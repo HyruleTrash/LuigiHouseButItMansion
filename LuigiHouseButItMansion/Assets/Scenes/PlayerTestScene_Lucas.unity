@@ -638,6 +638,25 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 8
+--- !u!1 &1534147255 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8504158198888317785, guid: 363934476ca544148a4b638b31f1e346, type: 3}
+  m_PrefabInstance: {fileID: 1323026450150041258}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1534147257
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1534147255}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d909a26cd1a04fddabacaf02c6c6ec5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomCameraConfig
+  centerPointBounds: {x: 6, y: 1, z: 0}
+  sizeBounds: {x: 2, y: 4, z: 10}
 --- !u!1 &1688988300
 GameObject:
   m_ObjectHideFlags: 0
@@ -688,7 +707,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   currentRoom: {fileID: 1031142328}
   playerCameraLookAt: {fileID: 1257684725}
-  playerCameraMovement: {fileID: 1257684725}
+  playerCameraMovement: {fileID: 1257684726}
   camInterestPoint: {fileID: 1174584254}
   playerRigidbody: {fileID: 153418862}
 --- !u!114 &1688988306
@@ -813,7 +832,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 615871850579391842, guid: 363934476ca544148a4b638b31f1e346, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 21.66
+      value: 25.075
       objectReference: {fileID: 0}
     - target: {fileID: 615871850579391842, guid: 363934476ca544148a4b638b31f1e346, type: 3}
       propertyPath: m_LocalRotation.w
@@ -851,10 +870,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: RoomObject (1)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3452200484014443683, guid: 363934476ca544148a4b638b31f1e346, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8504158198888317785, guid: 363934476ca544148a4b638b31f1e346, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1534147257}
   m_SourcePrefab: {fileID: 100100000, guid: 363934476ca544148a4b638b31f1e346, type: 3}
 --- !u!1001 &5178767098380830662
 PrefabInstance:
@@ -864,13 +887,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1050788122506615608, guid: 6c06053b53377ad499d624c24dc5111a, type: 3}
-      propertyPath: cameraViewPoint.x
-      value: -1
+    - target: {fileID: 1670731494709931899, guid: 6c06053b53377ad499d624c24dc5111a, type: 3}
+      propertyPath: sizeBounds.x
+      value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 1050788122506615608, guid: 6c06053b53377ad499d624c24dc5111a, type: 3}
-      propertyPath: cameraViewPoint.z
-      value: 0
+    - target: {fileID: 1670731494709931899, guid: 6c06053b53377ad499d624c24dc5111a, type: 3}
+      propertyPath: sizeBounds.y
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1670731494709931899, guid: 6c06053b53377ad499d624c24dc5111a, type: 3}
+      propertyPath: centerPointBounds.x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1670731494709931899, guid: 6c06053b53377ad499d624c24dc5111a, type: 3}
+      propertyPath: centerPointBounds.y
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1767495169625773643, guid: 6c06053b53377ad499d624c24dc5111a, type: 3}
       propertyPath: otherRoomEntrance
@@ -919,18 +950,6 @@ PrefabInstance:
     - target: {fileID: 3736045064804380411, guid: 6c06053b53377ad499d624c24dc5111a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4621744175933497146, guid: 6c06053b53377ad499d624c24dc5111a, type: 3}
-      propertyPath: m_Size.x
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 4621744175933497146, guid: 6c06053b53377ad499d624c24dc5111a, type: 3}
-      propertyPath: m_Size.y
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 4621744175933497146, guid: 6c06053b53377ad499d624c24dc5111a, type: 3}
-      propertyPath: m_Center.y
-      value: 2.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

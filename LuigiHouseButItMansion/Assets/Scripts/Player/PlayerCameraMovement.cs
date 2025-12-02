@@ -29,6 +29,9 @@ public class PlayerCameraMovement : MonoBehaviour
 
     private void Update()
     {
-        transform.position = Vector3.Lerp(transform.position, playerData.transform.position + offset, Time.deltaTime * speed);
+        if (!camInterestPoint)
+            return;
+        var newPos = Vector3.Lerp(transform.position, camInterestPoint.position + offset, Time.deltaTime * speed);
+        transform.position = playerData.currentRoom.cameraConfig.GetNearestInBounds(newPos);
     }
 }

@@ -9,6 +9,7 @@ public class RoomObjectData : MonoBehaviour
     [HideInInspector]
     public List<RoomEntrance> entrances;
     public Vector3 cameraViewPoint;
+    public RoomCameraConfig cameraConfig;
     
     private void Start()
     {

@@ -8,7 +8,7 @@ public class PlayerData : MonoBehaviour
     [SerializeField]
     private PlayerCameraLookAt playerCameraLookAt;
     [SerializeField]
-    private PlayerCameraLookAt playerCameraMovement;
+    private PlayerCameraMovement playerCameraMovement;
     [SerializeField]
     private Transform camInterestPoint;
     public Rigidbody playerRigidbody;

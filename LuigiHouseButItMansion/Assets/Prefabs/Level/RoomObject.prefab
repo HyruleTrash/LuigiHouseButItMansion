@@ -121,7 +121,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1977548513104106391}
-  - component: {fileID: 4621744175933497146}
+  - component: {fileID: 1670731494709931899}
   m_Layer: 0
   m_Name: CameraConfig
   m_TagString: Untagged
@@ -144,27 +144,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3736045064804380411}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &4621744175933497146
-BoxCollider:
+--- !u!114 &1670731494709931899
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1459090683294857552}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 1
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 8, y: 4, z: 10}
-  m_Center: {x: 0, y: 1, z: 0}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d909a26cd1a04fddabacaf02c6c6ec5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomCameraConfig
+  centerPointBounds: {x: 0, y: 1, z: 0}
+  sizeBounds: {x: 8, y: 4, z: 10}
 --- !u!1 &2675246940137775979
 GameObject:
   m_ObjectHideFlags: 0
@@ -214,6 +207,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomObjectData
   entrances: []
   cameraViewPoint: {x: -1, y: 0, z: 0}
+  cameraConfig: {fileID: 1670731494709931899}
 --- !u!1 &6171743111806585432
 GameObject:
   m_ObjectHideFlags: 0
