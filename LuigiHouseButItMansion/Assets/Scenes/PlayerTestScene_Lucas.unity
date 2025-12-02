@@ -466,6 +466,7 @@ GameObject:
   - component: {fileID: 1257684724}
   - component: {fileID: 1257684725}
   - component: {fileID: 1257684726}
+  - component: {fileID: 1257684727}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -617,10 +618,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 562d4cda72854ce438f47585d75e5869, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  speed: 0
+  speed: 5
   playerCamera: {fileID: 1257684722}
   camInterestPoint: {fileID: 0}
   offset: {x: 0, y: 0, z: 0}
+--- !u!114 &1257684727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1257684720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 883d3f107b394184da0d56e7c9cb9804, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  playerData: {fileID: 1688988305}
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!1 &1688988300
 GameObject:
   m_ObjectHideFlags: 0
@@ -796,7 +813,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 615871850579391842, guid: 363934476ca544148a4b638b31f1e346, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 12
+      value: 21.66
       objectReference: {fileID: 0}
     - target: {fileID: 615871850579391842, guid: 363934476ca544148a4b638b31f1e346, type: 3}
       propertyPath: m_LocalRotation.w
@@ -847,6 +864,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1050788122506615608, guid: 6c06053b53377ad499d624c24dc5111a, type: 3}
+      propertyPath: cameraViewPoint.x
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1050788122506615608, guid: 6c06053b53377ad499d624c24dc5111a, type: 3}
+      propertyPath: cameraViewPoint.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1767495169625773643, guid: 6c06053b53377ad499d624c24dc5111a, type: 3}
       propertyPath: otherRoomEntrance
       value: 
@@ -894,6 +919,18 @@ PrefabInstance:
     - target: {fileID: 3736045064804380411, guid: 6c06053b53377ad499d624c24dc5111a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4621744175933497146, guid: 6c06053b53377ad499d624c24dc5111a, type: 3}
+      propertyPath: m_Size.x
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4621744175933497146, guid: 6c06053b53377ad499d624c24dc5111a, type: 3}
+      propertyPath: m_Size.y
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4621744175933497146, guid: 6c06053b53377ad499d624c24dc5111a, type: 3}
+      propertyPath: m_Center.y
+      value: 2.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

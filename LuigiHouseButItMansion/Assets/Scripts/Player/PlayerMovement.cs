@@ -54,7 +54,6 @@ public class PlayerMovement : MonoBehaviour
         Vector3 moveVectorFinal = cameraRotation * moveVector3D;
         
         var force = moveVectorFinal * speed;
-        Debug.Log($"movement: {moveVectorFinal} \nforce:{force} \nvelocity: {rb.linearVelocity}");
         rb.AddForce(force);
     }
 }
