@@ -1,10 +1,13 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class PlayerCameraMovement : MonoBehaviour
 {
     [SerializeField]
     private float speed = 1;
+    [SerializeField]
+    float minDistance = 1f;
     [SerializeField]
     private Camera playerCamera;
     [HideInInspector]
@@ -34,6 +37,8 @@ public class PlayerCameraMovement : MonoBehaviour
     private void Update()
     {
         if (!camInterestPoint)
+            return;
+        if (Vector3.Distance(transform.position, camInterestPoint.position + offset) < minDistance)
             return;
         var newPos = Vector3.Lerp(transform.position, camInterestPoint.position + offset, Time.deltaTime * speed);
         transform.position = currentRoom.cameraConfig.GetNearestInBounds(newPos);

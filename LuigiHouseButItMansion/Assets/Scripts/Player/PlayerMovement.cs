@@ -13,6 +13,8 @@ public class PlayerMovement : MonoBehaviour
     [Header("Configuration")]
     [SerializeField]
     private float speed = 1;
+    [SerializeField]
+    private float maxSpeed = 1;
     
     // [SerializeField]
     private InputAction moveAction;
@@ -49,7 +51,21 @@ public class PlayerMovement : MonoBehaviour
     {
         moveVector = moveAction.ReadValue<Vector2>();
         playerData.transform.position = rb.transform.position;
-        
+
+        MovePlayerBasedOnMoveAction(moveVector);
+        LimitVelocity();
+    }
+
+    private void LimitVelocity()
+    {
+        Vector2 horizontalVelocity = new (rb.linearVelocity.x, rb.linearVelocity.z);
+        if (!(horizontalVelocity.magnitude > maxSpeed)) return;
+        horizontalVelocity = horizontalVelocity.normalized * maxSpeed;
+        rb.linearVelocity = new Vector3(horizontalVelocity.x, rb.linearVelocity.y, horizontalVelocity.y);
+    }
+
+    private void MovePlayerBasedOnMoveAction(Vector2 vector2)
+    {
         if (moveVector == Vector2.zero)
             return;
 
@@ -57,7 +73,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 moveVector3D = new Vector3(moveVector.x, 0, moveVector.y);
         Vector3 moveVectorFinal = cameraRotation * moveVector3D;
         
-        var force = moveVectorFinal * speed;
+        var force = moveVectorFinal * (Time.deltaTime * speed);
         rb.AddForce(force);
     }
 }

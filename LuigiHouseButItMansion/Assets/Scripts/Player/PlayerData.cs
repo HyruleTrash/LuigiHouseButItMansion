@@ -48,8 +48,13 @@ public class PlayerData : MonoBehaviour
         return currentRoom;
     }
 
+    /// <summary>
+    /// Meant only to be used by teleportation devices ect, not for physics
+    /// </summary>
+    /// <param name="transformPosition"></param>
     public void SetPlayerPosition(Vector3 transformPosition)
     {
+        playerCameraLookAt.Reset(transformPosition - playerRigidbody.position);
         playerRigidbody.position = transformPosition;
     }
 }
