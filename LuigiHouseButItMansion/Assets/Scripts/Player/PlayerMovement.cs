@@ -6,6 +6,7 @@ public class PlayerMovement : MonoBehaviour
 {
     [SerializeField]
     private PlayerData playerData;
+    private RoomObjectData currentRoom;
     [SerializeField]
     private InputActionAsset inputActionAsset;
     
@@ -39,6 +40,9 @@ public class PlayerMovement : MonoBehaviour
         rb.transform.SetParent(parentsParent);
 
         moveAction = InputSystem.actions.FindAction("Move");
+        
+        currentRoom = playerData.GetCurrentRoom();
+        playerData.OnCurrentRoomChange += room => { currentRoom = room;};
     }
 
     private void Update()
@@ -49,7 +53,7 @@ public class PlayerMovement : MonoBehaviour
         if (moveVector == Vector2.zero)
             return;
 
-        var cameraRotation = Quaternion.LookRotation(playerData.currentRoom.cameraViewPoint, Vector3.up);
+        var cameraRotation = Quaternion.LookRotation(currentRoom.cameraViewPoint, Vector3.up);
         Vector3 moveVector3D = new Vector3(moveVector.x, 0, moveVector.y);
         Vector3 moveVectorFinal = cameraRotation * moveVector3D;
         

@@ -29,4 +29,20 @@ public class RoomObjectData : MonoBehaviour
         var endPosition = cameraViewPoint * 2;
         Gizmos.DrawLine(startPosition + offset, startPosition + endPosition + offset);
     }
+
+    public void ReadyRoom()
+    {
+        foreach (var entrance in entrances)
+        {
+            entrance.enabled = true;
+        }
+    }
+
+    public void DisableRoom()
+    {
+        foreach (var entrance in entrances)
+        {
+            entrance.enabled = false;
+        }
+    }
 }
