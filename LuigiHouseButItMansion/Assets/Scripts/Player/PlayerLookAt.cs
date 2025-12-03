@@ -27,9 +27,49 @@ public class PlayerLookAt : MonoBehaviour
         if (Physics.Raycast(mouseRay, out RaycastHit hit, Mathf.Infinity, layerMask))
         {
             hitPoint = hit.point;
-            lookAtPoint = new Vector3(hit.point.x, rb.transform.position.y, hit.point.z);
+            lookAtPoint = new Vector3(hitPoint.x, rb.transform.position.y, hitPoint.z);
             rb.transform.LookAt(lookAtPoint);
         }
+        else
+        {
+            if (!Physics.Raycast(rb.position, -Vector3.up, out RaycastHit groundHit, Mathf.Infinity, layerMask)) return;
+            if (!IntersectY(mouseRay.origin, mouseRay.direction, groundHit.point.y, out hitPoint, out _)) return;
+            lookAtPoint = new Vector3(hitPoint.x, rb.transform.position.y, hitPoint.z);
+            rb.transform.LookAt(lookAtPoint);
+        }
+    }
+    
+    /// <summary>
+    /// Gets the intersection position on a certain Y position
+    /// </summary>
+    public static bool IntersectY(Vector3 origin, Vector3 direction, float targetY, out Vector3 hitPoint, out float travelDistance)
+    {
+        if (direction == Vector3.zero)
+        {
+            hitPoint = Vector3.zero;
+            travelDistance = 0f;
+            return false;
+        }
+
+        var dir = direction.normalized;
+        travelDistance = (targetY - origin.y) / dir.y;
+
+        // Ray is parallel to the plane
+        if (float.IsInfinity(travelDistance))
+        {
+            hitPoint = Vector3.zero;
+            return false;
+        }
+
+        // Intersection is behind the ray origin
+        if (travelDistance < 0f)
+        {
+            hitPoint = Vector3.zero;
+            return false;
+        }
+
+        hitPoint = origin + dir * travelDistance;
+        return true;
     }
 
     private void OnDrawGizmos()
