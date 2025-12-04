@@ -10,6 +10,7 @@ public class RoomObjectData : MonoBehaviour
     public List<RoomEntrance> entrances;
     public Vector3 cameraViewPoint;
     public RoomCameraConfig cameraConfig;
+    public Action OnReadyRoom;
     
     private void Start()
     {
@@ -36,6 +37,7 @@ public class RoomObjectData : MonoBehaviour
         {
             entrance.enabled = true;
         }
+        OnReadyRoom?.Invoke();
     }
 
     public void DisableRoom()
