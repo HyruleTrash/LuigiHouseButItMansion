@@ -11,6 +11,8 @@ public class PlayerLookAt : MonoBehaviour
     private Rigidbody rb;
     [SerializeField]
     private Camera cam;
+    [SerializeField]
+    private RenderTexture renderTexture;
 
     private void Start()
     {
@@ -24,8 +26,14 @@ public class PlayerLookAt : MonoBehaviour
     private Vector3 lookAtPoint;
     private void Update()
     {
-        var mousePos = Mouse.current.position.ReadValue() / 2;
-        var mouseRay = cam.ScreenPointToRay(new Vector2(mousePos.x, mousePos.y));
+        float CalculateMousePos(float mPos, float sSize, int rTex) => 1f / sSize * mPos * rTex;
+        
+        var mousePos = Mouse.current.position.ReadValue();
+        var trueMousePos = new Vector2(CalculateMousePos(mousePos.x, Screen.width, renderTexture.width),
+            CalculateMousePos(mousePos.y, Screen.height, renderTexture.height));
+        
+        var mouseRay = cam.ScreenPointToRay(trueMousePos);
+        
         if (Physics.Raycast(mouseRay, out var hit, Mathf.Infinity, layerMask))
         {
             hitPoint = hit.point;
