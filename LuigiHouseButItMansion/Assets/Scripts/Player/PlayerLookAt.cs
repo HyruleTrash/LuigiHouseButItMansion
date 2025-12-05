@@ -9,6 +9,7 @@ public class PlayerLookAt : MonoBehaviour
     [SerializeField]
     private LayerMask layerMask;
     private Rigidbody rb;
+    [SerializeField]
     private Camera cam;
 
     private void Start()
@@ -23,8 +24,9 @@ public class PlayerLookAt : MonoBehaviour
     private Vector3 lookAtPoint;
     private void Update()
     {
-        var mouseRay = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
-        if (Physics.Raycast(mouseRay, out RaycastHit hit, Mathf.Infinity, layerMask))
+        var mousePos = Mouse.current.position.ReadValue() / 2;
+        var mouseRay = cam.ScreenPointToRay(new Vector2(mousePos.x, mousePos.y));
+        if (Physics.Raycast(mouseRay, out var hit, Mathf.Infinity, layerMask))
         {
             hitPoint = hit.point;
             lookAtPoint = new Vector3(hitPoint.x, rb.transform.position.y, hitPoint.z);
@@ -32,7 +34,7 @@ public class PlayerLookAt : MonoBehaviour
         }
         else
         {
-            if (!Physics.Raycast(rb.position, -Vector3.up, out RaycastHit groundHit, Mathf.Infinity, layerMask)) return;
+            if (!Physics.Raycast(rb.position, -Vector3.up, out var groundHit, Mathf.Infinity, layerMask)) return;
             if (!IntersectY(mouseRay.origin, mouseRay.direction, groundHit.point.y, out hitPoint, out _)) return;
             lookAtPoint = new Vector3(hitPoint.x, rb.transform.position.y, hitPoint.z);
             rb.transform.LookAt(lookAtPoint);
