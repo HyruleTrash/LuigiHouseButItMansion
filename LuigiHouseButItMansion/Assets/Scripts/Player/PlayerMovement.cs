@@ -58,10 +58,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void LimitVelocity()
     {
-        Vector2 horizontalVelocity = new (rb.linearVelocity.x, rb.linearVelocity.z);
+        Vector2 horizontalVelocity = VectorHelper.GetXZ(rb.linearVelocity);
         if (!(horizontalVelocity.magnitude > maxSpeed)) return;
         horizontalVelocity = horizontalVelocity.normalized * maxSpeed;
-        rb.linearVelocity = new Vector3(horizontalVelocity.x, rb.linearVelocity.y, horizontalVelocity.y);
+        rb.linearVelocity = VectorHelper.XZToVector3(horizontalVelocity, rb.linearVelocity.y);
     }
 
     private void MovePlayerBasedOnMoveAction(Vector2 vector2)

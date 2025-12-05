@@ -28,6 +28,16 @@ public class PlayerData : MonoBehaviour
         playerCameraMovement.camInterestPoint = camInterestPoint;
     }
 
+    private void Start()
+    {
+        SceneData.instance.RegisteredObject<PlayerData>(this);
+    }
+
+    private void OnDestroy()
+    {
+        SceneData.instance.DeRegisteredObject<PlayerData>();
+    }
+
     public Vector3 GetCameraDirection()
     {
         return (transform.position - playerCameraLookAt.playerCamera.transform.position).normalized;
