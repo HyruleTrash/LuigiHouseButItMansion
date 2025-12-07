@@ -123,10 +123,9 @@ public class WaterProjectile : MonoBehaviour
         if (shouldMoveAlongSpline)
         {
             rate += usedSpeed * Time.deltaTime;
-            if (rate >= 1) {
-                rate = startPosition;
-                scaleX = 0;
-                shouldMoveAlongSpline = false;
+            if (rate >= 1)
+            {
+                ResetToStart();
             }
             meshBender.SetInterval(spline, spline.Length * rate);
         }
@@ -145,5 +144,15 @@ public class WaterProjectile : MonoBehaviour
         }
 
         meshBender.ComputeIfNeeded();
+    }
+
+    private void ResetToStart()
+    {
+        rate = startPosition;
+        scaleX = 0;
+        shouldMoveAlongSpline = false;
+        meshBender.Source = SourceMesh.Build(mesh)
+            .Rotate(Quaternion.Euler(rotation))
+            .Scale(new Vector3(0, scale.y, scale.z));
     }
 }

@@ -16,7 +16,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private float maxSpeed = 1;
     
-    // [SerializeField]
     private InputAction moveAction;
     private Vector2 moveVector;
     private Rigidbody rb;
@@ -28,7 +27,7 @@ public class PlayerMovement : MonoBehaviour
     
     private void OnDisable()
     {
-        inputActionAsset.FindActionMap("Player").Enable();
+        inputActionAsset.FindActionMap("Player").Disable();
     }
 
     private void Start()
