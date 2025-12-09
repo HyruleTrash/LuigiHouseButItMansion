@@ -30,6 +30,7 @@ public class PlayerShoot : MonoBehaviour
 
     private Spline spline;
     private TrajectoryGetter trajectoryGetter;
+    private Vector3 offset = Vector3.up * 2;
 
     private void OnEnable()
     {
@@ -66,16 +67,16 @@ public class PlayerShoot : MonoBehaviour
         chamberTimer.Update(Time.deltaTime);
     }
 
-    private TrajectoryGetter.TrajectoryData temp;
+    // private TrajectoryGetter.TrajectoryData temp;
     private void TryShoot()
     {
         if (!canShoot)
             return;
         
         Debug.Log("Shooting!");
-        trajectoryGetter.GetTrajectory(transform.position + shootPosition, Quaternion.identity, transform.forward, shotStrength, data =>
-        {
-            temp = data;
+        trajectoryGetter.GetTrajectory(transform.position + shootPosition, Quaternion.identity, transform.forward + offset, shotStrength, 
+        () => {
+            // temp = data;
             Debug.Log("Pain");
         });
         
@@ -87,9 +88,9 @@ public class PlayerShoot : MonoBehaviour
     {
         spline.nodes = new List<SplineNode>(2);
         
-        spline.AddNode(new SplineNode(shootPosition, shootPosition + transform.forward * shotStrength));
+        var nextNode = shootPosition + (transform.forward + offset) * shotStrength;
+        spline.AddNode(new SplineNode(shootPosition, nextNode));
 
-        var nextNode = shootPosition + (transform.forward * shotStrength);
         var distanceBetweenNodes = Vector3.Distance(shootPosition, nextNode);
         nextNode += Vector3.down * distanceBetweenNodes;
         spline.AddNode(new SplineNode( nextNode, nextNode));
@@ -99,9 +100,9 @@ public class PlayerShoot : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(transform.position + shootPosition, 0.1f);
-        
-        Gizmos.DrawSphere(temp.startPosition, 0.1f);
-        Gizmos.DrawSphere(temp.highestPosition, 0.1f);
-        Gizmos.DrawSphere(temp.endPosition, 0.1f);
+        //
+        // Gizmos.DrawSphere(temp.startPosition, 0.1f);
+        // Gizmos.DrawSphere(temp.highestPosition, 0.1f);
+        // Gizmos.DrawSphere(temp.endPosition, 0.1f);
     }
 }
