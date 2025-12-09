@@ -28,23 +28,12 @@ public class PlayerShoot : MonoBehaviour
     [SerializeField]
     private Vector3 scale;
 
-    private Spline spline;
     private TrajectoryGetter trajectoryGetter;
-    private Vector3 offset = Vector3.up * 2;
+    private Vector3 offset = Vector3.up * 1;
 
     private void OnEnable()
     {
         inputActionAsset.FindActionMap("Player").Enable();
-    }
-
-    private void OnValidate()
-    {
-        if (spline == null)
-            spline = gameObject.GetComponent<Spline>();
-        if (spline == null)
-            spline = gameObject.AddComponent<Spline>();
-        if (enabled)
-            CalculateTrajectory();
     }
 
     private void Start()
@@ -57,7 +46,7 @@ public class PlayerShoot : MonoBehaviour
         chamberTimer.running = false;
         chamberTimer.onEnd += () => canShoot = true;
 
-        trajectoryGetter = new TrajectoryGetter(mesh, scale);
+        trajectoryGetter = new TrajectoryGetter(mesh, gameObject);
     }
 
     private void Update()
@@ -74,7 +63,7 @@ public class PlayerShoot : MonoBehaviour
             return;
         
         Debug.Log("Shooting!");
-        trajectoryGetter.GetTrajectory(transform.position + shootPosition, Quaternion.identity, transform.forward + offset, shotStrength, 
+        trajectoryGetter.GetTrajectory(transform.position + shootPosition, transform.forward + offset, shotStrength, 
         () => {
             // temp = data;
             Debug.Log("Pain");
@@ -84,25 +73,16 @@ public class PlayerShoot : MonoBehaviour
         chamberTimer.Reset();
     }
 
-    private void CalculateTrajectory()
-    {
-        spline.nodes = new List<SplineNode>(2);
-        
-        var nextNode = shootPosition + (transform.forward + offset) * shotStrength;
-        spline.AddNode(new SplineNode(shootPosition, nextNode));
-
-        var distanceBetweenNodes = Vector3.Distance(shootPosition, nextNode);
-        nextNode += Vector3.down * distanceBetweenNodes;
-        spline.AddNode(new SplineNode( nextNode, nextNode));
-    }
-
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(transform.position + shootPosition, 0.1f);
-        //
-        // Gizmos.DrawSphere(temp.startPosition, 0.1f);
-        // Gizmos.DrawSphere(temp.highestPosition, 0.1f);
-        // Gizmos.DrawSphere(temp.endPosition, 0.1f);
+
+        if (trajectoryGetter == null || trajectoryGetter.temp == null)
+            return;
+        foreach (var pos in trajectoryGetter.temp)
+        {
+            Gizmos.DrawSphere(pos, 0.1f);
+        }
     }
 }
