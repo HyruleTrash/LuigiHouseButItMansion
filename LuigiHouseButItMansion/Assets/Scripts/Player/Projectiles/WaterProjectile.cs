@@ -34,8 +34,11 @@ public class WaterProjectile : MonoBehaviour
     public bool shouldRun = false;
     public bool shouldRepeat = false;
     public Action<WaterProjectile> OnFinished;
+    public Action OnEndHit;
+    private bool endOfSplineHit = false;
     
     public Mesh mesh;
+    private float meshLength;
     public Material material;
     public Vector3 rotation;
     public Vector3 scale;
@@ -95,7 +98,8 @@ public class WaterProjectile : MonoBehaviour
         meshBender.Mode = MeshBender.FillingMode.Once;
         meshBender.SetInterval(spline, 0);
 
-        var percentage = 1f / spline.Length * GetMeshLength(mesh);
+        meshLength = GetMeshLength(mesh);
+        var percentage = 1f / spline.Length * meshLength;
         speed = usedSpeed * (1 + percentage);
         
         meshBender.Source = SourceMesh.Build(mesh)
@@ -159,10 +163,17 @@ public class WaterProjectile : MonoBehaviour
         if (shouldMoveAlongSpline)
         {
             rate += usedSpeed * Time.deltaTime;
+            var percentage = 1f / spline.Length * meshLength;
+            if ((percentage > 1 || rate >= percentage) && endOfSplineHit == false)
+            {
+                endOfSplineHit = true;
+                OnEndHit?.Invoke();
+            }
             if (rate >= 1)
             {
                 ResetToStart();
             }
+
             meshBender.SetInterval(spline, spline.Length * rate);
         }
         else
@@ -188,9 +199,12 @@ public class WaterProjectile : MonoBehaviour
         rate = startPosition;
         scaleX = 0;
         shouldMoveAlongSpline = false;
+        endOfSplineHit = false;
+        
         meshBender.Source = SourceMesh.Build(mesh)
             .Rotate(Quaternion.Euler(rotation))
             .Scale(new Vector3(0, scale.y, scale.z));
+        
         if (!shouldRepeat)
         {
             ShouldRun = false;

@@ -73,8 +73,10 @@ public class TrajectoryGetter
         if (output.collided)
         {
             // Collided
-            spline.nodes[1].Position = (output.contactPoint - splineObject.transform.position) + -output.direction * output.distance;
-            spline.nodes[1].Direction = spline.nodes[1].Position;
+            var offsetDirection = (-output.direction + direction) / 2;
+            spline.nodes[1].Position = (output.contactPoint - splineObject.transform.position) + offsetDirection * output.distance;
+            offsetDirection = (-output.direction + direction) / 2 * 0.1f;
+            spline.nodes[1].Direction = spline.nodes[1].Position + offsetDirection;
 
             spline.nodes[0].Direction = new Vector3(spline.nodes[1].Position.x, output.highestPoint.y, spline.nodes[1].Position.z);
             var directionTowardsHighestPoint = (output.highestPoint - spline.nodes[1].Position).normalized;
@@ -103,7 +105,7 @@ public class TrajectoryGetter
 
     private SplineCollision CheckCollisionAllongSpline(Vector3 shotStartPosition)
     {
-        var stepSize = mesh.bounds.extents.magnitude / 2;
+        var stepSize = mesh.bounds.extents.magnitude / 4;
         var halfExtents = mesh.bounds.extents / 2;
         meshCollider.enabled = true;
 

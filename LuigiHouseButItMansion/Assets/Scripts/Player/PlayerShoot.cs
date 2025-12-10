@@ -25,6 +25,7 @@ public class PlayerShoot : MonoBehaviour
     private float projectileSpeed;
     [SerializeField]
     private float shotStrength;
+    private float usedShotStrength;
     [SerializeField]
     private Vector3 shootPosition;
     private Vector3 shootDirection;
@@ -44,9 +45,17 @@ public class PlayerShoot : MonoBehaviour
     private Vector3 visualRotation;
     [SerializeField]
     private Vector3 visualScale;
+    [SerializeField]
+    private GameObject waterSplashPrefab;
 
     private TrajectoryGetter trajectoryGetter;
-    private ObjectPool<WaterProjectile> waterProjectilePool = new();
+    private ObjectPool<WaterProjectileInstance> waterProjectilePool = new();
+
+    public class WaterProjectileInstance
+    {
+        public WaterProjectile projectile;
+        public ParticleSystem splashParticle;
+    }
 
     private void OnEnable()
     {
@@ -71,8 +80,6 @@ public class PlayerShoot : MonoBehaviour
         chamberTimer.running = false;
         chamberTimer.onEnd += () => canShoot = true;
         
-        aimAction = InputSystem.actions.FindAction("Aim");
-        
         trajectoryGetter = new TrajectoryGetter(collisionMesh, gameObject, scale, layerMask);
     }
 
@@ -85,13 +92,16 @@ public class PlayerShoot : MonoBehaviour
 
     private void CalculateShootDirectionMouse()
     {
-        if (Mathf.Approximately(aimAction.ReadValue<float>(), 1) && Physics.Raycast(MouseRayGetter.instance.GetMouseRay(), out var hit, Mathf.Infinity, layerMask))
+        if (Physics.Raycast(MouseRayGetter.instance.GetMouseRay(), out var hit, Mathf.Infinity, layerMask))
         {
-            shootDirection = (hit.point - shootPosition).normalized;
+            var shootPos = GetShootPosition() + transform.position;
+            shootDirection = (hit.point - shootPos).normalized;
+            usedShotStrength = shotStrength * Vector3.Distance(hit.point, shootPos);
         }
         else
         {
-            shootDirection = transform.forward + Vector3.up * 1;
+            shootDirection = transform.forward;
+            usedShotStrength = shotStrength;
         }
     }
 
@@ -102,51 +112,73 @@ public class PlayerShoot : MonoBehaviour
         
         CalculateShootDirectionMouse();
         
-        Debug.Log("Shooting!");
         trajectoryGetter.GetTrajectory(GetShootPosition(), shootDirection, shotStrength, 
             (TrajectoryGetter.SplineCollision collisionData, Spline spline) => {
                 canShoot = false;
                 chamberTimer.Reset();
-                Debug.Log($"Hit something! {collisionData.collidedWith}");
+                // Debug.Log($"Hit something! {collisionData.collidedWith}");
 
-                WaterProjectile currentProjectile;
-                var foundInactive = waterProjectilePool.GetInactiveObject(out var waterProjectile);
+                WaterProjectileInstance currentInstance;
+                var foundInactive = waterProjectilePool.GetInactiveObject(out var foundInstance);
                 bool shouldInit = false;
                 if (foundInactive)
-                    currentProjectile = (WaterProjectile)waterProjectile;
+                    currentInstance = (WaterProjectileInstance)foundInstance;
                 else
                 {
-                    currentProjectile = new GameObject("WaterProjectile", typeof(Spline)).AddComponent<WaterProjectile>();
-                    currentProjectile.OnFinished = (WaterProjectile doneProjectile) =>
+                    currentInstance = new()
                     {
-                        waterProjectilePool.ReturnToInActivePool(doneProjectile);
+                        projectile = new GameObject("WaterProjectile", typeof(Spline)).AddComponent<WaterProjectile>()
+                    };
+                    currentInstance.projectile.OnFinished = (WaterProjectile doneProjectile) =>
+                    {
+                        currentInstance.splashParticle.transform.rotation = waterSplashPrefab.transform.rotation;
+                        waterProjectilePool.ReturnToInActivePool(currentInstance);
                     };
 
-                    currentProjectile.spline = currentProjectile.GetComponent<Spline>();
-                    currentProjectile.material = material;
-                    currentProjectile.mesh = mesh;
+                    currentInstance.projectile.spline = currentInstance.projectile.GetComponent<Spline>();
+                    currentInstance.projectile.material = material;
+                    currentInstance.projectile.mesh = mesh;
+                    
+                    var splashParticle = Instantiate(waterSplashPrefab, currentInstance.projectile.transform, false);
+                    
+                    currentInstance.splashParticle = splashParticle.GetComponent<ParticleSystem>();
+                    currentInstance.projectile.OnEndHit = () =>
+                    {
+                        currentInstance.splashParticle.Play();
+                    };
+                    
                     shouldInit = true;
                 }
                 
-                currentProjectile.transform.position = spline.transform.position;
-                currentProjectile.scale = visualScale;
-                currentProjectile.rotation = visualRotation;
+                // splash effect data
+                if (collisionData.collided)
+                {
+                    var offsetDirection = waterSplashPrefab.transform.rotation * (-collisionData.direction * collisionData.distance);
+                    currentInstance.splashParticle.transform.position = collisionData.contactPoint + offsetDirection;
+
+                    currentInstance.splashParticle.transform.rotation = Quaternion.LookRotation(collisionData.direction, waterSplashPrefab.transform.up);
+                }
                 
-                currentProjectile.usedSpeed = projectileSpeed;
+                // projectile Data
+                currentInstance.projectile.transform.position = spline.transform.position;
+                currentInstance.projectile.scale = visualScale;
+                currentInstance.projectile.rotation = visualRotation;
+                
+                currentInstance.projectile.usedSpeed = projectileSpeed;
                 
                 // set spline data
-                var projectileSpline = currentProjectile.spline;
+                var projectileSpline = currentInstance.projectile.spline;
                 projectileSpline.nodes = new List<SplineNode>(spline.nodes.Count);
                 foreach (var node in spline.nodes)
                 {
                     projectileSpline.AddNode(new SplineNode(node.Position,node.Direction));
                 }
 
-                currentProjectile.RefreshCurves();
+                currentInstance.projectile.RefreshCurves();
                 
                 if (shouldInit)
-                    currentProjectile.Init();
-                currentProjectile.ShouldRun = true;
+                    currentInstance.projectile.Init();
+                currentInstance.projectile.ShouldRun = true;
             });
     }
 
@@ -159,5 +191,7 @@ public class PlayerShoot : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(GetShootPosition() + transform.position, 0.1f);
+        Gizmos.DrawLine(GetShootPosition() + transform.position, GetShootPosition() + transform.position + shootDirection * shotStrength);
+        
     }
 }

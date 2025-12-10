@@ -303,7 +303,7 @@ namespace SplineMesh {
                         float distOnSpline = intervalStart + intervalLength * distanceRate;
                         if(distOnSpline > spline.Length) {
                             distOnSpline = spline.Length;
-                            Debug.Log("dist " + distOnSpline + " spline length " + spline.Length + " start " + intervalStart);
+                            // Debug.Log("dist " + distOnSpline + " spline length " + spline.Length + " start " + intervalStart);
                         }
 
                         sample = spline.GetSampleAtDistance(distOnSpline);
