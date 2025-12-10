@@ -7786,6 +7786,7 @@ GameObject:
   - component: {fileID: 2008268185}
   - component: {fileID: 2008268187}
   - component: {fileID: 2008268188}
+  - component: {fileID: 2008268189}
   m_Layer: 0
   m_Name: SceneData
   m_TagString: Untagged
@@ -7848,6 +7849,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MouseRayGetter
   cam: {fileID: 983421180}
   renderTexture: {fileID: 8400000, guid: d9aef1988730b80479a8ec8841004082, type: 2}
+--- !u!114 &2008268189
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2008268184}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 974fd5d99f7e48cda8d89eee249b8481, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EntityHitFlash
+  hitMaskMaterialPrefab: {fileID: 2100000, guid: d476796607f2cb74db4fb4e44d3cccc1, type: 2}
+  defaultFlashSpeed: 2
+  defaultFlashTime: 20
 --- !u!1 &2008923168
 GameObject:
   m_ObjectHideFlags: 0

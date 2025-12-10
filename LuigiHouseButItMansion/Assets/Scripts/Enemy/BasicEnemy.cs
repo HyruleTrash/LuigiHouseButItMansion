@@ -38,6 +38,7 @@ public class BasicEnemy : IEnemy
         }
 
         healthComponent.maxHealth = dataExampleHealth.maxHealth;
+        healthComponent.invincibilityFrames = dataExampleHealth.invincibilityFrames;
         
         healthComponent.Revive();
         spawner.Add(instance);
