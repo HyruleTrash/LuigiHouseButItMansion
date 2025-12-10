@@ -26,6 +26,8 @@ public class PlayerShoot : MonoBehaviour
     [SerializeField]
     private Mesh mesh;
     [SerializeField]
+    private LayerMask layerMask;
+    [SerializeField]
     private Vector3 scale;
 
     private TrajectoryGetter trajectoryGetter;
@@ -46,7 +48,7 @@ public class PlayerShoot : MonoBehaviour
         chamberTimer.running = false;
         chamberTimer.onEnd += () => canShoot = true;
 
-        trajectoryGetter = new TrajectoryGetter(mesh, gameObject);
+        trajectoryGetter = new TrajectoryGetter(mesh, gameObject, scale, layerMask);
     }
 
     private void Update()
@@ -56,16 +58,16 @@ public class PlayerShoot : MonoBehaviour
         chamberTimer.Update(Time.deltaTime);
     }
 
-    // private TrajectoryGetter.TrajectoryData temp;
+    private TrajectoryGetter.SplineCollision temp;
     private void TryShoot()
     {
         if (!canShoot)
             return;
         
         Debug.Log("Shooting!");
-        trajectoryGetter.GetTrajectory(transform.position + shootPosition, transform.forward + offset, shotStrength, 
-        () => {
-            // temp = data;
+        trajectoryGetter.GetTrajectory(GetShootPosition(), transform.forward + offset, shotStrength, 
+        (TrajectoryGetter.SplineCollision collisionData) => {
+            temp = collisionData;
             Debug.Log("Pain");
         });
         
@@ -73,13 +75,19 @@ public class PlayerShoot : MonoBehaviour
         chamberTimer.Reset();
     }
 
+    private Vector3 GetShootPosition()
+    {
+        return (transform.rotation * shootPosition);
+    }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawSphere(transform.position + shootPosition, 0.1f);
+        Gizmos.DrawSphere(GetShootPosition() + transform.position, 0.1f);
 
         if (trajectoryGetter == null || trajectoryGetter.temp == null)
             return;
+        Gizmos.color = Color.orange;
         foreach (var pos in trajectoryGetter.temp)
         {
             Gizmos.DrawSphere(pos, 0.1f);
