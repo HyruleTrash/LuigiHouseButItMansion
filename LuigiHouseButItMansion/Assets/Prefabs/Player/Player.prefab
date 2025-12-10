@@ -113,18 +113,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44d869360f684a8d886c94be444a4b60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerShoot
+  mouseLayerMask:
+    serializedVersion: 2
+    m_Bits: 265
   inputActionAsset: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  chamberTime: 0.5
-  projectileSpeed: 0
-  shotStrength: 5
+  chamberTime: 0.25
+  projectileSpeed: 1
+  shotStrength: 20
+  damage: 5
   shootPosition: {x: 0, y: 0, z: 0.5}
   collisionMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   layerMask:
     serializedVersion: 2
-    m_Bits: 9
-  scale: {x: 0.41, y: 0.41, z: 0.41}
+    m_Bits: 265
+  scale: {x: 0.2, y: 0.2, z: 0.2}
   mesh: {fileID: 7814459101124295239, guid: fd1b2b676d14d8b479db7f5a3f61d932, type: 3}
   material: {fileID: 2100000, guid: 828596e267757ae479046b5a3478819b, type: 2}
+  visualRotation: {x: 0, y: 90, z: 0}
+  visualScale: {x: 1, y: 0.2, z: 0.2}
+  waterSplashPrefab: {fileID: 7351556286301219907, guid: 646002e1ba844474e9df39eb525dc322, type: 3}
 --- !u!1 &5340719364204834502
 GameObject:
   m_ObjectHideFlags: 0
@@ -345,8 +352,6 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 8
-  cam: {fileID: 0}
-  renderTexture: {fileID: 8400000, guid: d9aef1988730b80479a8ec8841004082, type: 2}
 --- !u!1 &7933306752479335644
 GameObject:
   m_ObjectHideFlags: 0

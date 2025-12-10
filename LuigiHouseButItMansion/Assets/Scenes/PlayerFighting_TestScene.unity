@@ -6015,66 +6015,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5674562136487454145, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: cam
-      value: 
-      objectReference: {fileID: 760041185}
-    - target: {fileID: 7801742513122768622, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: cam
-      value: 
-      objectReference: {fileID: 760041185}
-    - target: {fileID: 7801742513122768622, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: scale.x
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7801742513122768622, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: scale.y
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7801742513122768622, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: scale.z
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7801742513122768622, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: chamberTime
-      value: 0.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 7801742513122768622, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: shotStrength
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 7801742513122768622, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: renderTexture
-      value: 
-      objectReference: {fileID: 8400000, guid: d9aef1988730b80479a8ec8841004082, type: 2}
-    - target: {fileID: 7801742513122768622, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: visualScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7801742513122768622, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: visualScale.y
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7801742513122768622, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: visualScale.z
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7801742513122768622, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: projectileSpeed
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7801742513122768622, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: visualRotation.y
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 7801742513122768622, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: waterSplashPrefab
-      value: 
-      objectReference: {fileID: 7351556286301219907, guid: 646002e1ba844474e9df39eb525dc322, type: 3}
-    - target: {fileID: 7801742513122768622, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: mouseLayerMask.m_Bits
-      value: 9
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

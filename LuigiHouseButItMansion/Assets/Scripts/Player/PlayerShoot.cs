@@ -25,7 +25,8 @@ public class PlayerShoot : MonoBehaviour
     private float projectileSpeed;
     [SerializeField]
     private float shotStrength;
-    private float usedShotStrength;
+    [SerializeField]
+    private float damage;
     [SerializeField]
     private Vector3 shootPosition;
     private Vector3 shootDirection;
@@ -49,13 +50,7 @@ public class PlayerShoot : MonoBehaviour
     private GameObject waterSplashPrefab;
 
     private TrajectoryGetter trajectoryGetter;
-    private ObjectPool<WaterProjectileInstance> waterProjectilePool = new();
-
-    public class WaterProjectileInstance
-    {
-        public WaterProjectile projectile;
-        public ParticleSystem splashParticle;
-    }
+    public ObjectPool<WaterProjectileInstance> waterProjectilePool = new();
 
     private void OnEnable()
     {
@@ -96,13 +91,9 @@ public class PlayerShoot : MonoBehaviour
         {
             var shootPos = GetShootPosition() + transform.position;
             shootDirection = (hit.point - shootPos).normalized;
-            usedShotStrength = shotStrength * Vector3.Distance(hit.point, shootPos);
         }
         else
-        {
             shootDirection = transform.forward;
-            usedShotStrength = shotStrength;
-        }
     }
 
     private void TryShoot()
@@ -111,75 +102,42 @@ public class PlayerShoot : MonoBehaviour
             return;
         
         CalculateShootDirectionMouse();
+        trajectoryGetter.GetTrajectory(GetShootPosition(), shootDirection, shotStrength, SpawnProjectileInstance);
+    }
+
+    private void SpawnProjectileInstance(TrajectoryGetter.SplineCollision collisionData, Spline spline)
+    {
+        canShoot = false;
+        chamberTimer.Reset();
+
+        WaterProjectileInstance currentInstance;
+        var foundInactive = waterProjectilePool.GetInactiveObject(out var foundInstance);
+        bool shouldInit = false;
+        if (foundInactive)
+            currentInstance = (WaterProjectileInstance)foundInstance;
+        else
+        {
+            WaterProjectileInstance.CreateNew(this, mesh, material, waterSplashPrefab, out currentInstance, out shouldInit);
+        }
         
-        trajectoryGetter.GetTrajectory(GetShootPosition(), shootDirection, shotStrength, 
-            (TrajectoryGetter.SplineCollision collisionData, Spline spline) => {
-                canShoot = false;
-                chamberTimer.Reset();
-                // Debug.Log($"Hit something! {collisionData.collidedWith}");
+        currentInstance.SetData(spline, visualRotation, visualScale, projectileSpeed);
+        currentInstance.SetSplineData(spline);
+        currentInstance.CollisionLogic(collisionData, waterSplashPrefab, CheckIfCollidedWithWasDamagable);
+        
+        if (shouldInit)
+            currentInstance.projectile.Init();
+        currentInstance.projectile.ShouldRun = true;
+    }
 
-                WaterProjectileInstance currentInstance;
-                var foundInactive = waterProjectilePool.GetInactiveObject(out var foundInstance);
-                bool shouldInit = false;
-                if (foundInactive)
-                    currentInstance = (WaterProjectileInstance)foundInstance;
-                else
-                {
-                    currentInstance = new()
-                    {
-                        projectile = new GameObject("WaterProjectile", typeof(Spline)).AddComponent<WaterProjectile>()
-                    };
-                    currentInstance.projectile.OnFinished = (WaterProjectile doneProjectile) =>
-                    {
-                        currentInstance.splashParticle.transform.rotation = waterSplashPrefab.transform.rotation;
-                        waterProjectilePool.ReturnToInActivePool(currentInstance);
-                    };
-
-                    currentInstance.projectile.spline = currentInstance.projectile.GetComponent<Spline>();
-                    currentInstance.projectile.material = material;
-                    currentInstance.projectile.mesh = mesh;
-                    
-                    var splashParticle = Instantiate(waterSplashPrefab, currentInstance.projectile.transform, false);
-                    
-                    currentInstance.splashParticle = splashParticle.GetComponent<ParticleSystem>();
-                    currentInstance.projectile.OnEndHit = () =>
-                    {
-                        currentInstance.splashParticle.Play();
-                    };
-                    
-                    shouldInit = true;
-                }
-                
-                // splash effect data
-                if (collisionData.collided)
-                {
-                    var offsetDirection = waterSplashPrefab.transform.rotation * (-collisionData.direction * collisionData.distance);
-                    currentInstance.splashParticle.transform.position = collisionData.contactPoint + offsetDirection;
-
-                    currentInstance.splashParticle.transform.rotation = Quaternion.LookRotation(collisionData.direction, waterSplashPrefab.transform.up);
-                }
-                
-                // projectile Data
-                currentInstance.projectile.transform.position = spline.transform.position;
-                currentInstance.projectile.scale = visualScale;
-                currentInstance.projectile.rotation = visualRotation;
-                
-                currentInstance.projectile.usedSpeed = projectileSpeed;
-                
-                // set spline data
-                var projectileSpline = currentInstance.projectile.spline;
-                projectileSpline.nodes = new List<SplineNode>(spline.nodes.Count);
-                foreach (var node in spline.nodes)
-                {
-                    projectileSpline.AddNode(new SplineNode(node.Position,node.Direction));
-                }
-
-                currentInstance.projectile.RefreshCurves();
-                
-                if (shouldInit)
-                    currentInstance.projectile.Init();
-                currentInstance.projectile.ShouldRun = true;
-            });
+    private void CheckIfCollidedWithWasDamagable(GameObject collidedWithGameObject)
+    {
+        if (collidedWithGameObject.layer != LayerMask.NameToLayer("Damagable")) return;
+        IDamagable[] damagables;
+        damagables = collidedWithGameObject.GetComponents<IDamagable>();
+        if (damagables.Length == 0)
+            return;
+        foreach (var d in damagables)
+            d.Hit(this, damage);
     }
 
     private Vector3 GetShootPosition()
