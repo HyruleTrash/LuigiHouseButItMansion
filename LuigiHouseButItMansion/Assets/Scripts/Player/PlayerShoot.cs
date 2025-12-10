@@ -7,6 +7,10 @@ using UnityEngine.InputSystem;
 
 public class PlayerShoot : MonoBehaviour
 {
+    [Header("Input")]
+    [SerializeField]
+    private LayerMask mouseLayerMask;
+    private InputAction aimAction;
     [SerializeField]
     private InputActionAsset inputActionAsset;
     private InputAction shootAction;
@@ -23,6 +27,7 @@ public class PlayerShoot : MonoBehaviour
     private float shotStrength;
     [SerializeField]
     private Vector3 shootPosition;
+    private Vector3 shootDirection;
     [Header("Collision")]
     [SerializeField]
     private Mesh collisionMesh;
@@ -41,7 +46,6 @@ public class PlayerShoot : MonoBehaviour
     private Vector3 visualScale;
 
     private TrajectoryGetter trajectoryGetter;
-    private Vector3 offset = Vector3.up * 1; // TODO bind this to where the mouse is / looking direction
     private ObjectPool<WaterProjectile> waterProjectilePool = new();
 
     private void OnEnable()
@@ -66,7 +70,9 @@ public class PlayerShoot : MonoBehaviour
         chamberTimer = new Timer(chamberTime);
         chamberTimer.running = false;
         chamberTimer.onEnd += () => canShoot = true;
-
+        
+        aimAction = InputSystem.actions.FindAction("Aim");
+        
         trajectoryGetter = new TrajectoryGetter(collisionMesh, gameObject, scale, layerMask);
     }
 
@@ -77,13 +83,27 @@ public class PlayerShoot : MonoBehaviour
         chamberTimer.Update(Time.deltaTime);
     }
 
+    private void CalculateShootDirectionMouse()
+    {
+        if (Mathf.Approximately(aimAction.ReadValue<float>(), 1) && Physics.Raycast(MouseRayGetter.instance.GetMouseRay(), out var hit, Mathf.Infinity, layerMask))
+        {
+            shootDirection = (hit.point - shootPosition).normalized;
+        }
+        else
+        {
+            shootDirection = transform.forward + Vector3.up * 1;
+        }
+    }
+
     private void TryShoot()
     {
         if (!canShoot)
             return;
         
+        CalculateShootDirectionMouse();
+        
         Debug.Log("Shooting!");
-        trajectoryGetter.GetTrajectory(GetShootPosition(), transform.forward + offset, shotStrength, 
+        trajectoryGetter.GetTrajectory(GetShootPosition(), shootDirection, shotStrength, 
             (TrajectoryGetter.SplineCollision collisionData, Spline spline) => {
                 canShoot = false;
                 chamberTimer.Reset();
