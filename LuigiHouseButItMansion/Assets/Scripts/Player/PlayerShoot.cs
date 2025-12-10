@@ -66,11 +66,10 @@ public class PlayerShoot : MonoBehaviour
         
         Debug.Log("Shooting!");
         trajectoryGetter.GetTrajectory(GetShootPosition(), transform.forward + offset, shotStrength, 
-        (TrajectoryGetter.SplineCollision collisionData) => {
-            temp = collisionData;
-            Debug.Log("Pain");
-        });
-        
+            (TrajectoryGetter.SplineCollision collisionData, Spline spline) => {
+                temp = collisionData;
+                Debug.Log("Hit something!");
+            });
         canShoot = false;
         chamberTimer.Reset();
     }
@@ -92,5 +91,8 @@ public class PlayerShoot : MonoBehaviour
         {
             Gizmos.DrawSphere(pos, 0.1f);
         }
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawSphere(temp.contactPoint, 0.1f);
+        Gizmos.DrawLine(temp.contactPoint, temp.contactPoint + temp.direction * temp.distance);
     }
 }
