@@ -9,14 +9,32 @@ using UnityEngine;
 [RequireComponent(typeof(Spline))]
 public class WaterProjectile : MonoBehaviour
 {
-    private Spline spline;
+    public Spline spline;
     private float rate = 0;
     private readonly float startPosition = 0;
     private MeshBender meshBender;
 
     [HideInInspector]
     public GameObject generated;
+    private bool initialized = false;
 
+    public bool ShouldRun
+    {
+        get => shouldRun;
+        set
+        {
+            if (value != shouldRun)
+            {
+                generated.SetActive(value);
+            }
+            shouldRun = value;
+        }
+    }
+    
+    public bool shouldRun = false;
+    public bool shouldRepeat = false;
+    public Action<WaterProjectile> OnFinished;
+    
     public Mesh mesh;
     public Material material;
     public Vector3 rotation;
@@ -30,8 +48,9 @@ public class WaterProjectile : MonoBehaviour
 
     private void OnEnable() {
         rate = 0;
-        Init();
 #if UNITY_EDITOR
+        if (initialized) return;
+        Init();
         EditorApplication.update += CustomUpdate;
 #endif
     }
@@ -40,6 +59,8 @@ public class WaterProjectile : MonoBehaviour
 #if UNITY_EDITOR
         scaleX = 0;
         shouldMoveAlongSpline = false;
+        if (initialized) return;
+        initialized = false;
         EditorApplication.update -= CustomUpdate;
 #endif
     }
@@ -49,8 +70,11 @@ public class WaterProjectile : MonoBehaviour
         Init();
     }
 
-    private void Init()
+    public void Init()
     {
+        if (mesh ==null)
+            return;
+        
         var generatedName = $"{GetType().Name}: {gameObject.name}";
         var generatedTransform = transform.Find(generatedName);
         if (generatedTransform != null)
@@ -77,6 +101,8 @@ public class WaterProjectile : MonoBehaviour
         meshBender.Source = SourceMesh.Build(mesh)
             .Rotate(Quaternion.Euler(rotation))
             .Scale(new Vector3(0, scale.y, scale.z));
+
+        initialized = true;
     }
 
     // Based on SourceMesh 's buildData function
@@ -116,10 +142,20 @@ public class WaterProjectile : MonoBehaviour
         }
         return Math.Abs(maxX - minX);
     }
-    
+
+    private void Update()
+    {
+        CustomUpdate();
+    }
+
+    public void RefreshCurves()
+    {
+        spline.RefreshCurves();
+    }
+
     private void CustomUpdate()
     {
-        if (generated == null) return;
+        if (generated == null || !shouldRun) return;
         if (shouldMoveAlongSpline)
         {
             rate += usedSpeed * Time.deltaTime;
@@ -143,7 +179,8 @@ public class WaterProjectile : MonoBehaviour
                 .Scale(new Vector3(scaleX, scale.y, scale.z));
         }
 
-        meshBender.ComputeIfNeeded();
+        if (shouldRun)
+            meshBender.ComputeIfNeeded();
     }
 
     private void ResetToStart()
@@ -154,5 +191,10 @@ public class WaterProjectile : MonoBehaviour
         meshBender.Source = SourceMesh.Build(mesh)
             .Rotate(Quaternion.Euler(rotation))
             .Scale(new Vector3(0, scale.y, scale.z));
+        if (!shouldRepeat)
+        {
+            ShouldRun = false;
+            OnFinished?.Invoke(this);
+        }
     }
 }

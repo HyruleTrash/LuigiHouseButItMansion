@@ -81,10 +81,10 @@ namespace SplineMesh {
             if (this.spline == spline && this.intervalStart == intervalStart && this.intervalEnd == intervalEnd) return;
             if (spline == null) throw new ArgumentNullException("spline");
             if (intervalStart < 0 || intervalStart >= spline.Length) {
-                throw new ArgumentOutOfRangeException("interval start must be 0 or greater and lesser than spline length (was " + intervalStart + ")");
+                return; //throw new ArgumentOutOfRangeException("interval start must be 0 or greater and lesser than spline length (was " + intervalStart + ")");
             }
             if (intervalEnd != 0 && intervalEnd <= intervalStart || intervalEnd > spline.Length) {
-                throw new ArgumentOutOfRangeException("interval end must be 0 or greater than interval start, and lesser than spline length (was " + intervalEnd + ")");
+                return; //throw new ArgumentOutOfRangeException("interval end must be 0 or greater than interval start, and lesser than spline length (was " + intervalEnd + ")");
             }
             if (this.spline != null) {
                 // unlistening previous spline

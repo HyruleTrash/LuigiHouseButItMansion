@@ -16,26 +16,45 @@ public class PlayerShoot : MonoBehaviour
     private float chamberTime;
     private Timer chamberTimer;
     private bool canShoot = true;
-    [Header("Projectiles")]
+    [Header("Projectile data")]
     [SerializeField]
     private float projectileSpeed;
     [SerializeField]
     private float shotStrength;
     [SerializeField]
     private Vector3 shootPosition;
+    [Header("Collision")]
     [SerializeField]
-    private Mesh mesh;
+    private Mesh collisionMesh;
     [SerializeField]
     private LayerMask layerMask;
     [SerializeField]
     private Vector3 scale;
+    [Header("Projectile (visual)")]
+    [SerializeField]
+    private Mesh mesh;
+    [SerializeField]
+    private Material material;
+    [SerializeField]
+    private Vector3 visualRotation;
+    [SerializeField]
+    private Vector3 visualScale;
 
     private TrajectoryGetter trajectoryGetter;
-    private Vector3 offset = Vector3.up * 1;
+    private Vector3 offset = Vector3.up * 1; // TODO bind this to where the mouse is / looking direction
+    private ObjectPool<WaterProjectile> waterProjectilePool = new();
 
     private void OnEnable()
     {
         inputActionAsset.FindActionMap("Player").Enable();
+    }
+
+    private void OnValidate()
+    {
+        if (collisionMesh != null && mesh != null && scale != Vector3.zero &&
+            layerMask != -1) return;
+        canShoot = false;
+        enabled = false;
     }
 
     private void Start()
@@ -48,7 +67,7 @@ public class PlayerShoot : MonoBehaviour
         chamberTimer.running = false;
         chamberTimer.onEnd += () => canShoot = true;
 
-        trajectoryGetter = new TrajectoryGetter(mesh, gameObject, scale, layerMask);
+        trajectoryGetter = new TrajectoryGetter(collisionMesh, gameObject, scale, layerMask);
     }
 
     private void Update()
@@ -58,7 +77,6 @@ public class PlayerShoot : MonoBehaviour
         chamberTimer.Update(Time.deltaTime);
     }
 
-    private TrajectoryGetter.SplineCollision temp;
     private void TryShoot()
     {
         if (!canShoot)
@@ -67,11 +85,49 @@ public class PlayerShoot : MonoBehaviour
         Debug.Log("Shooting!");
         trajectoryGetter.GetTrajectory(GetShootPosition(), transform.forward + offset, shotStrength, 
             (TrajectoryGetter.SplineCollision collisionData, Spline spline) => {
-                temp = collisionData;
-                Debug.Log("Hit something!");
+                canShoot = false;
+                chamberTimer.Reset();
+                Debug.Log($"Hit something! {collisionData.collidedWith}");
+
+                WaterProjectile currentProjectile;
+                var foundInactive = waterProjectilePool.GetInactiveObject(out var waterProjectile);
+                bool shouldInit = false;
+                if (foundInactive)
+                    currentProjectile = (WaterProjectile)waterProjectile;
+                else
+                {
+                    currentProjectile = new GameObject("WaterProjectile", typeof(Spline)).AddComponent<WaterProjectile>();
+                    currentProjectile.OnFinished = (WaterProjectile doneProjectile) =>
+                    {
+                        waterProjectilePool.ReturnToInActivePool(doneProjectile);
+                    };
+
+                    currentProjectile.spline = currentProjectile.GetComponent<Spline>();
+                    currentProjectile.material = material;
+                    currentProjectile.mesh = mesh;
+                    shouldInit = true;
+                }
+                
+                currentProjectile.transform.position = spline.transform.position;
+                currentProjectile.scale = visualScale;
+                currentProjectile.rotation = visualRotation;
+                
+                currentProjectile.usedSpeed = projectileSpeed;
+                
+                // set spline data
+                var projectileSpline = currentProjectile.spline;
+                projectileSpline.nodes = new List<SplineNode>(spline.nodes.Count);
+                foreach (var node in spline.nodes)
+                {
+                    projectileSpline.AddNode(new SplineNode(node.Position,node.Direction));
+                }
+
+                currentProjectile.RefreshCurves();
+                
+                if (shouldInit)
+                    currentProjectile.Init();
+                currentProjectile.ShouldRun = true;
             });
-        canShoot = false;
-        chamberTimer.Reset();
     }
 
     private Vector3 GetShootPosition()
@@ -83,16 +139,5 @@ public class PlayerShoot : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(GetShootPosition() + transform.position, 0.1f);
-
-        if (trajectoryGetter == null || trajectoryGetter.temp == null)
-            return;
-        Gizmos.color = Color.orange;
-        foreach (var pos in trajectoryGetter.temp)
-        {
-            Gizmos.DrawSphere(pos, 0.1f);
-        }
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawSphere(temp.contactPoint, 0.1f);
-        Gizmos.DrawLine(temp.contactPoint, temp.contactPoint + temp.direction * temp.distance);
     }
 }

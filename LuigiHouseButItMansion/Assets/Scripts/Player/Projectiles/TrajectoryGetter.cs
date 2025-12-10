@@ -17,6 +17,16 @@ public class TrajectoryGetter
     
     private Mesh mesh;
     private LayerMask layerMask;
+    
+    public struct SplineCollision
+    {
+        public bool collided;
+        public Vector3 contactPoint;
+        public Vector3 direction;
+        public float distance;
+        public Vector3 highestPoint;
+        public Collider collidedWith;
+    }
 
     public TrajectoryGetter(Mesh mesh, GameObject parent, Vector3 scale, LayerMask layerMask)
     {
@@ -50,6 +60,7 @@ public class TrajectoryGetter
         splineObject.transform.position = parent.transform.position;
         
         spline.nodes = new List<SplineNode>(2);
+        spline.RefreshCurves();
         
         var nextNode = shotStartPosition + direction * strength;
         spline.AddNode(new SplineNode(shotStartPosition, nextNode));
@@ -85,19 +96,9 @@ public class TrajectoryGetter
                 spline.AddNode(new SplineNode(voidPosition, voidPosition));
             }
         }
+        spline.RefreshCurves();
 
         onEnd?.Invoke(output, spline);
-    }
-
-    public List<Vector3> temp = new();
-
-    public struct SplineCollision
-    {
-        public bool collided;
-        public Vector3 contactPoint;
-        public Vector3 direction;
-        public float distance;
-        public Vector3 highestPoint;
     }
 
     private SplineCollision CheckCollisionAllongSpline(Vector3 shotStartPosition)
@@ -112,7 +113,6 @@ public class TrajectoryGetter
         {
             var curve = spline.GetSampleAtDistance(i);
             var checkOriginPos = curve.location + splineObject.transform.position;
-            temp.Add(checkOriginPos);
 
             Collider[] colliders = Physics.OverlapBox(checkOriginPos, halfExtents);
             if (colliders.Length <= 0) continue;
@@ -122,7 +122,7 @@ public class TrajectoryGetter
                 if ((layerMask & (1 << collision.gameObject.layer)) == 0) continue; 
                 // Inside bounds and layer
 
-                Debug.Log(collision.gameObject.name);
+                // Debug.Log(collision.gameObject.name);
 
                 meshObject.transform.position = checkOriginPos;
                     
@@ -138,7 +138,7 @@ public class TrajectoryGetter
                 
                 meshObject.transform.localPosition = Vector3.zero;
                 meshCollider.enabled = false;
-                return new SplineCollision {collided = true, contactPoint = checkOriginPos, distance = distance, direction = direction, highestPoint = highestPoint};
+                return new SplineCollision {collided = true, contactPoint = checkOriginPos, distance = distance, direction = direction, highestPoint = highestPoint, collidedWith = collision};
             }
         }
 
