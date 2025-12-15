@@ -5,9 +5,12 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/MainScene.unity
-    guid: 286ce062e292e224194af63303ea508a
+    guid: 5dcf9566aaa6c2346a9a9937ab56eef2
+  - enabled: 1
+    path: Assets/Scenes/PlayerFighting_Prototype.unity
+    guid: a6df3fa86473dc84b83e8869143c60b5
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

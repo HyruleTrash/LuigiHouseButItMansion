@@ -1,14 +1,8 @@
 ﻿
+using System;
+using System.Collections.Generic;
 using UnityEngine;
-
-[CreateAssetMenu(fileName = "BasicEnemyData", menuName = "ScriptableObjects/Enemies/BasicEnemy")]
-public class BasicEnemyData : ScriptableObjectSingleton<BasicEnemyData>
-{
-    public GameObject enemyPrefab;
-    public EnemyHealthData healthData;
-    [HideInInspector]
-    public ObjectPool<GameObject> basicEnemyPool = new ();
-}
+using Object = UnityEngine.Object;
 
 public class BasicEnemy : IEnemy
 {
@@ -16,29 +10,55 @@ public class BasicEnemy : IEnemy
         
     public void Spawn(EnemySpawnManager spawner, Vector3 position)
     {
-        EnemyHealthData dataExampleHealth = BasicEnemyData.Instance.healthData;
+        BasicEnemyData dataInstance = AssetBundle.GetAsset<BasicEnemyData>();
         EnemyHealth healthComponent;
         
-        if (BasicEnemyData.Instance.basicEnemyPool.GetInactiveObject(out var foundEnemy))
+        
+        if (dataInstance == null)
+            Debug.Log("ABTICH");
+        if (dataInstance.enemyPrefab == null)
+            Debug.Log("MISSINGPREFAB");
+        if (dataInstance.basicEnemyPool == null)
+            Debug.Log("MISSING_POOL");
+        
+        if (dataInstance.basicEnemyPool.GetInactiveObject(out var foundEnemy))
         {
             instance = (GameObject)foundEnemy;
             instance.SetActive(true);
             healthComponent = instance.GetComponent<EnemyHealth>();
+            try
+            {
+                instance.GetComponent<MeshRenderer>().SetMaterials(new List<Material>(dataInstance.enemyPrefab.GetComponent<MeshRenderer>().materials));
+            }
+            catch (Exception e)
+            {
+                Debug.Log($"EXCEPTIONTYPE_A {e}");
+            }
         }
         else
         {
-            instance = Object.Instantiate(BasicEnemyData.Instance.enemyPrefab, position, Quaternion.identity);
-            healthComponent = instance.AddComponent<EnemyHealth>();
-            
-            healthComponent.OnDeath.AddListener((gameObject) =>
+            try
             {
-                instance.SetActive(false);
-                BasicEnemyData.Instance.basicEnemyPool.ReturnToInActivePool(gameObject);
-            });
+                instance = Object.Instantiate(dataInstance.enemyPrefab, position, Quaternion.identity);
+                healthComponent = instance.AddComponent<EnemyHealth>();
+            
+                healthComponent.OnDeath.AddListener((gameObject) =>
+                {
+                    instance.SetActive(false);
+                    dataInstance.basicEnemyPool.ReturnToInActivePool(gameObject);
+                    spawner.Remove(instance);
+                    spawner.CheckLiveEnemyState();
+                });
+            }
+            catch (Exception e)
+            {
+                Debug.Log($"EXCEPTIONTYPE_B {e}");
+                throw;
+            }
         }
 
-        healthComponent.maxHealth = dataExampleHealth.maxHealth;
-        healthComponent.invincibilityFrames = dataExampleHealth.invincibilityFrames;
+        healthComponent.maxHealth = dataInstance.healthData.maxHealth;
+        healthComponent.invincibilityFrames = dataInstance.healthData.invincibilityFrames;
         
         healthComponent.Revive();
         spawner.Add(instance);

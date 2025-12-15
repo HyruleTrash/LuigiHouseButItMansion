@@ -158,6 +158,5 @@ public class PlayerShoot : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(GetShootPosition() + transform.position, 0.1f);
         Gizmos.DrawLine(GetShootPosition() + transform.position, GetShootPosition() + transform.position + shootDirection * shotStrength);
-        
     }
 }

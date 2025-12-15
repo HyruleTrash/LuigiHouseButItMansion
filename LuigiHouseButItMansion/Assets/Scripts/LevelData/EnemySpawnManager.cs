@@ -32,7 +32,7 @@ public class EnemySpawnManager : MonoBehaviour
 
     private void Spawn()
     {
-        if (spawnCount <= 0)
+        if (!enabled || spawnCount <= 0)
             return;
         spawnCount--;
 
@@ -40,10 +40,23 @@ public class EnemySpawnManager : MonoBehaviour
         {
             enemyReference.CallMethod("Spawn", new object[] {this, spawnPoint.position});
         }
+
+        parentRoom.LockDoors();
     }
 
     public void Add(GameObject instance)
     {
         enemies.Add(instance);
+    }
+
+    public void CheckLiveEnemyState()
+    {
+        if (enemies.Count <= 0)
+            parentRoom.UnLockDoors();
+    }
+
+    public void Remove(GameObject instance)
+    {
+        enemies.Remove(instance);
     }
 }

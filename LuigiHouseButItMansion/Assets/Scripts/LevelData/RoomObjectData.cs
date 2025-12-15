@@ -37,6 +37,8 @@ public class RoomObjectData : MonoBehaviour
         {
             entrance.enabled = true;
         }
+
+        // Debug.Log(gameObject.name);
         OnReadyRoom?.Invoke();
     }
 
@@ -45,6 +47,22 @@ public class RoomObjectData : MonoBehaviour
         foreach (var entrance in entrances)
         {
             entrance.enabled = false;
+        }
+    }
+
+    public void LockDoors()
+    {
+        foreach (var entrance in entrances)
+        {
+            entrance.Lock();
+        }
+    }
+
+    public void UnLockDoors()
+    {
+        foreach (var entrance in entrances)
+        {
+            entrance.UnLock();
         }
     }
 }

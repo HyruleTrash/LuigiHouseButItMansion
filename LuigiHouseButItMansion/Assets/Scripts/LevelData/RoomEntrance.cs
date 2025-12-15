@@ -12,6 +12,9 @@ public class RoomEntrance : MonoBehaviour
     private Timer disableTimer;
     [SerializeField]
     private Vector3 spawnPosition;
+    [SerializeField]
+    private List<GameObject> tempLockObjects = new();
+    private bool locked;
     
     private void Awake()
     {
@@ -36,6 +39,8 @@ public class RoomEntrance : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (locked)
+            return;
         if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
             var dataRef = other.GetComponent<PlayerDataReference>();
@@ -49,7 +54,7 @@ public class RoomEntrance : MonoBehaviour
     private void SpawnPlayer(PlayerData playerData)
     {
         playerData.SetCurrentRoom(parentRoom);
-        playerData.SetPlayerPosition(otherRoomEntrance.spawnPosition + transform.position);
+        playerData.SetPlayerPosition(GetSpawnPosition());
     }
 
     private void Update()
@@ -64,9 +69,34 @@ public class RoomEntrance : MonoBehaviour
         disableTimer = new Timer(2, () => {entranceTrigger.enabled = true;});
     }
 
+    public Vector3 GetSpawnPosition()
+    {
+        return transform.rotation * spawnPosition + transform.position;
+    }
+    
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawSphere(spawnPosition + transform.position, 0.2f);
+        Gizmos.DrawSphere(GetSpawnPosition(), 0.2f);
+    }
+
+    private void SetTempLockObjects(bool state)
+    {
+        foreach (var tempLockObject in tempLockObjects)
+        {
+            tempLockObject.SetActive(state);
+        }
+    }
+
+    public void Lock()
+    {
+        SetTempLockObjects(true);
+        locked = true;
+    }
+
+    public void UnLock()
+    {
+        SetTempLockObjects(false);
+        locked = false;
     }
 }

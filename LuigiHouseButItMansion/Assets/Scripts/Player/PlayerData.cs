@@ -49,7 +49,7 @@ public class PlayerData : MonoBehaviour
             return;
         currentRoom.DisableRoom();
         currentRoom = newRoom;
-        currentRoom.ReadyRoom();
+        newRoom.ReadyRoom();
         OnCurrentRoomChange?.Invoke(currentRoom);
     }
 

@@ -5,18 +5,11 @@ using LucasCustomClasses;
 using UnityEngine;
 using UnityEngine.Events;
 
-[Serializable]
-public class EnemyHealthData
-{
-    public float maxHealth;
-    public float invincibilityFrames;
-}
-
 public class EnemyHealth : MonoBehaviour, IDamagable
 {
     public UnityEvent<GameObject> OnDeath = new ();
     public bool isDead = false;
-    public float maxHealth;
+    public float maxHealth = 20;
     public float health;
     public float invincibilityFrames = 0.1f;
     private List<DamagerRegistration> damagers = new();
