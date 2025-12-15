@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using LucasCustomClasses;
+using NUnit.Framework;
 using UnityEngine;
 
 public class EntityHitFlash : SingletonBehaviour<EntityHitFlash>
@@ -27,18 +28,22 @@ public class EntityHitFlash : SingletonBehaviour<EntityHitFlash>
     {
         private struct RendererRegistration
         {
-            public Renderer renderer;
-            public List<Material> material; // old material(s)
+            public MeshRenderer renderer;
+            public List<Material> oldMaterials;
+            public List<Material> hitmaskMaterialList;
 
-            public RendererRegistration(Renderer renderer)
+            public RendererRegistration(MeshRenderer renderer)
             {
                 this.renderer = renderer;
-                material = new List<Material>();
+                oldMaterials = new List<Material>();
+                hitmaskMaterialList = new List<Material>();
             }
         }
         
         private List<RendererRegistration> rendererRegistrations = new ();
         private Timer flashTimer;
+        private Timer flashTimerA;
+        private Timer flashTimerB;
         private Timer timer;
         private int key;
         private bool isDead;
@@ -46,21 +51,21 @@ public class EntityHitFlash : SingletonBehaviour<EntityHitFlash>
         public float flashSpeed;
         public float flashTime;
         
-        public RegisteredEntity(Renderer renderer, float? flashSpeed, float? flashTime, int key)
+        public RegisteredEntity(MeshRenderer renderer, float? flashSpeed, float? flashTime, int key)
         {
-            AddRegistration(renderer);
             Init(flashSpeed, flashTime, key);
+            AddRegistration(renderer);
         }
 
-        public RegisteredEntity(Renderer[] renderers, float? flashSpeed, float? flashTime, int key)
+        public RegisteredEntity(MeshRenderer[] renderers, float? flashSpeed, float? flashTime, int key)
         {
+            Init(flashSpeed, flashTime, key);
             foreach (var renderer in renderers)
             {
                 if (renderer == null)
                     continue;
                 AddRegistration(renderer);
             }
-            Init(flashSpeed, flashTime, key);
         }
 
         private void Init(float? flashSpeed, float? flashTime, int key)
@@ -81,20 +86,26 @@ public class EntityHitFlash : SingletonBehaviour<EntityHitFlash>
             }
         }
         
-        private void AddRegistration(Renderer renderer)
+        private void AddRegistration(MeshRenderer renderer)
         {
             var newRegistration = new RendererRegistration(renderer);
-            foreach (var material in renderer.sharedMaterials)
+            
+            renderer.GetMaterials(newRegistration.oldMaterials);
+
+            for (var index = 0; index < newRegistration.oldMaterials.Count; index++)
             {
-                newRegistration.material.Add(new Material(material));
+                newRegistration.hitmaskMaterialList.Add(new Material(hitMaskMaterial));
             }
+
             rendererRegistrations.Add(newRegistration);
         }
 
         private void SetTimer()
         {
             timer = new Timer(flashTime) { onEnd = UnRegisterFinishedEntity };
-            flashTimer = new Timer(flashSpeed) { onEnd = SetHitMaskMaterial };
+            flashTimerA = new Timer(flashSpeed) { onEnd = SetHitMaskMaterial };
+            flashTimerB = new Timer(flashSpeed) { onEnd = UndoHitMaskMaterial };
+            flashTimer = flashTimerA;
         }
 
         private void SetHitMaskMaterial()
@@ -103,32 +114,28 @@ public class EntityHitFlash : SingletonBehaviour<EntityHitFlash>
             {
                 foreach (var registrations in rendererRegistrations)
                 {
-                    for (var i = 0; i < registrations.renderer.sharedMaterials.Length; i++)
-                    {
-                        registrations.renderer.sharedMaterials[i] = hitMaskMaterial;
-                    }
+                    registrations.renderer.SetMaterials(registrations.hitmaskMaterialList);
                 }
             }
             
             flashTimer.Reset();
-            flashTimer.onEnd = UndoHitMaskMaterial;
+            flashTimer = flashTimerB;
+            flashTimer.Reset();
         }
 
         private void UndoHitMaskMaterial()
         {
             ResetMaterials();
             flashTimer.Reset();
-            flashTimer.onEnd = SetHitMaskMaterial;
+            flashTimer = flashTimerA;
+            flashTimer.Reset();
         }
 
         public void ResetMaterials()
         {
             foreach (var registrations in rendererRegistrations)
             {
-                for (var i = 0; i < registrations.renderer.sharedMaterials.Length; i++)
-                {
-                    registrations.renderer.sharedMaterials[i] = registrations.material[i];
-                }
+                registrations.renderer.SetMaterials(registrations.oldMaterials);
             }
         }
         
@@ -140,7 +147,7 @@ public class EntityHitFlash : SingletonBehaviour<EntityHitFlash>
         
         public void Update(float dt)
         {
-            if (!isDead)
+            if (isDead)
                 return;
             flashTimer.Update(dt);
             timer.Update(dt);
@@ -161,7 +168,7 @@ public class EntityHitFlash : SingletonBehaviour<EntityHitFlash>
         }
     }
 
-    public int RegisterEntity(Renderer renderer, float? flashSpeed = null, float? flashTime = null)
+    public int RegisterEntity(MeshRenderer renderer, float? flashSpeed = null, float? flashTime = null)
     {
         if (renderer == null)
             return -1;
@@ -172,7 +179,7 @@ public class EntityHitFlash : SingletonBehaviour<EntityHitFlash>
         return key;
     }
 
-    public int RegisterEntity(Renderer[] renderers, float? flashSpeed = null, float? flashTime = null)
+    public int RegisterEntity(MeshRenderer[] renderers, float? flashSpeed = null, float? flashTime = null)
     {
         if (renderers == null || renderers.Length == 0)
             return -1;

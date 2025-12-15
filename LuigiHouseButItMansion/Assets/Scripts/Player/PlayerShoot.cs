@@ -144,7 +144,8 @@ public class PlayerShoot : MonoBehaviour
         }
         if (!hasHit)
             return;
-        EntityHitFlash.instance.RegisterEntity(collidedWithGameObject.GetComponent<Renderer>());
+        var rendererComponent = collidedWithGameObject.GetComponent<MeshRenderer>();
+        EntityHitFlash.instance.RegisterEntity(rendererComponent);
     }
 
     private Vector3 GetShootPosition()
