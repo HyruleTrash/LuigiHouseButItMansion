@@ -15138,6 +15138,7 @@ GameObject:
   - component: {fileID: 2008268187}
   - component: {fileID: 2008268188}
   - component: {fileID: 2008268189}
+  - component: {fileID: 2008268190}
   m_Layer: 0
   m_Name: SceneData
   m_TagString: Untagged
@@ -15217,6 +15218,19 @@ MonoBehaviour:
   hitMaskMaterialPrefab: {fileID: 2100000, guid: d476796607f2cb74db4fb4e44d3cccc1, type: 2}
   defaultFlashSpeed: 0.1
   defaultFlashTime: 0.5
+--- !u!114 &2008268190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2008268184}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82242de05f374b52911c00d78bb90e42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GlobalControls
+  inputActionAsset: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
 --- !u!1 &2015052651 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8164078558771037576, guid: b6709b9cd876ec94c8103792395ed091, type: 3}
