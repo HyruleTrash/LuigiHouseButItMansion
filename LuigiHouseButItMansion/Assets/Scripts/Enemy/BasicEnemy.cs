@@ -2,33 +2,36 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using Object = UnityEngine.Object;
 
 public class BasicEnemy : IEnemy
 {
     private GameObject instance;
+    private EnemyHealth healthComponent;
+    private NavMeshAgent agentComponent;
+    private readonly BasicEnemyData dataInstance = AssetBundle.GetAsset<BasicEnemyData>();
+    public EnemySpawnManager parentSpawner;
         
     public void Spawn(EnemySpawnManager spawner, Vector3 position)
     {
-        BasicEnemyData dataInstance = AssetBundle.GetAsset<BasicEnemyData>();
-        EnemyHealth healthComponent;
-        
-        
-        if (dataInstance == null)
-            Debug.Log("ABTICH");
-        if (dataInstance.enemyPrefab == null)
-            Debug.Log("MISSINGPREFAB");
-        if (dataInstance.basicEnemyPool == null)
-            Debug.Log("MISSING_POOL");
+        parentSpawner = spawner;
         
         if (dataInstance.basicEnemyPool.GetInactiveObject(out var foundEnemy))
         {
             instance = (GameObject)foundEnemy;
             instance.SetActive(true);
             healthComponent = instance.GetComponent<EnemyHealth>();
+            agentComponent = instance.GetComponent<NavMeshAgent>();
+            
+            healthComponent.OnDeath.AddListener(OnDeath);
+            
+            instance.transform.position = position;
+            agentComponent.enabled = true;
             try
             {
-                instance.GetComponent<MeshRenderer>().SetMaterials(new List<Material>(dataInstance.enemyPrefab.GetComponent<MeshRenderer>().materials));
+                List<Material> tempMatExample = new (dataInstance.enemyPrefab.GetComponent<MeshRenderer>().sharedMaterials);
+                instance.GetComponent<MeshRenderer>().SetMaterials(tempMatExample);
             }
             catch (Exception e)
             {
@@ -41,14 +44,9 @@ public class BasicEnemy : IEnemy
             {
                 instance = Object.Instantiate(dataInstance.enemyPrefab, position, Quaternion.identity);
                 healthComponent = instance.AddComponent<EnemyHealth>();
-            
-                healthComponent.OnDeath.AddListener((gameObject) =>
-                {
-                    instance.SetActive(false);
-                    dataInstance.basicEnemyPool.ReturnToInActivePool(gameObject);
-                    spawner.Remove(instance);
-                    spawner.CheckLiveEnemyState();
-                });
+                agentComponent = instance.GetComponent<NavMeshAgent>();
+                
+                healthComponent.OnDeath.AddListener(OnDeath);
             }
             catch (Exception e)
             {
@@ -62,5 +60,15 @@ public class BasicEnemy : IEnemy
         
         healthComponent.Revive();
         spawner.Add(instance);
+    }
+
+    public void OnDeath(GameObject instance)
+    {
+        instance.SetActive(false);
+        dataInstance.basicEnemyPool.ReturnToInActivePool(instance);
+        parentSpawner.Remove(instance);
+        parentSpawner.CheckLiveEnemyState();
+        agentComponent.enabled = false;
+        healthComponent.OnDeath.RemoveListener(OnDeath);
     }
 }

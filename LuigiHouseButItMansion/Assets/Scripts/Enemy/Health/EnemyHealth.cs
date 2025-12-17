@@ -13,6 +13,8 @@ public class EnemyHealth : MonoBehaviour, IDamagable
     public float health;
     public float invincibilityFrames = 0.1f;
     private List<DamagerRegistration> damagers = new();
+    public int HitFlashKey { get => hitFlashKey; set => hitFlashKey = value; }
+    private int hitFlashKey;
     
     private class DamagerRegistration
     {

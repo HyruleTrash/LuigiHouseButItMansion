@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class EnemySpawnManager : MonoBehaviour
 {
+    [SerializeField]
     private RoomObjectData parentRoom;
     private Transform[] spawnPoints;
     [SerializeField]
@@ -14,7 +15,6 @@ public class EnemySpawnManager : MonoBehaviour
 
     private void Awake()
     {
-        parentRoom = transform.parent.GetComponent<RoomObjectData>();
         if (parentRoom == null)
         {
             enabled = false;

@@ -136,16 +136,19 @@ public class PlayerShoot : MonoBehaviour
         damagables = collidedWithGameObject.GetComponents<IDamagable>();
         if (damagables.Length == 0)
             return;
-        bool hasHit = false;
+        
+        IDamagable hit = null;
         foreach (var d in damagables)
         {
             d.Hit(this, damage);
-            hasHit = true;
+            hit = d;
         }
-        if (!hasHit)
+        if (hit == null)
             return;
+        
         var rendererComponent = collidedWithGameObject.GetComponent<MeshRenderer>();
-        EntityHitFlash.instance.RegisterEntity(rendererComponent);
+        if (hit.HitFlashKey == -1 || EntityHitFlash.instance.GetRegisteredEntity(hit.HitFlashKey) == null)
+            hit.HitFlashKey = EntityHitFlash.instance.RegisterEntity(rendererComponent);
     }
 
     private Vector3 GetShootPosition()

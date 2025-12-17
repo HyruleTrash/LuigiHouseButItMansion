@@ -49,11 +49,6 @@ public class AssetBundle : SingletonBehaviour<AssetBundle>
 
     public static T GetAsset<T>() where T : ScriptableObject
     {
-        foreach (var pair in instance.assets)
-        {
-            Debug.Log($"test: {pair.name}");
-        }
-        
         var type = typeof(T);
         if (type.FullName == null)
             return null;
