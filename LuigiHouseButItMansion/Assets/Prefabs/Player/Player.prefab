@@ -51,6 +51,7 @@ MonoBehaviour:
   currentRoom: {fileID: 0}
   playerCameraLookAt: {fileID: 2701891313739678807}
   playerCameraMovement: {fileID: 2198887547801475123}
+  playerCameraInterestOffset: {fileID: 5751102011175974575}
   camInterestPoint: {fileID: 8456675601207906433}
   playerRigidbody: {fileID: 5956312760287975169}
 --- !u!114 &8766372053583535948
@@ -67,8 +68,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   playerData: {fileID: 1151793576789169415}
   inputActionAsset: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  speed: 500
-  maxSpeed: 22
+  speedData:
+  - name: Default
+    speed: 5
+    maxSpeed: 3
+    usesDrag: 0
+    dragAmount: 0
+    dragDecrementSpeed: 0
+  - name: Ice
+    speed: 10
+    maxSpeed: 3
+    usesDrag: 1
+    dragAmount: 0.1
+    dragDecrementSpeed: 1
+  currentSpeedDataName: Ice
 --- !u!1 &4744517400210701106
 GameObject:
   m_ObjectHideFlags: 0
@@ -117,16 +130,16 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 265
   inputActionAsset: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  chamberTime: 0.25
-  projectileSpeed: 1
+  chamberTime: 0.1
+  projectileSpeed: 2
   shotStrength: 20
-  damage: 5
+  damage: 1
   shootPosition: {x: 0, y: 0, z: 0.5}
   collisionMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   layerMask:
     serializedVersion: 2
     m_Bits: 265
-  scale: {x: 0.2, y: 0.2, z: 0.2}
+  scale: {x: 0.2, y: 0.3, z: 0.3}
   mesh: {fileID: 7814459101124295239, guid: fd1b2b676d14d8b479db7f5a3f61d932, type: 3}
   material: {fileID: 2100000, guid: 828596e267757ae479046b5a3478819b, type: 2}
   visualRotation: {x: 0, y: 90, z: 0}
@@ -157,7 +170,7 @@ Transform:
   m_GameObject: {fileID: 5340719364204834502}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.59, z: 0.22}
+  m_LocalPosition: {x: 0, y: 0.24, z: 0.22}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -178,6 +191,7 @@ GameObject:
   - component: {fileID: 2701891313739678807}
   - component: {fileID: 2198887547801475123}
   - component: {fileID: 5674562136487454145}
+  - component: {fileID: 5751102011175974575}
   m_Layer: 6
   m_Name: Player Camera
   m_TagString: Player
@@ -193,13 +207,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6687333158736869330}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.18301211, y: -0.6830118, z: 0.18301266, w: 0.6830139}
-  m_LocalPosition: {x: 5.52339, y: 2.76, z: 0.03981}
+  m_LocalRotation: {x: 0.09982194, y: -0.70002437, z: 0.099822715, w: 0.7000264}
+  m_LocalPosition: {x: 5.523388, y: 2.19, z: 0.03981018}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1393768646098537795}
-  m_LocalEulerAnglesHint: {x: 30, y: -90, z: 0}
+  m_LocalEulerAnglesHint: {x: 16.231, y: -90, z: 0}
 --- !u!20 &6646246718813869919
 Camera:
   m_ObjectHideFlags: 0
@@ -316,9 +330,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCameraLookAt
   speed: 2
-  minDistance: 1
+  minDistance: 0.1
   playerCamera: {fileID: 6646246718813869919}
   camInterestPoint: {fileID: 8456675601207906433}
+  maxDownAngle: 34
+  maxUpAngle: -34
 --- !u!114 &2198887547801475123
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -332,7 +348,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   speed: 5
-  minDistance: 1
+  minDistance: 0.1
   playerCamera: {fileID: 6646246718813869919}
   camInterestPoint: {fileID: 0}
   offset: {x: 0, y: 0, z: 0}
@@ -352,6 +368,35 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 8
+--- !u!114 &5751102011175974575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6687333158736869330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17cf92466ad3e7e4d974c87ed8f6cd1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  speed: 5
+  offsetLerpSpeed: 8
+  minMaxHorizontal: {x: 3, y: 3}
+  minMaxVertical: {x: 1, y: 1}
+  defaultSizes: {x: 50, y: 50}
+  leftBox:
+    size: {x: 0, y: 0, z: 0, w: 0}
+    center: {x: 0, y: 0}
+  rightBox:
+    size: {x: 0, y: 0, z: 0, w: 0}
+    center: {x: 0, y: 0}
+  upBox:
+    size: {x: 0, y: 0, z: 0, w: 0}
+    center: {x: 0, y: 0}
+  downBox:
+    size: {x: 0, y: 0, z: 0, w: 0}
+    center: {x: 0, y: 0}
 --- !u!1 &7933306752479335644
 GameObject:
   m_ObjectHideFlags: 0
