@@ -38,9 +38,10 @@ public class PlayerCameraMovement : MonoBehaviour
     {
         if (!camInterestPoint)
             return;
-        if (Vector3.Distance(transform.position, camInterestPoint.position + offset) < minDistance)
+        var usedInterestPoint = camInterestPoint.position + offset;
+        if (Vector3.Distance(transform.position, usedInterestPoint) < minDistance)
             return;
-        var newPos = Vector3.Lerp(transform.position, camInterestPoint.position + offset, Time.deltaTime * speed);
+        var newPos = Vector3.Lerp(transform.position, usedInterestPoint, Time.deltaTime * speed);
         transform.position = currentRoom.cameraConfig.GetNearestInBounds(newPos);
     }
 }

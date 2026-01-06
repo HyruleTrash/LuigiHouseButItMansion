@@ -12,6 +12,10 @@ public class PlayerCameraLookAt : MonoBehaviour
     [HideInInspector]
     public Transform camInterestPoint;
     private Transform lastInterestPointPosition;
+    [SerializeField]
+    float maxDownAngle = 34f;
+    [SerializeField]
+    float maxUpAngle = -34f;
 
     private void Start()
     {
@@ -31,7 +35,14 @@ public class PlayerCameraLookAt : MonoBehaviour
                 Time.deltaTime * speed);
             lastInterestPointPosition.position = newPos;
         }
-        transform.LookAt(lastInterestPointPosition.position);
+        var lookRot = Quaternion.LookRotation(lastInterestPointPosition.position - transform.position, Vector3.up);
+        var lookRotEuler = lookRot.eulerAngles;
+        
+        // Convert from 0–360 to -180–180
+        if (lookRotEuler.x > 180f) lookRotEuler.x -= 360f;
+        lookRotEuler.x = Mathf.Clamp(lookRotEuler.x,maxUpAngle, maxDownAngle);
+        
+        transform.rotation = Quaternion.Euler(lookRotEuler);
     }
 
     /// <summary>

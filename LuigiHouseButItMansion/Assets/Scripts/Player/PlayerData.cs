@@ -13,7 +13,8 @@ public class PlayerData : MonoBehaviour
     [SerializeField]
     private PlayerCameraMovement playerCameraMovement;
     [SerializeField]
-    private Transform camInterestPoint;
+    private PlayerCameraInterestOffset playerCameraInterestOffset;
+    public Transform camInterestPoint;
     [Header("Player")]
     public Rigidbody playerRigidbody;
 
@@ -24,6 +25,7 @@ public class PlayerData : MonoBehaviour
             enabled = false;
             return;
         }
+        playerCameraInterestOffset.SetPlayerData(this);
         playerCameraLookAt.camInterestPoint = camInterestPoint;
         playerCameraMovement.camInterestPoint = camInterestPoint;
     }

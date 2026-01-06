@@ -38,7 +38,7 @@ public class RoomObjectData : MonoBehaviour
             entrance.enabled = true;
         }
 
-        // Debug.Log(gameObject.name);
+        UnLockDoors();
         OnReadyRoom?.Invoke();
     }
 

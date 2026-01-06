@@ -8,7 +8,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/MainScene.unity
     guid: 5dcf9566aaa6c2346a9a9937ab56eef2
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/PlayerFighting_Prototype.unity
     guid: a6df3fa86473dc84b83e8869143c60b5
   m_configObjects:
