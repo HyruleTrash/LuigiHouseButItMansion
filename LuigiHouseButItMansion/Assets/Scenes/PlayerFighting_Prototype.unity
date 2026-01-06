@@ -11181,6 +11181,57 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+<<<<<<< HEAD
+=======
+    - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
+      propertyPath: currentSpeedDataName
+      value: Ice
+      objectReference: {fileID: 0}
+    - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
+      propertyPath: speedData.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
+      propertyPath: speedData.Array.data[0].name
+      value: Default
+      objectReference: {fileID: 0}
+    - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
+      propertyPath: speedData.Array.data[1].name
+      value: Ice
+      objectReference: {fileID: 0}
+    - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
+      propertyPath: speedData.Array.data[0].speed
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
+      propertyPath: speedData.Array.data[1].speed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
+      propertyPath: speedData.Array.data[0].maxSpeed
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
+      propertyPath: speedData.Array.data[1].maxSpeed
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
+      propertyPath: speedData.Array.data[1].usesDrag
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
+      propertyPath: speedData.Array.data[1].dragAmount
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
+      propertyPath: speedData.Array.data[1].dragDecrementSpeed
+      value: 1
+      objectReference: {fileID: 0}
+>>>>>>> f95a1edc0020a33afecea9ec7916a70e95517744
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
