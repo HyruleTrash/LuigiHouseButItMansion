@@ -17,6 +17,10 @@ public class PlayerData : MonoBehaviour
     public Transform camInterestPoint;
     [Header("Player")]
     public Rigidbody playerRigidbody;
+    [SerializeField]
+    private GameObject bodyModel;
+    [SerializeField]
+    private Health healthComp;
 
     private void Awake()
     {
@@ -68,5 +72,12 @@ public class PlayerData : MonoBehaviour
     {
         playerCameraLookAt.Reset(transformPosition - playerRigidbody.position);
         playerRigidbody.position = transformPosition;
+    }
+
+    public void TriggerHitFlash()
+    {
+        var rendererComponent = bodyModel.GetComponentsInChildren<MeshRenderer>();
+        if (healthComp.HitFlashKey == -1 || EntityHitFlash.instance.GetRegisteredEntity(healthComp.HitFlashKey) == null)
+            healthComp.HitFlashKey = EntityHitFlash.instance.RegisterEntity(rendererComponent);
     }
 }

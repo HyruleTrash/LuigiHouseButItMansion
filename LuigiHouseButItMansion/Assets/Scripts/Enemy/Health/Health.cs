@@ -5,7 +5,7 @@ using LucasCustomClasses;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class EnemyHealth : MonoBehaviour, IDamagable
+public class Health : MonoBehaviour, IDamagable
 {
     public UnityEvent<GameObject> OnDeath = new ();
     public UnityEvent<GameObject> OnHit = new ();
@@ -20,7 +20,7 @@ public class EnemyHealth : MonoBehaviour, IDamagable
     private class DamagerRegistration
     {
         public Timer timer;
-        public Component damager;
+        public object damager;
     }
 
     private void Start()
@@ -36,7 +36,7 @@ public class EnemyHealth : MonoBehaviour, IDamagable
             damager.timer.Update(Time.deltaTime);
     }
 
-    public void Hit(Component damager, float damage)
+    public void Hit(object damager, float damage)
     {
         if (isDead || HasHitEnemy(damager))
             return;
@@ -60,7 +60,7 @@ public class EnemyHealth : MonoBehaviour, IDamagable
         damagers = new List<DamagerRegistration>();
     }
 
-    private void RemoveFromDamagers(Component damager)
+    private void RemoveFromDamagers(object damager)
     {
         foreach (var registeredDamager in damagers)
         {
@@ -70,7 +70,7 @@ public class EnemyHealth : MonoBehaviour, IDamagable
         }
     }
 
-    private bool HasHitEnemy(Component damager)
+    private bool HasHitEnemy(object damager)
     {
         return damagers.Any(registeredDamager => damager.Equals(registeredDamager.damager));
     }

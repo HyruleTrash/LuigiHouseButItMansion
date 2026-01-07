@@ -8604,6 +8604,33 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 382641631573976491, guid: 1a9dd128fae2fe34ca6bc544b8eb77b5, type: 3}
+--- !u!1 &1109453291 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1116671406565876046, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
+  m_PrefabInstance: {fileID: 1410850999}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1109453295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1109453291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eaa473418bde433cbcfba2a729a65734, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
+  OnDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  OnHit:
+    m_PersistentCalls:
+      m_Calls: []
+  isDead: 0
+  maxHealth: 20
+  health: 0
+  invincibilityFrames: 0.1
 --- !u!1 &1132686391
 GameObject:
   m_ObjectHideFlags: 0
@@ -11138,6 +11165,14 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 1151793576789169415, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
+      propertyPath: bodyModel
+      value: 
+      objectReference: {fileID: 1421739659}
+    - target: {fileID: 1151793576789169415, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
+      propertyPath: healthComp
+      value: 
+      objectReference: {fileID: 1109453295}
+    - target: {fileID: 1151793576789169415, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
       propertyPath: currentRoom
       value: 
       objectReference: {fileID: 5281467846735207678}
@@ -11188,7 +11223,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1116671406565876046, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1109453295}
   m_SourcePrefab: {fileID: 100100000, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
 --- !u!1 &1412623544
 GameObject:
@@ -11360,6 +11398,11 @@ Transform:
   - {fileID: 1326010609}
   m_Father: {fileID: 1950271273}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 90}
+--- !u!1 &1421739659 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 281517003446816367, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
+  m_PrefabInstance: {fileID: 1410850999}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1436496155
 GameObject:
   m_ObjectHideFlags: 0
