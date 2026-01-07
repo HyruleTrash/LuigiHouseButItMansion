@@ -2125,60 +2125,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 218941649}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &243900467
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 243900469}
-  - component: {fileID: 243900468}
-  m_Layer: 0
-  m_Name: EnemySpawnManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &243900468
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 243900467}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: daeb587c2ac217942abb263529b29a26, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  parentRoom: {fileID: 608654393}
-  spawnCount: 1
-  enemyReference:
-    className: BasicEnemy
---- !u!4 &243900469
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 243900467}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 801474063}
-  - {fileID: 331108677}
-  - {fileID: 828939898}
-  - {fileID: 274187161}
-  - {fileID: 488083755}
-  - {fileID: 1824057478}
-  m_Father: {fileID: 608654394}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &244591628
 GameObject:
   m_ObjectHideFlags: 0
@@ -2380,37 +2326,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 269088621}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &274187160
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 274187161}
-  m_Layer: 0
-  m_Name: EnemySpawnPoint (3)
-  m_TagString: Untagged
-  m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &274187161
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 274187160}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -18.989998, y: 0, z: 11.37}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 243900469}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &277199032 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8164078558771037576, guid: b6709b9cd876ec94c8103792395ed091, type: 3}
@@ -2657,37 +2572,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 324058198}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &331108676
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 331108677}
-  m_Layer: 0
-  m_Name: EnemySpawnPoint (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &331108677
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 331108676}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -13.619999, y: 0, z: 11.37}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 243900469}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &340974967
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3743,37 +3627,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 467159185}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &488083754
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 488083755}
-  m_Layer: 0
-  m_Name: EnemySpawnPoint (6)
-  m_TagString: Untagged
-  m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &488083755
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 488083754}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -13.619999, y: 0, z: 7.0700006}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 243900469}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &495675686
 GameObject:
   m_ObjectHideFlags: 0
@@ -4908,7 +4761,6 @@ Transform:
   - {fileID: 457807716}
   - {fileID: 445150437}
   - {fileID: 551979011}
-  - {fileID: 243900469}
   - {fileID: 915301335}
   - {fileID: 963562339}
   - {fileID: 671899735}
@@ -6624,38 +6476,7 @@ MonoBehaviour:
   parentRoom: {fileID: 945736181}
   spawnCount: 1
   enemyReference:
-    className: BasicEnemy
---- !u!1 &801474062
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 801474063}
-  m_Layer: 0
-  m_Name: EnemySpawnPoint
-  m_TagString: Untagged
-  m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &801474063
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 801474062}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -13.46, y: 0, z: -0.46}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 243900469}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+    className: RatEnemy
 --- !u!1 &825338231
 GameObject:
   m_ObjectHideFlags: 0
@@ -6745,37 +6566,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 825338231}
   m_Mesh: {fileID: -6291417794127464109, guid: 1ffab7f8c8e704c47bb53a91bafcaed2, type: 3}
---- !u!1 &828939897
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 828939898}
-  m_Layer: 0
-  m_Name: EnemySpawnPoint (2)
-  m_TagString: Untagged
-  m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &828939898
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 828939897}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -18.83, y: 0, z: -0.46000004}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 243900469}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &828988974
 GameObject:
   m_ObjectHideFlags: 0
@@ -7146,7 +6936,7 @@ GameObject:
   - component: {fileID: 878988741}
   - component: {fileID: 878988740}
   - component: {fileID: 878988742}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Batch_12.040
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8668,7 +8458,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
   m_SerializedVersion: 0
-  m_AgentTypeID: 0
+  m_AgentTypeID: -1372625422
   m_CollectObjects: 0
   m_Size: {x: 10, y: 10, z: 10}
   m_Center: {x: 0, y: 2, z: 0}
@@ -8685,7 +8475,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 9442d71fb41e36c41ad0364dbc558e4a, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: a309699e418774249be8d4d68ced91c7, type: 2}
   m_BuildHeightMesh: 0
 --- !u!4 &1055738560
 Transform:
@@ -8814,6 +8604,33 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 382641631573976491, guid: 1a9dd128fae2fe34ca6bc544b8eb77b5, type: 3}
+--- !u!1 &1109453291 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1116671406565876046, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
+  m_PrefabInstance: {fileID: 1410850999}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1109453295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1109453291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eaa473418bde433cbcfba2a729a65734, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
+  OnDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  OnHit:
+    m_PersistentCalls:
+      m_Calls: []
+  isDead: 0
+  maxHealth: 20
+  health: 0
+  invincibilityFrames: 0.1
 --- !u!1 &1132686391
 GameObject:
   m_ObjectHideFlags: 0
@@ -9798,7 +9615,7 @@ GameObject:
   - component: {fileID: 1223630797}
   - component: {fileID: 1223630796}
   - component: {fileID: 1223630798}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Batch_12.040
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9910,7 +9727,7 @@ GameObject:
   - component: {fileID: 1226243850}
   - component: {fileID: 1226243849}
   - component: {fileID: 1226243851}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Batch_12.040
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11348,6 +11165,14 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 1151793576789169415, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
+      propertyPath: bodyModel
+      value: 
+      objectReference: {fileID: 1421739659}
+    - target: {fileID: 1151793576789169415, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
+      propertyPath: healthComp
+      value: 
+      objectReference: {fileID: 1109453295}
+    - target: {fileID: 1151793576789169415, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
       propertyPath: currentRoom
       value: 
       objectReference: {fileID: 5281467846735207678}
@@ -11391,30 +11216,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7801742513122768622, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: damage
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7801742513122768622, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: scale.y
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7801742513122768622, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: scale.z
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7801742513122768622, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: chamberTime
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7801742513122768622, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: projectileSpeed
-      value: 2
+    - target: {fileID: 5751102011175974575, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
+      propertyPath: defaultSizeH
+      value: 30
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1116671406565876046, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1109453295}
   m_SourcePrefab: {fileID: 100100000, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
 --- !u!1 &1412623544
 GameObject:
@@ -11586,6 +11398,11 @@ Transform:
   - {fileID: 1326010609}
   m_Father: {fileID: 1950271273}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 90}
+--- !u!1 &1421739659 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 281517003446816367, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
+  m_PrefabInstance: {fileID: 1410850999}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1436496155
 GameObject:
   m_ObjectHideFlags: 0
@@ -12589,7 +12406,7 @@ MonoBehaviour:
   parentRoom: {fileID: 1826116879}
   spawnCount: 1
   enemyReference:
-    className: BasicEnemy
+    className: RatEnemy
 --- !u!1 &1642993226
 GameObject:
   m_ObjectHideFlags: 0
@@ -12821,8 +12638,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d909a26cd1a04fddabacaf02c6c6ec5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomCameraConfig
-  centerPointBounds: {x: -3.21, y: 2, z: 0}
-  sizeBounds: {x: 18.5, y: 6, z: 7.32}
+  centerPointBounds: {x: -2.24, y: 2, z: 0}
+  sizeBounds: {x: 20.2, y: 6, z: 7.32}
 --- !u!4 &1688489442
 Transform:
   m_ObjectHideFlags: 0
@@ -12857,8 +12674,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 15.56432, y: 6.3780785, z: 5.924892}
-  m_Center: {x: -3.2158146, y: 1.8998828, z: -0.16302848}
+  m_Size: {x: 20.43, y: 6.3780785, z: 5.924892}
+  m_Center: {x: -6.1, y: 1.8998828, z: -0.16302848}
 --- !u!1 &1703480293
 GameObject:
   m_ObjectHideFlags: 0
@@ -13574,37 +13391,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1813174594}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1824057477
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1824057478}
-  m_Layer: 0
-  m_Name: EnemySpawnPoint (7)
-  m_TagString: Untagged
-  m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1824057478
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1824057477}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -18.989998, y: 0, z: 7.0700006}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 243900469}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1826116878
 GameObject:
   m_ObjectHideFlags: 0
@@ -14507,7 +14293,7 @@ MonoBehaviour:
   parentRoom: {fileID: 1593038000}
   spawnCount: 1
   enemyReference:
-    className: BasicEnemy
+    className: RatEnemy
 --- !u!1 &1933804823
 GameObject:
   m_ObjectHideFlags: 0
@@ -15161,7 +14947,7 @@ MonoBehaviour:
   assets:
   - {fileID: 11400000, guid: 3742038220b86ba4f9f2a6f8b6666cc7, type: 2}
   keys:
-  - BasicEnemyData
+  - RatEnemyData
 --- !u!4 &2008268186
 Transform:
   m_ObjectHideFlags: 0
@@ -15697,7 +15483,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.7223263, y: 6.0369115, z: 11.364701}
+  m_Size: {x: 2.7, y: 6.0369115, z: 12.14}
   m_Center: {x: -0.86116314, y: 2.5184557, z: 3.1425033}
 --- !u!1 &2102770261
 GameObject:
