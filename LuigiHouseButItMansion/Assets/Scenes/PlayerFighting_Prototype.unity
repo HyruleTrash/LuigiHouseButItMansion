@@ -11181,15 +11181,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-<<<<<<< HEAD
-=======
     - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
       propertyPath: currentSpeedDataName
-      value: Ice
+      value: Default
       objectReference: {fileID: 0}
     - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
       propertyPath: speedData.Array.size
@@ -11231,7 +11229,6 @@ PrefabInstance:
       propertyPath: speedData.Array.data[1].dragDecrementSpeed
       value: 1
       objectReference: {fileID: 0}
->>>>>>> f95a1edc0020a33afecea9ec7916a70e95517744
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
