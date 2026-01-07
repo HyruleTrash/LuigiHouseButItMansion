@@ -11,6 +11,7 @@ public class RoomObjectData : MonoBehaviour
     public Vector3 cameraViewPoint;
     public RoomCameraConfig cameraConfig;
     public Action OnReadyRoom;
+    public InteractableObjectsManager interactableObjectsManager;
     
     private void Start()
     {
