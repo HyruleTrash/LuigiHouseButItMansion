@@ -81,7 +81,7 @@ MonoBehaviour:
     usesDrag: 1
     dragAmount: 0.1
     dragDecrementSpeed: 1
-  currentSpeedDataName: Ice
+  currentSpeedDataName: Default
 --- !u!1 &4744517400210701106
 GameObject:
   m_ObjectHideFlags: 0
@@ -495,7 +495,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fdb18c14c284b27983da64a7ac5769f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDataReference
-  playerData: {fileID: 1151793576789169415}
+  reference: {fileID: 1151793576789169415}
 --- !u!1001 &1092492246636507966
 PrefabInstance:
   m_ObjectHideFlags: 0

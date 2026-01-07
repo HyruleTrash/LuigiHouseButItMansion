@@ -6476,7 +6476,7 @@ MonoBehaviour:
   parentRoom: {fileID: 945736181}
   spawnCount: 1
   enemyReference:
-    className: BasicEnemy
+    className: RatEnemy
 --- !u!1 &825338231
 GameObject:
   m_ObjectHideFlags: 0
@@ -8458,7 +8458,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
   m_SerializedVersion: 0
-  m_AgentTypeID: 0
+  m_AgentTypeID: -1372625422
   m_CollectObjects: 0
   m_Size: {x: 10, y: 10, z: 10}
   m_Center: {x: 0, y: 2, z: 0}
@@ -11181,54 +11181,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: currentSpeedDataName
-      value: Default
-      objectReference: {fileID: 0}
-    - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: speedData.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: speedData.Array.data[0].name
-      value: Default
-      objectReference: {fileID: 0}
-    - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: speedData.Array.data[1].name
-      value: Ice
-      objectReference: {fileID: 0}
-    - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: speedData.Array.data[0].speed
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: speedData.Array.data[1].speed
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: speedData.Array.data[0].maxSpeed
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: speedData.Array.data[1].maxSpeed
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: speedData.Array.data[1].usesDrag
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: speedData.Array.data[1].dragAmount
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8766372053583535948, guid: b5c449a7fb0bfed47aca1661d614bec1, type: 3}
-      propertyPath: speedData.Array.data[1].dragDecrementSpeed
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -12407,7 +12359,7 @@ MonoBehaviour:
   parentRoom: {fileID: 1826116879}
   spawnCount: 1
   enemyReference:
-    className: BasicEnemy
+    className: RatEnemy
 --- !u!1 &1642993226
 GameObject:
   m_ObjectHideFlags: 0
@@ -14294,7 +14246,7 @@ MonoBehaviour:
   parentRoom: {fileID: 1593038000}
   spawnCount: 1
   enemyReference:
-    className: BasicEnemy
+    className: RatEnemy
 --- !u!1 &1933804823
 GameObject:
   m_ObjectHideFlags: 0
@@ -14948,7 +14900,7 @@ MonoBehaviour:
   assets:
   - {fileID: 11400000, guid: 3742038220b86ba4f9f2a6f8b6666cc7, type: 2}
   keys:
-  - BasicEnemyData
+  - RatEnemyData
 --- !u!4 &2008268186
 Transform:
   m_ObjectHideFlags: 0

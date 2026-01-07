@@ -146,7 +146,7 @@ public class PlayerShoot : MonoBehaviour
         if (hit == null)
             return;
         
-        var rendererComponent = collidedWithGameObject.GetComponent<MeshRenderer>();
+        var rendererComponent = collidedWithGameObject.GetComponentInChildren<MeshRenderer>();
         if (hit.HitFlashKey == -1 || EntityHitFlash.instance.GetRegisteredEntity(hit.HitFlashKey) == null)
             hit.HitFlashKey = EntityHitFlash.instance.RegisterEntity(rendererComponent);
     }

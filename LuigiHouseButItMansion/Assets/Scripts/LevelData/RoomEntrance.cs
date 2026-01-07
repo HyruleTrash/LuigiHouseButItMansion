@@ -43,11 +43,11 @@ public class RoomEntrance : MonoBehaviour
             return;
         if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
-            var dataRef = other.GetComponent<PlayerDataReference>();
+            var dataRef = other.GetComponent<ComponentReference>();
             if (dataRef == null) return;
             
             otherRoomEntrance.DisableTriggerTimed();
-            otherRoomEntrance.SpawnPlayer(dataRef.playerData);
+            otherRoomEntrance.SpawnPlayer(dataRef.GetReference<PlayerData>());
         }
     }
 

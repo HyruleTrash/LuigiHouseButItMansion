@@ -8,6 +8,7 @@ using UnityEngine.Events;
 public class EnemyHealth : MonoBehaviour, IDamagable
 {
     public UnityEvent<GameObject> OnDeath = new ();
+    public UnityEvent<GameObject> OnHit = new ();
     public bool isDead = false;
     public float maxHealth = 20;
     public float health;
@@ -40,7 +41,8 @@ public class EnemyHealth : MonoBehaviour, IDamagable
         if (isDead || HasHitEnemy(damager))
             return;
         health -= damage;
-
+        OnHit.Invoke(gameObject);
+        
         if (!(health <= 0))
         {
             damagers.Add(new DamagerRegistration {
