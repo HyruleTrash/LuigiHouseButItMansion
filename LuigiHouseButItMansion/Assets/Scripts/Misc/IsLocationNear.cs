@@ -36,7 +36,6 @@ public class IsLocationNear : MonoBehaviour
             near = false;
         }
 
-        Debug.Log($"is near? {near}\n{distance} <= {minDistance}");
         if (near)
             DuringNear.Invoke();
     }

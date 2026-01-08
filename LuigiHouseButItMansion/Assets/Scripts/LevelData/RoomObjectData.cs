@@ -6,8 +6,7 @@ using UnityEngine.Serialization;
 
 public class RoomObjectData : MonoBehaviour
 {
-    [HideInInspector]
-    public List<RoomEntrance> entrances;
+    private List<RoomEntrance> entrances;
     public Vector3 cameraViewPoint;
     public RoomCameraConfig cameraConfig;
     public Action OnReadyRoom;
@@ -30,6 +29,13 @@ public class RoomObjectData : MonoBehaviour
         var startPosition = transform.position;
         var endPosition = cameraViewPoint * 2;
         Gizmos.DrawLine(startPosition + offset, startPosition + endPosition + offset);
+    }
+    
+    public void AddEntrance(RoomEntrance entrance)
+    {
+        entrances ??= new List<RoomEntrance>();
+        entrances.Add(entrance);
+        entrance.UnLock();
     }
 
     public void ReadyRoom()

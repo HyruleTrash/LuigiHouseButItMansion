@@ -68,7 +68,7 @@ public class PlayerMovement : MonoBehaviour
         var parentsParent = rb.transform.parent.parent;
         rb.transform.SetParent(parentsParent);
 
-        moveAction = InputSystem.actions.FindAction("Move");
+        moveAction = inputActionAsset.FindActionMap("Player").FindAction("Move");
         
         currentRoom = playerData.GetCurrentRoom();
         playerData.OnCurrentRoomChange += room => { currentRoom = room;};

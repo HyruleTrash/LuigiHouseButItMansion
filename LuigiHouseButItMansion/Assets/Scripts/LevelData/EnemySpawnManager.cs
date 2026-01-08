@@ -1,16 +1,19 @@
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class EnemySpawnManager : MonoBehaviour
 {
-    [SerializeField]
-    private RoomObjectData parentRoom;
-    private Transform[] spawnPoints;
+    public RoomObjectData parentRoom;
+    private Transform[] spawnPoints = Array.Empty<Transform>();
     [SerializeField]
     private int spawnCount = 1;
     [SerializeField]
-    private ClassReference<IEnemy> enemyReference;
+    private List<ClassReference<BaseEnemy>> enemyReferences = new();
+    private List<ClassReference<BaseEnemy>> enemyReferencesThatUseSpawnPoints = new();
+    private List<ClassReference<BaseEnemy>> enemyReferencesWithoutSpawnPoints = new();
     private List<GameObject> enemies = new();
 
     private void Awake()
@@ -30,15 +33,49 @@ public class EnemySpawnManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        if (enemyReferences.Count <= 1)
+            return;
+        foreach (var reference in enemyReferences)
+        {
+            var data = EnemyDataBase.Instance.GetData(reference.ResolvedType);
+            if (data != null && data.usesSpawnPoint)
+                enemyReferencesThatUseSpawnPoints.Add(reference);
+            else
+                enemyReferencesWithoutSpawnPoints.Add(reference);
+        }
+    }
+
     private void Spawn()
     {
         if (!enabled || spawnCount <= 0)
             return;
         spawnCount--;
 
-        foreach (var spawnPoint in spawnPoints)
+        if (enemyReferences.Count > 1)
         {
-            enemyReference.CallMethod("Spawn", new object[] {this, spawnPoint.position});
+            var spawnPointsToUse = spawnPoints.ToList();
+            foreach (var enemyReference in enemyReferencesThatUseSpawnPoints)
+            {
+                var spawnPoint = spawnPointsToUse.FirstOrDefault();
+                if (spawnPoint == null)
+                    continue;
+                enemyReference.CallMethod("Spawn", new object[] {this, spawnPoint.position});
+                spawnPointsToUse.Remove(spawnPoint);
+            }
+
+            foreach (var enemyReference in enemyReferencesWithoutSpawnPoints)
+            {
+                enemyReference.CallMethod("Spawn", new object[] {this, Vector3.zero});
+            }
+        }
+        else if (enemyReferences.Count == 1)
+        {
+            foreach (var spawnPoint in spawnPoints)
+            {
+                enemyReferences[0].CallMethod("Spawn", new object[] {this, spawnPoint.position});
+            }
         }
 
         parentRoom.LockDoors();

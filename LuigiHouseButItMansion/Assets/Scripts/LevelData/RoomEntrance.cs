@@ -24,10 +24,8 @@ public class RoomEntrance : MonoBehaviour
             enabled = false;
             return;
         }
-
-        if (parentRoom.entrances == null)
-            parentRoom.entrances = new List<RoomEntrance>();
-        parentRoom.entrances.Add(this);
+        
+        parentRoom.AddEntrance(this);
 
         if (otherRoomEntrance == null)
             enabled = false;

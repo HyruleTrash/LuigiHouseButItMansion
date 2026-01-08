@@ -1,11 +1,13 @@
 ﻿
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class InteractableObject : MonoBehaviour
 {
     public Bounds bounds;
     private InteractableObjectsManager managerRef;
+    public UnityEvent OnInteract;
 
     private void OnDrawGizmos()
     {
@@ -50,6 +52,12 @@ public class InteractableObject : MonoBehaviour
 
     public virtual void TriggerInteraction()
     {
-        Debug.Log("Interact!");
+        OnInteract.Invoke();
+        OnInteract = new UnityEvent();
+    }
+
+    public Vector3 GetSpawnPoint()
+    {
+        return bounds.center + transform.position; // TODO make this a settable separate point
     }
 }

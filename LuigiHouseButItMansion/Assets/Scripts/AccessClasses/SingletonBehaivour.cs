@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -24,10 +25,9 @@ public class SingletonBehaviour<T> : MonoBehaviour where T : MonoBehaviour
     {
         if (_instance != null && _instance != GetComponent<T>())
         {
-            Destroy(gameObject);
-        } else {
-            _instance = GetComponent<T>();
-            DontDestroyOnLoad(gameObject);
+            Destroy(_instance.gameObject);
         }
+        _instance = GetComponent<T>();
+        DontDestroyOnLoad(gameObject);
     }
 }

@@ -31,4 +31,21 @@ public class InteractableObjectsManager : MonoBehaviour
     }
     
     public InteractableObject[] GetInteractables() => interactables.ToArray();
+
+    public InteractableObject GetRandom()
+    {
+        var index = -1;
+        var count = interactables.Count * 2;
+        while (true)
+        {
+            index = UnityEngine.Random.Range(0, interactables.Count - 1);
+            count--;
+            if (index >= 0 && index < interactables.Count && interactables[index] != null)
+                break;
+            if (count <= 0)
+                return null;
+        }
+        
+        return interactables[index];
+    }
 }

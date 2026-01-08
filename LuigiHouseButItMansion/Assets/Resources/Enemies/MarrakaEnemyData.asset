@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e58a685b1284eeeb98ad48b7c5901fd, type: 3}
+  m_Name: MarrakaEnemyData
+  m_EditorClassIdentifier: Assembly-CSharp::MarrakaEnemyData
+  usesSpawnPoint: 0
+  enemyPrefab: {fileID: 8477964055832198927, guid: 80a20182824cb8540b66a8eff460bc88, type: 3}
+  minPlayerHitDistance: 1
+  minPlayerNearDistance: 2
+  damageAmount: 1
+  hideAndSeekTime: 20
+  strongState:
+    speed: 4
+    healthData:
+      maxHealth: 20
+      invincibilityFrames: 0.1
+  weakState:
+    speed: 2
+    healthData:
+      maxHealth: 10
+      invincibilityFrames: 0.1

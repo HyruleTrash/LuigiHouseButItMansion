@@ -1,5 +1,6 @@
 ﻿#if UNITY_EDITOR
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.UIElements;
@@ -7,7 +8,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Object = UnityEngine.Object;
 
-[CustomPropertyDrawer(typeof(ClassReference<>))]
+[CustomPropertyDrawer(typeof(ClassReference<>), true)]
 public class ClassReferencePropertyDrawer : PropertyDrawer
 {
     private class ClassReferenceStyles
@@ -100,7 +101,14 @@ public class ClassReferencePropertyDrawer : PropertyDrawer
         if (generated)
             return;
         Type foundType = fieldInfo.FieldType;
+
+        if (foundType.IsArray)
+            foundType = foundType.GetElementType();
+        else if (foundType.IsGenericType && foundType.GetGenericTypeDefinition() == typeof(List<>))
+            foundType = foundType.GetGenericArguments()[0];
+
         var genericArguments = foundType.GetGenericArguments();
+
         
         var type = genericArguments[0];
         var types = AppDomain.CurrentDomain.GetAssemblies()

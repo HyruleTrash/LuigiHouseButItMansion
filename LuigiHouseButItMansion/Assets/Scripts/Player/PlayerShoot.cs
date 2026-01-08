@@ -67,9 +67,7 @@ public class PlayerShoot : MonoBehaviour
 
     private void Start()
     {
-        shootAction = InputSystem.actions.FindAction("Attack");
-        shootAction.started += _ => { isTryingToShoot = true;};
-        shootAction.canceled += _ => { isTryingToShoot = false;};
+        shootAction = inputActionAsset.FindActionMap("Player").FindAction("Attack");
         
         chamberTimer = new Timer(chamberTime);
         chamberTimer.running = false;
@@ -80,6 +78,7 @@ public class PlayerShoot : MonoBehaviour
 
     private void Update()
     {
+        isTryingToShoot = Mathf.Approximately(shootAction.ReadValue<float>(), 1f);
         if (isTryingToShoot)
             TryShoot();
         chamberTimer.Update(Time.deltaTime);
