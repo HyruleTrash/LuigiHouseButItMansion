@@ -1,7 +1,15 @@
-﻿namespace LucasCustomClasses
+﻿
+using System;
+using LucasCustomClasses;
+using UnityEngine;
+
+public class TimerComp :MonoBehaviour
 {
-    public class TimerComp
+    public Timer timer;
+
+    private void Update()
     {
-        
+        if (timer != null && timer.running)
+            timer.Update(Time.deltaTime);
     }
 }
