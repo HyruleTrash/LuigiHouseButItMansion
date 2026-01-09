@@ -19,7 +19,8 @@ public class EnemyDataBase
     public Dictionary<Type, BaseEnemyData> data = new()
     {
         {typeof(RatEnemy), AssetBundle.GetAsset<RatEnemyData>()},
-        {typeof(MarrakaEnemy), AssetBundle.GetAsset<MarrakaEnemyData>()}
+        {typeof(MarrakaEnemy), AssetBundle.GetAsset<MarrakaEnemyData>()},
+        {typeof(DrunkEnemy), AssetBundle.GetAsset<DrunkEnemyData>()}
     };
 
     public BaseEnemyData GetData(Type type)

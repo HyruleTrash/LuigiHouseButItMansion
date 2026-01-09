@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class EnemySpawnManager : MonoBehaviour
 {
@@ -56,12 +57,21 @@ public class EnemySpawnManager : MonoBehaviour
         if (enemyReferences.Count > 1)
         {
             var spawnPointsToUse = spawnPoints.ToList();
-            foreach (var enemyReference in enemyReferencesThatUseSpawnPoints)
+            var enemyReferencesCopy = enemyReferencesThatUseSpawnPoints.ToList();
+            while (spawnPointsToUse.Count != 0)
             {
+                ClassReference<BaseEnemy> enemyReference;
+                if (enemyReferencesCopy.Count == 0)
+                    enemyReference = enemyReferencesThatUseSpawnPoints[Random.Range(0, enemyReferencesThatUseSpawnPoints.Count - 1)];
+                else
+                {
+                    enemyReference = enemyReferencesCopy[Random.Range(0, enemyReferencesThatUseSpawnPoints.Count - 1)];
+                    enemyReferencesCopy.Remove(enemyReference);
+                }
                 var spawnPoint = spawnPointsToUse.FirstOrDefault();
                 if (spawnPoint == null)
                     continue;
-                enemyReference.CallMethod("Spawn", new object[] {this, spawnPoint.position});
+                enemyReference.CallMethod("Spawn", new object[] { this, spawnPoint.position });
                 spawnPointsToUse.Remove(spawnPoint);
             }
 
