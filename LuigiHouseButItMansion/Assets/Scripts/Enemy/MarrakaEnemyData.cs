@@ -11,6 +11,7 @@ public class MarrakaEnemyData : BaseEnemyData
     public float minPlayerNearDistance = 2;
     public int damageAmount = 1;
     public float hideAndSeekTime;
+    public float spawnAnimSpeed = 1;
     public ChaseState strongState;
     public ChaseState weakState;
 
@@ -19,6 +20,8 @@ public class MarrakaEnemyData : BaseEnemyData
     {
         public float speed;
         public EnemyHealthData healthData;
+        public float stunlockTime;
+        public float stunInvincibilityTime;
     }
 
 }

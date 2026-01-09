@@ -23,6 +23,8 @@ public class NavAgentGoToTarget : MonoBehaviour
             enabled = false;
             return;
         }
+        if (!navMeshAgent.enabled || !navMeshAgent.isOnNavMesh)
+            return;
 
         var targetPos = getTargetPosition.Invoke();
         if (Vector2.Distance(VectorHelper.GetXZ(targetPos), VectorHelper.GetXZ(transform.position)) > navMeshAgent.radius + minDistance)

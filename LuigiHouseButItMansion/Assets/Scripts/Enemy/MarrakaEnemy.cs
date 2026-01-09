@@ -7,13 +7,21 @@ using Object = UnityEngine.Object;
 
 public class MarrakaEnemy : BaseEnemy
 {
+    private static readonly int spawnTriggerAnimId = Animator.StringToHash("Spawn");
     private PlayerData playerRef;
     private MarrakaEnemyData dataInstance;
     
     private Health healthComp;
+    private TimerComp stunTimerComp;
+    private TimerComp stunInvincibilityTimerComp;
+    private bool stunned = false;
+    
     private NavMeshAgent agentComp;
     private NavAgentGoToTarget goToPlayerComp;
     private IsLocationNear isPlayerNearComp;
+
+    private Animator animator;
+    private MoveTo moveOutOfInteractableAnimComp;
     private TimerComp hideAndSeekTimerComp;
     private InteractableObject hauntedInteractable;
     
@@ -59,6 +67,12 @@ public class MarrakaEnemy : BaseEnemy
         agentComp.enabled = false;
 
         hideAndSeekTimerComp = Instance.AddComponent<TimerComp>();
+        stunTimerComp = Instance.AddComponent<TimerComp>();
+        stunInvincibilityTimerComp = Instance.AddComponent<TimerComp>();
+
+        animator = Instance.GetComponent<Animator>();
+        moveOutOfInteractableAnimComp = Instance.AddComponent<MoveTo>();
+        moveOutOfInteractableAnimComp.enabled = false;
     }
 
     protected override void ReUseInstance(object foundEnemy, Vector3 position, object enemyData)
@@ -67,6 +81,7 @@ public class MarrakaEnemy : BaseEnemy
         base.ReUseInstance(foundEnemy, position, enemyData);
         Instance.transform.position = position; 
         
+        stunned = false;
         healthComp = Instance.GetComponent<Health>();
         
         goToPlayerComp = Instance.GetComponent<NavAgentGoToTarget>();
@@ -74,11 +89,19 @@ public class MarrakaEnemy : BaseEnemy
         
         agentComp = Instance.GetComponent<NavMeshAgent>();
         agentComp.enabled = false;
-        
-        hideAndSeekTimerComp = Instance.GetComponent<TimerComp>();
+
+        var timers = Instance.GetComponents<TimerComp>();
+        hideAndSeekTimerComp = timers[0];
+        stunTimerComp = timers[1];
+        stunInvincibilityTimerComp = timers[2];
         
         List<Material> tempMatExample = new (dataInstance.enemyPrefab.GetComponentInChildren<MeshRenderer>().sharedMaterials);
         Instance.GetComponentInChildren<MeshRenderer>().SetMaterials(tempMatExample);
+        
+        animator = Instance.GetComponent<Animator>();
+        
+        moveOutOfInteractableAnimComp = Instance.GetComponent<MoveTo>();
+        moveOutOfInteractableAnimComp.enabled = false;
     }
 
     private void TriggerHideMechanic(EnemySpawnManager spawner)
@@ -108,7 +131,6 @@ public class MarrakaEnemy : BaseEnemy
     
     private void OnHideAndSeekEnd()
     {
-        Debug.Log("time out");
         SetChaseState(dataInstance.strongState);
     }
     
@@ -118,10 +140,34 @@ public class MarrakaEnemy : BaseEnemy
         healthComp.invincibilityFrames = chaseState.healthData.invincibilityFrames;
         agentComp.speed = chaseState.speed;
         
-        // TODO Trigger spawn animation
-        Instance.transform.position = hauntedInteractable.GetSpawnPoint();
-        agentComp.enabled = true;
-        goToPlayerComp.enabled = true;
+        stunTimerComp.timer = new Timer(chaseState.stunlockTime, OnStunFinished)
+        {
+            running = false
+        };
+        stunInvincibilityTimerComp.timer = new Timer(chaseState.stunInvincibilityTime, OnStunInvincibilityFinished)
+        {
+            running = false
+        };
+        
+        animator.SetTrigger(spawnTriggerAnimId);
+        var spawnPoint = hauntedInteractable.GetSpawnPoint();
+        Instance.transform.position = spawnPoint;
+        
+        var dirTowardsPlayer = (playerRef.playerRigidbody.gameObject.transform.position - spawnPoint).normalized;
+        if (!NavMesh.SamplePosition(spawnPoint + dirTowardsPlayer, out var hit, 5,
+                agentComp.areaMask)) return;
+        var destination = hit.position;
+        destination.y += agentComp.height / 2 - agentComp.baseOffset / 2;
+        
+        moveOutOfInteractableAnimComp.Initialize(destination, dataInstance.spawnAnimSpeed);
+        moveOutOfInteractableAnimComp.enabled = true;
+        moveOutOfInteractableAnimComp.onReachedDestination = new();
+        moveOutOfInteractableAnimComp.onReachedDestination.AddListener(() =>
+        {
+            agentComp.Warp(destination);
+            agentComp.enabled = true;
+            goToPlayerComp.enabled = true;
+        });
     }
 
     private void HurtPlayer()
@@ -145,7 +191,23 @@ public class MarrakaEnemy : BaseEnemy
     
     private void OnHit(GameObject _)
     {
+        if (stunned)
+            return;
         goToPlayerComp.enabled = true;
+        agentComp.enabled = false;
+        stunTimerComp.timer.Reset();
+    }
+    
+    private void OnStunFinished()
+    {
+        agentComp.enabled = true;
+        stunned = true;
+        stunInvincibilityTimerComp.timer.Reset();
+    }
+    
+    private void OnStunInvincibilityFinished()
+    {
+        stunned = false;
     }
     
     private void OnDeath(GameObject instance)

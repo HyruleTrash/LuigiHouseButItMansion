@@ -6,13 +6,17 @@ using UnityEngine.Events;
 public class InteractableObject : MonoBehaviour
 {
     public Bounds bounds;
+    [SerializeField]
+    private Vector3 spawnPoint;
     private InteractableObjectsManager managerRef;
     public UnityEvent OnInteract;
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireCube(bounds.center + transform.position, bounds.size);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawSphere(GetSpawnPoint(), 0.1f);
     }
 
     private void Start()
@@ -58,6 +62,6 @@ public class InteractableObject : MonoBehaviour
 
     public Vector3 GetSpawnPoint()
     {
-        return bounds.center + transform.position; // TODO make this a settable separate point
+        return (transform.rotation * spawnPoint) + transform.position;
     }
 }

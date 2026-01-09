@@ -2450,6 +2450,7 @@ MonoBehaviour:
   bounds:
     m_Center: {x: -0.06, y: 0.24, z: -0.48}
     m_Extent: {x: 0.48, y: 1.42, z: 0.82}
+  spawnPoint: {x: 0, y: 1.09, z: 0}
   OnInteract:
     m_PersistentCalls:
       m_Calls: []
@@ -2895,6 +2896,7 @@ MonoBehaviour:
   bounds:
     m_Center: {x: 0, y: 0.69, z: 0}
     m_Extent: {x: 0.48, y: 0.72, z: 0.48}
+  spawnPoint: {x: 0, y: 1.36, z: 0}
   OnInteract:
     m_PersistentCalls:
       m_Calls: []
@@ -7499,6 +7501,7 @@ MonoBehaviour:
   bounds:
     m_Center: {x: 0, y: 1.98, z: 0}
     m_Extent: {x: 0.4, y: 1.9, z: 0.37}
+  spawnPoint: {x: 0, y: 3.35, z: 0}
   OnInteract:
     m_PersistentCalls:
       m_Calls: []
@@ -8905,6 +8908,7 @@ MonoBehaviour:
   bounds:
     m_Center: {x: 0, y: 1.98, z: 0}
     m_Extent: {x: 0.4, y: 1.9, z: 0.37}
+  spawnPoint: {x: 0, y: 3.35, z: 0}
   OnInteract:
     m_PersistentCalls:
       m_Calls: []
@@ -9583,6 +9587,7 @@ MonoBehaviour:
   bounds:
     m_Center: {x: 0, y: 0.91, z: 0}
     m_Extent: {x: 1.26, y: 0.72, z: 0.84}
+  spawnPoint: {x: 0, y: 1.4, z: 0}
   OnInteract:
     m_PersistentCalls:
       m_Calls: []
@@ -11349,6 +11354,7 @@ MonoBehaviour:
   bounds:
     m_Center: {x: 1.95, y: -0.54, z: -3.81}
     m_Extent: {x: 0.37, y: 1.99, z: 1}
+  spawnPoint: {x: 3.92, y: 0.58, z: 1.72}
   OnInteract:
     m_PersistentCalls:
       m_Calls: []
@@ -11938,6 +11944,7 @@ MonoBehaviour:
   bounds:
     m_Center: {x: 0, y: 0.71, z: 0}
     m_Extent: {x: 0.56, y: 0.64, z: 0.42}
+  spawnPoint: {x: 0, y: 0.87, z: 0}
   OnInteract:
     m_PersistentCalls:
       m_Calls: []
@@ -12146,6 +12153,7 @@ MonoBehaviour:
   bounds:
     m_Center: {x: 0, y: 1.98, z: 0}
     m_Extent: {x: 0.4, y: 1.9, z: 0.37}
+  spawnPoint: {x: 0, y: 3.35, z: 0}
   OnInteract:
     m_PersistentCalls:
       m_Calls: []
@@ -12363,6 +12371,7 @@ MonoBehaviour:
   bounds:
     m_Center: {x: 0, y: 0.91, z: 0}
     m_Extent: {x: 1.26, y: 0.72, z: 0.84}
+  spawnPoint: {x: 0, y: 1.37, z: 0.03}
   OnInteract:
     m_PersistentCalls:
       m_Calls: []
@@ -12974,6 +12983,7 @@ MonoBehaviour:
   bounds:
     m_Center: {x: 0, y: 1.98, z: 0}
     m_Extent: {x: 0.4, y: 1.9, z: 0.37}
+  spawnPoint: {x: 0, y: 3.35, z: 0}
   OnInteract:
     m_PersistentCalls:
       m_Calls: []
@@ -14890,6 +14900,7 @@ MonoBehaviour:
   bounds:
     m_Center: {x: 0, y: 1.98, z: 0}
     m_Extent: {x: 0.4, y: 1.9, z: 0.37}
+  spawnPoint: {x: 0, y: 3.35, z: 0}
   OnInteract:
     m_PersistentCalls:
       m_Calls: []
@@ -16310,6 +16321,7 @@ MonoBehaviour:
   bounds:
     m_Center: {x: 1.95, y: -0.54, z: -3.81}
     m_Extent: {x: 0.37, y: 1.99, z: 1}
+  spawnPoint: {x: 3.92, y: 0.58, z: 1.72}
   OnInteract:
     m_PersistentCalls:
       m_Calls: []
@@ -17705,6 +17717,7 @@ MonoBehaviour:
   bounds:
     m_Center: {x: 0, y: 1.98, z: 0}
     m_Extent: {x: 0.4, y: 1.9, z: 0.37}
+  spawnPoint: {x: 0, y: 3.35, z: 0}
   OnInteract:
     m_PersistentCalls:
       m_Calls: []
@@ -17921,6 +17934,7 @@ MonoBehaviour:
   bounds:
     m_Center: {x: 1.95, y: -0.54, z: -3.81}
     m_Extent: {x: 0.37, y: 1.99, z: 1}
+  spawnPoint: {x: 3.92, y: 0.58, z: 1.72}
   OnInteract:
     m_PersistentCalls:
       m_Calls: []

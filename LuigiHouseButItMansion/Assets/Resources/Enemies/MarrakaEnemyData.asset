@@ -18,13 +18,18 @@ MonoBehaviour:
   minPlayerNearDistance: 2
   damageAmount: 1
   hideAndSeekTime: 20
+  spawnAnimSpeed: 3
   strongState:
-    speed: 4
+    speed: 6
     healthData:
       maxHealth: 20
-      invincibilityFrames: 0.1
+      invincibilityFrames: 0.05
+    stunlockTime: 0.1
+    stunInvincibilityTime: 0.1
   weakState:
     speed: 2
     healthData:
       maxHealth: 10
       invincibilityFrames: 0.1
+    stunlockTime: 0.5
+    stunInvincibilityTime: 0.5
