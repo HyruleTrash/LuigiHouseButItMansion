@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1393768646098537795}
   - component: {fileID: 1151793576789169415}
   - component: {fileID: 8766372053583535948}
+  - component: {fileID: 1955705370028861627}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -54,6 +55,9 @@ MonoBehaviour:
   playerCameraInterestOffset: {fileID: 5751102011175974575}
   camInterestPoint: {fileID: 8456675601207906433}
   playerRigidbody: {fileID: 5956312760287975169}
+  playerMovement: {fileID: 8766372053583535948}
+  bodyModel: {fileID: 281517003446816367}
+  healthComp: {fileID: 1955705370028861627}
 --- !u!114 &8766372053583535948
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -70,18 +74,40 @@ MonoBehaviour:
   inputActionAsset: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   speedData:
   - name: Default
-    speed: 5
-    maxSpeed: 3
+    speed: 20
+    maxSpeed: 2
     usesDrag: 0
     dragAmount: 0
     dragDecrementSpeed: 0
   - name: Ice
-    speed: 10
+    speed: 30
     maxSpeed: 3
     usesDrag: 1
     dragAmount: 0.1
     dragDecrementSpeed: 1
   currentSpeedDataName: Default
+--- !u!114 &1955705370028861627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1116671406565876046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eaa473418bde433cbcfba2a729a65734, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
+  OnDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  OnHit:
+    m_PersistentCalls:
+      m_Calls: []
+  isDead: 0
+  maxHealth: 20
+  health: 0
+  invincibilityFrames: 0.1
 --- !u!1 &4744517400210701106
 GameObject:
   m_ObjectHideFlags: 0
@@ -126,25 +152,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44d869360f684a8d886c94be444a4b60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerShoot
-  mouseLayerMask:
-    serializedVersion: 2
-    m_Bits: 265
-  inputActionAsset: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  chamberTime: 0.1
-  projectileSpeed: 2
-  shotStrength: 20
-  damage: 1
+  projectileData: {fileID: 11400000, guid: 13640ede02e007a459a67eec366f40e3, type: 2}
   shootPosition: {x: 0, y: 0, z: 0.5}
+  chamberTime: 0.1
   collisionMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   layerMask:
     serializedVersion: 2
     m_Bits: 265
-  scale: {x: 0.2, y: 0.3, z: 0.3}
-  mesh: {fileID: 7814459101124295239, guid: fd1b2b676d14d8b479db7f5a3f61d932, type: 3}
-  material: {fileID: 2100000, guid: 828596e267757ae479046b5a3478819b, type: 2}
-  visualRotation: {x: 0, y: 90, z: 0}
-  visualScale: {x: 1, y: 0.2, z: 0.2}
-  waterSplashPrefab: {fileID: 7351556286301219907, guid: 646002e1ba844474e9df39eb525dc322, type: 3}
+  inputActionAsset: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
 --- !u!1 &5340719364204834502
 GameObject:
   m_ObjectHideFlags: 0
@@ -384,19 +399,8 @@ MonoBehaviour:
   offsetLerpSpeed: 8
   minMaxHorizontal: {x: 3, y: 3}
   minMaxVertical: {x: 1, y: 1}
-  defaultSizes: {x: 50, y: 50}
-  leftBox:
-    size: {x: 0, y: 0, z: 0, w: 0}
-    center: {x: 0, y: 0}
-  rightBox:
-    size: {x: 0, y: 0, z: 0, w: 0}
-    center: {x: 0, y: 0}
-  upBox:
-    size: {x: 0, y: 0, z: 0, w: 0}
-    center: {x: 0, y: 0}
-  downBox:
-    size: {x: 0, y: 0, z: 0, w: 0}
-    center: {x: 0, y: 0}
+  defaultSizeW: 20
+  defaultSizeH: 30
 --- !u!1 &7933306752479335644
 GameObject:
   m_ObjectHideFlags: 0
@@ -409,6 +413,7 @@ GameObject:
   - component: {fileID: 5147018081576748649}
   - component: {fileID: 5956312760287975169}
   - component: {fileID: 6944461763009391362}
+  - component: {fileID: 5526794125401225536}
   m_Layer: 6
   m_Name: Body
   m_TagString: Untagged
@@ -424,15 +429,15 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7933306752479335644}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: 0.0015745205, w: 0.99999875}
+  m_LocalPosition: {x: 0.00032043457, y: -0.00005531311, z: 0}
   m_LocalScale: {x: 0.93233, y: 0.85483, z: 0.93233}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 622612295567955157}
   - {fileID: 7666029999785012514}
   m_Father: {fileID: 1393768646098537795}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0.18}
 --- !u!136 &5147018081576748649
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -496,6 +501,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDataReference
   reference: {fileID: 1151793576789169415}
+--- !u!114 &5526794125401225536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7933306752479335644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2c6fad2c877a474dbf669e7f896c223, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInteract
+  playerDataRef: {fileID: 1151793576789169415}
+  inputActionAsset: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  bounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0.42, y: 0.6, z: 0.39}
+  offset: {x: 0, y: 0, z: 0.78}
 --- !u!1001 &1092492246636507966
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -705,6 +728,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 02b818181aa93274eaa72710e028b158, type: 3}
+--- !u!1 &281517003446816367 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 02b818181aa93274eaa72710e028b158, type: 3}
+  m_PrefabInstance: {fileID: 1092492246636507966}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &622612295567955157 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 02b818181aa93274eaa72710e028b158, type: 3}

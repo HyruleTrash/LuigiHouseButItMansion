@@ -7,7 +7,7 @@ public class TimerComp :MonoBehaviour
 {
     public Timer timer;
 
-    private void Update()
+    protected void Update()
     {
         if (timer != null && timer.running)
             timer.Update(Time.deltaTime);

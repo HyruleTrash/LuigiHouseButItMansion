@@ -17,10 +17,10 @@ public class PlayerData : MonoBehaviour
     public Transform camInterestPoint;
     [Header("Player")]
     public Rigidbody playerRigidbody;
+    public PlayerMovement playerMovement;
     [SerializeField]
     private GameObject bodyModel;
-    [SerializeField]
-    private Health healthComp;
+    public Health healthComp;
 
     private void Awake()
     {

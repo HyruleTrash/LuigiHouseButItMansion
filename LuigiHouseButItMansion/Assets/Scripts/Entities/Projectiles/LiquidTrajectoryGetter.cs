@@ -6,7 +6,7 @@ using SplineMesh;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class TrajectoryGetter
+public class LiquidTrajectoryGetter
 {
     private GameObject parent;
     
@@ -28,14 +28,14 @@ public class TrajectoryGetter
         public Collider collidedWith;
     }
 
-    public TrajectoryGetter(Mesh mesh, GameObject parent, Vector3 scale, LayerMask layerMask)
+    public LiquidTrajectoryGetter(Mesh mesh, GameObject parent, Vector3 scale, LayerMask layerMask)
     {
         this.mesh = mesh;
         this.layerMask = layerMask;
         this.parent = parent;
 
-        splineObject = new GameObject($"{typeof(TrajectoryGetter)}_{mesh.name}", typeof(Spline));
-        meshObject = new GameObject($"{typeof(TrajectoryGetter)}_{mesh.name}_Mesh", typeof(MeshCollider));
+        splineObject = new GameObject($"{typeof(LiquidTrajectoryGetter)}_{mesh.name}", typeof(Spline));
+        meshObject = new GameObject($"{typeof(LiquidTrajectoryGetter)}_{mesh.name}_Mesh", typeof(MeshCollider));
         meshObject.transform.SetParent(splineObject.transform);
         
         splineObject.layer = LayerMask.NameToLayer("Projectile");
@@ -69,7 +69,7 @@ public class TrajectoryGetter
         nextNode += Vector3.down * distanceBetweenNodes;
         spline.AddNode(new SplineNode( nextNode, nextNode));
 
-        var output = CheckCollisionAllongSpline(shotStartPosition);
+        var output = CheckCollisionAllongSpline();
         if (output.collided)
         {
             // Collided
@@ -103,7 +103,7 @@ public class TrajectoryGetter
         onEnd?.Invoke(output, spline);
     }
 
-    private SplineCollision CheckCollisionAllongSpline(Vector3 shotStartPosition)
+    private SplineCollision CheckCollisionAllongSpline()
     {
         var stepSize = mesh.bounds.extents.magnitude / 4;
         var halfExtents = mesh.bounds.extents / 2;
@@ -121,10 +121,9 @@ public class TrajectoryGetter
             
             foreach (var collision in colliders)
             {
+                if (collision.gameObject == parent) continue; 
                 if ((layerMask & (1 << collision.gameObject.layer)) == 0) continue; 
                 // Inside bounds and layer
-
-                // Debug.Log(collision.gameObject.name);
 
                 meshObject.transform.position = checkOriginPos;
                     

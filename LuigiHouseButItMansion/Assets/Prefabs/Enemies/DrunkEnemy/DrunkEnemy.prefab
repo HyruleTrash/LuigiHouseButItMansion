@@ -99,6 +99,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5238500964269447872}
   - component: {fileID: 8726199615973695294}
+  - component: {fileID: 581719843950277391}
   m_Layer: 8
   m_Name: DrunkEnemy
   m_TagString: Untagged
@@ -143,3 +144,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.2, y: 1.78, z: 1.2}
   m_Center: {x: 0, y: 0.91, z: 0}
+--- !u!114 &581719843950277391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8477964055832198927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cac01cc65b4c4c708145c02382a6496d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyShoot
+  projectileData: {fileID: 11400000, guid: 9e5f7b639c363a34e9b76c12789e81b6, type: 2}
+  shootPosition: {x: 0, y: 1.15, z: 1.06}
+  chamberTime: 2
+  collisionMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 329
+  playerRef: {fileID: 0}
+  minimalSpottingDistance: 20
+  visionLayerMask:
+    serializedVersion: 2
+    m_Bits: 329

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4692387197908987167}
   - component: {fileID: 2280051781539452808}
   m_Layer: 0
-  m_Name: WaterSplashParticle
+  m_Name: BeerSplashParticle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -223,7 +223,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.49999988, g: 0.55888414, b: 1, a: 1}
+      maxColor: {r: 1, g: 0.9120585, b: 0, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -4840,7 +4840,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 32704eb68ef02af4681de899db94adc2, type: 2}
+  - {fileID: 2100000, guid: 0a980f498376cb946ba160fc170cffb5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

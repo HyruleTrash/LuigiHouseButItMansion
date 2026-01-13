@@ -7,8 +7,10 @@ using UnityEngine;
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(Spline))]
-public class WaterProjectile : MonoBehaviour
+public class LiquidProjectileHandler : MonoBehaviour
 {
+    [HideInInspector]
+    public LiquidProjectileInstance currentInstanceReference;
     public Spline spline;
     private float rate = 0;
     private readonly float startPosition = 0;
@@ -33,7 +35,7 @@ public class WaterProjectile : MonoBehaviour
     
     public bool shouldRun = false;
     public bool shouldRepeat = false;
-    public Action<WaterProjectile> OnFinished;
+    public Action<LiquidProjectileInstance, LiquidProjectileHandler> OnFinished;
     public Action OnEndHit;
     private bool endOfSplineHit = false;
     
@@ -208,7 +210,7 @@ public class WaterProjectile : MonoBehaviour
         if (!shouldRepeat)
         {
             ShouldRun = false;
-            OnFinished?.Invoke(this);
+            OnFinished?.Invoke(currentInstanceReference, this);
         }
     }
 }

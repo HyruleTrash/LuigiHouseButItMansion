@@ -24,8 +24,7 @@ public class PlayerMovement : MonoBehaviour
     }
     [Header("Configuration")]
     public List<SpeedData> speedData;
-    [SerializeField]
-    private string currentSpeedDataName;
+    public string currentSpeedDataName;
     private SpeedData currentSpeedData;
     private float currentDrag = 0;
     
@@ -114,6 +113,6 @@ public class PlayerMovement : MonoBehaviour
         var moveVectorFinal = cameraRotation * moveVector3D;
         
         var force = moveVectorFinal * currentSpeedData.speed;
-        rb.AddForce(force);
+        rb.AddForce(force * Time.deltaTime, ForceMode.VelocityChange);
     }
 }
