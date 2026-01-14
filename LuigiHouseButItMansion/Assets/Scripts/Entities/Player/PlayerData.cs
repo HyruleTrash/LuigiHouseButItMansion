@@ -37,6 +37,7 @@ public class PlayerData : MonoBehaviour
     private void Start()
     {
         SceneData.instance.RegisteredObject<PlayerData>(this);
+        currentRoom?.ReadyRoom();
     }
 
     private void OnDestroy()

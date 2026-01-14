@@ -6,7 +6,7 @@ public class BeerProjectileInstance : LiquidProjectileInstance
 {
     public ParticleSystem splashParticle;
     public PlayerData playerRef;
-    public void CollisionLogic(LiquidTrajectoryGetter.SplineCollision collisionData, GameObject waterSplashPrefab, Action<LiquidProjectileInstance, GameObject> onCollision)
+    public void CollisionLogic(LiquidTrajectoryGetter.SplineCollision collisionData, GameObject waterSplashPrefab, Action<LiquidProjectileInstance, GameObject, LiquidTrajectoryGetter.SplineCollision> onCollision)
     {
         if (!collisionData.collided)
         {
@@ -24,6 +24,6 @@ public class BeerProjectileInstance : LiquidProjectileInstance
 
         splashParticle.transform.rotation = Quaternion.LookRotation(collisionData.direction, waterSplashPrefab.transform.up);
 
-        onCollision?.Invoke(this, collisionData.collidedWith.gameObject);
+        onCollision?.Invoke(this, collisionData.collidedWith.gameObject, collisionData);
     }
 }

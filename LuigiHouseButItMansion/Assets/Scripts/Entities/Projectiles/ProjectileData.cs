@@ -23,5 +23,5 @@ public abstract class ProjectileData : ScriptableObject
     }
 
     public abstract LiquidProjectileInstance SpawnInstance(LiquidTrajectoryGetter.SplineCollision collisionData, Spline spline,
-        Action<LiquidProjectileInstance, GameObject> onCollision = null);
+        Action<LiquidProjectileInstance, GameObject, LiquidTrajectoryGetter.SplineCollision> onCollision = null);
 }

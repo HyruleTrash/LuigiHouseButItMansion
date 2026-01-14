@@ -94,10 +94,25 @@ public class RoomObjectData : MonoBehaviour
 
     public void SetGlobalShaderGoopData()
     {
-        if (goopData == null)
+        UpdateGoopTexture();
+        if (goopData != null)
         {
-            setRoomGoopTex = null;
+            setRoomMin = roomBounds.min + transform.position;
+            setRoomSize = roomBounds.size;
+            setRoomColor = goopData.goopColor;
+            setRoomCutOffThreshold = goopData.cutoffThreshold;
         }
+
+        Shader.SetGlobalVector(RoomMin, setRoomMin);
+        Shader.SetGlobalVector(RoomSize, setRoomSize);
+        Shader.SetGlobalColor(GoopColor, setRoomColor);
+        Shader.SetGlobalFloat(CutOffThreshold, setRoomCutOffThreshold);
+    }
+
+    public void UpdateGoopTexture()
+    {
+        if (goopData == null) 
+            setRoomGoopTex = null;
         else
         {
             if (roomGoopTex == null)
@@ -116,17 +131,9 @@ public class RoomObjectData : MonoBehaviour
             }
 
             setRoomGoopTex = roomGoopTex;
-            setRoomMin = roomBounds.min + transform.position;
-            setRoomSize = roomBounds.size;
-            setRoomColor = goopData.goopColor;
-            setRoomCutOffThreshold = goopData.cutoffThreshold;
         }
-
+        
         Shader.SetGlobalTexture(GoopMask, setRoomGoopTex);
-        Shader.SetGlobalVector(RoomMin, setRoomMin);
-        Shader.SetGlobalVector(RoomSize, setRoomSize);
-        Shader.SetGlobalColor(GoopColor, setRoomColor);
-        Shader.SetGlobalFloat(CutOffThreshold, setRoomCutOffThreshold);
     }
 
     public void DisableRoom()
@@ -151,5 +158,52 @@ public class RoomObjectData : MonoBehaviour
         {
             entrance.UnLock();
         }
+    }
+
+    public void RemoveGoopAt(Vector3 contactPoint)
+    {
+        // Convert world space contact point to UV coordinates matching shader logic
+        Vector2 goopUV = CalculateGoopUV(contactPoint);
+    
+        // Create a small circular brush for removal
+        int brushSize = 5; // Adjust based on desired removal size
+        int centerX = Mathf.RoundToInt(goopUV.x * setRoomGoopTex.width);
+        int centerY = Mathf.RoundToInt(goopUV.y * setRoomGoopTex.height);
+    
+        // Ensure we stay within texture bounds
+        int startX = Mathf.Max(0, centerX - brushSize);
+        int startY = Mathf.Max(0, centerY - brushSize);
+        int endX = Mathf.Min(setRoomGoopTex.width - 1, centerX + brushSize);
+        int endY = Mathf.Min(setRoomGoopTex.height - 1, centerY + brushSize);
+    
+        // Modify the texture data
+        NativeArray<byte> pixels = setRoomGoopTex.GetRawTextureData<byte>();
+        for (int y = startY; y <= endY; y++)
+        {
+            for (int x = startX; x <= endX; x++)
+            {
+                // Calculate distance from center
+                float distSq = (x - centerX) * (x - centerX) + (y - centerY) * (y - centerY);
+            
+                // Only affect pixels within brush radius
+                if (distSq <= brushSize * brushSize)
+                {
+                    int index = y * setRoomGoopTex.width + x;
+                    pixels[index] = 0; // Set to minimum value (no goop)
+                }
+            }
+        }
+    
+        // Apply changes back to texture
+        setRoomGoopTex.SetPixelData(pixels, 0);
+        setRoomGoopTex.Apply();
+    
+        UpdateGoopTexture();
+    }
+
+    private Vector2 CalculateGoopUV(Vector3 worldPos)
+    {
+        Vector2 goopUV = (new Vector2(worldPos.x, worldPos.z) - new Vector2(setRoomMin.x, setRoomMin.z)) / new Vector2(setRoomSize.x, setRoomSize.z);
+        return new Vector2(Math.Clamp(goopUV.x, 0, 1), Math.Clamp(goopUV.y, 0, 1)); // Clamp to 0-1 range
     }
 }

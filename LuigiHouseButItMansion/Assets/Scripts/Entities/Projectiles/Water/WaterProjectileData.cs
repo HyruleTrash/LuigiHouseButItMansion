@@ -9,8 +9,9 @@ public class WaterProjectileData : ProjectileData
     [Space(5)]
     public GameObject waterSplashPrefab;
     private ObjectPool<WaterProjectileInstance> waterProjectilePool = new();
+    private PlayerData playerRef = null;
     
-    public override LiquidProjectileInstance SpawnInstance(LiquidTrajectoryGetter.SplineCollision collisionData, Spline spline, Action<LiquidProjectileInstance, GameObject> onCollision)
+    public override LiquidProjectileInstance SpawnInstance(LiquidTrajectoryGetter.SplineCollision collisionData, Spline spline, Action<LiquidProjectileInstance, GameObject, LiquidTrajectoryGetter.SplineCollision> onCollision)
     {
         WaterProjectileInstance currentInstance = null;
         var foundInactive = waterProjectilePool.GetInactiveObject(out var foundInstance);
@@ -46,8 +47,11 @@ public class WaterProjectileData : ProjectileData
     }
     
     
-    private void CheckIfCollidedWithWasDamagable(LiquidProjectileInstance _, GameObject collidedWithGameObject)
+    private void CheckIfCollidedWithWasDamagable(LiquidProjectileInstance _, GameObject collidedWithGameObject, LiquidTrajectoryGetter.SplineCollision collisionData)
     {
+        playerRef ??= SceneData.instance.GetRegisteredObject<PlayerData>();
+        playerRef.GetCurrentRoom().RemoveGoopAt(collisionData.contactPoint);
+        
         if (collidedWithGameObject.layer != LayerMask.NameToLayer("Damagable")) return;
         IDamagable[] damagables;
         damagables = collidedWithGameObject.GetComponents<IDamagable>();

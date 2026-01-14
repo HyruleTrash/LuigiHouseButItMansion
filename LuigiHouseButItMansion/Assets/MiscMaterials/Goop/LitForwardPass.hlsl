@@ -276,14 +276,11 @@ void LitPassFragment(
     
     if (goop >= _CutOffThreshold)
         color.rgb = lerp(color.rgb, _GoopColor.rgb, goop);
-    // color.rgb = half3(goop, 0, 0);
-    // color.rgb = half3(goopUV.x, goopUV.y, 0); shows green and orange walls
     
     color.rgb = MixFog(color.rgb, inputData.fogCoord);
     color.a = OutputAlpha(color.a, IsSurfaceTypeTransparent(_Surface));
 
     outColor = color;
-    // outColor = half4(1,1,1,1);
 
 #ifdef _WRITE_RENDERING_LAYERS
     outRenderingLayers = EncodeMeshRenderingLayer();

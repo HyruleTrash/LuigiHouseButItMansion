@@ -8,7 +8,7 @@ public class WaterProjectileInstance : LiquidProjectileInstance
 {
     public ParticleSystem splashParticle;
     
-    public void CollisionLogic(LiquidTrajectoryGetter.SplineCollision collisionData, GameObject waterSplashPrefab, Action<LiquidProjectileInstance, GameObject> onCollision)
+    public void CollisionLogic(LiquidTrajectoryGetter.SplineCollision collisionData, GameObject waterSplashPrefab, Action<LiquidProjectileInstance, GameObject, LiquidTrajectoryGetter.SplineCollision> onCollision)
     {
         if (!collisionData.collided)
         {
@@ -26,6 +26,6 @@ public class WaterProjectileInstance : LiquidProjectileInstance
 
         splashParticle.transform.rotation = Quaternion.LookRotation(collisionData.direction, waterSplashPrefab.transform.up);
 
-        onCollision?.Invoke(this, collisionData.collidedWith.gameObject);
+        onCollision?.Invoke(this, collisionData.collidedWith.gameObject, collisionData);
     }
 }

@@ -13,7 +13,7 @@ public class BeerProjectileData : ProjectileData
     [SerializeField]
     private float maxEffectTime;
 
-    public override LiquidProjectileInstance SpawnInstance(LiquidTrajectoryGetter.SplineCollision collisionData, Spline spline, Action<LiquidProjectileInstance, GameObject> onCollision)
+    public override LiquidProjectileInstance SpawnInstance(LiquidTrajectoryGetter.SplineCollision collisionData, Spline spline, Action<LiquidProjectileInstance, GameObject, LiquidTrajectoryGetter.SplineCollision> onCollision)
     {
         BeerProjectileInstance currentInstance = null;
         var foundInactive = projectilePool.GetInactiveObject(out var foundInstance);
@@ -48,7 +48,7 @@ public class BeerProjectileData : ProjectileData
         return currentInstance;
     }
     
-    private void CheckIfCollidedWasPlayer(LiquidProjectileInstance instance, GameObject collidedWithGameObject)
+    private void CheckIfCollidedWasPlayer(LiquidProjectileInstance instance, GameObject collidedWithGameObject, LiquidTrajectoryGetter.SplineCollision collisionData)
     {
         if (collidedWithGameObject.layer != LayerMask.NameToLayer("Player")) return;
         
