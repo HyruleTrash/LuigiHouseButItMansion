@@ -52,7 +52,7 @@ public class BeerProjectileData : ProjectileData
     {
         if (collidedWithGameObject.layer != LayerMask.NameToLayer("Player")) return;
         
-        if (instance is not BeerProjectileInstance shotInstance)
+        if (instance is not BeerProjectileInstance shotInstance || shotInstance.playerRef == null)
             return;
         
         var hit = shotInstance.playerRef.healthComp;

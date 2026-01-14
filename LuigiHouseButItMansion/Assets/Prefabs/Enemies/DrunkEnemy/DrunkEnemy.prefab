@@ -164,7 +164,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 329
   playerRef: {fileID: 0}
-  minimalSpottingDistance: 20
+  minimalSpottingDistance: 10
   visionLayerMask:
     serializedVersion: 2
     m_Bits: 329
+  shootDragSpeed: 0.5

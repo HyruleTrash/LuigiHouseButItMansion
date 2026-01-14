@@ -44,7 +44,7 @@ public abstract class ShootHandler : MonoBehaviour
         chamberTimer.Update(Time.deltaTime);
     }
 
-    protected Vector3 GetShootPosition()
+    protected virtual Vector3 GetShootPosition()
     {
         return transform.rotation * shootPosition + transform.position;
     }

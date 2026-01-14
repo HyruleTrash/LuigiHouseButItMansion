@@ -1,4 +1,6 @@
 ﻿
+using System;
+using LucasCustomClasses;
 using SplineMesh;
 using UnityEngine;
 
@@ -10,11 +12,18 @@ public class EnemyShoot : ShootHandler
     public float minimalSpottingDistance;
     [SerializeField]
     private LayerMask visionLayerMask;
+    private Vector3? usedShootPosition = null;
+    [SerializeField]
+    private float shootDragSpeed = 0.1f;
+
+    private Timer stopShootingTimer;
+    private bool shouldShoot = false;
 
     protected override void Start()
     {
         base.Start();
         playerRef ??= SceneData.instance.GetRegisteredObject<PlayerData>();
+        usedShootPosition = GetShootPosition();
     }
 
     protected override void Update()
@@ -25,10 +34,28 @@ public class EnemyShoot : ShootHandler
             return;
         }
         base.Update();
-        if (Vector3.Distance(transform.position, playerRef.playerRigidbody.transform.position) > minimalSpottingDistance)
+        
+        if (Vector3.Distance(transform.position, playerRef.playerRigidbody.transform.position) >
+            minimalSpottingDistance)
+        {
+            usedShootPosition = null;
+            if (stopShootingTimer is not { running: true })
+                stopShootingTimer = new Timer(2, () => shouldShoot = false);
+            stopShootingTimer.Update(Time.deltaTime);
+        }
+        else
+        {
+            shouldShoot = true;
+            stopShootingTimer.running = false;
+        }
+        
+        if (!shouldShoot)
             return;
+        var lookAtPoint = new Vector3(playerRef.playerRigidbody.transform.position.x, transform.position.y, playerRef.playerRigidbody.transform.position.z);
+        transform.LookAt(lookAtPoint);
+        
         if (Physics.Raycast(GetShootPosition(),
-                GetShotDirection(),
+                (playerRef.playerRigidbody.transform.position - GetShootPosition()).normalized,
                 out RaycastHit hit,
                 Mathf.Infinity,
                 visionLayerMask,
@@ -38,9 +65,6 @@ public class EnemyShoot : ShootHandler
         {
             TryShoot();
         }
-        
-        var lookAtPoint = new Vector3(playerRef.playerRigidbody.transform.position.x, transform.position.y, playerRef.playerRigidbody.transform.position.z);
-        transform.LookAt(lookAtPoint);
     }
 
     protected override void SpawnProjectileInstance(LiquidTrajectoryGetter.SplineCollision collisionData, Spline spline)
@@ -52,8 +76,22 @@ public class EnemyShoot : ShootHandler
             a.playerRef = playerRef;
     }
 
+    protected override Vector3 GetShootPosition()
+    {
+        usedShootPosition ??= base.GetShootPosition();
+        usedShootPosition = Vector3.Lerp(usedShootPosition.Value, base.GetShootPosition(), shootDragSpeed * Time.deltaTime);
+        return usedShootPosition.Value;
+    }
+
     protected override Vector3 GetShotDirection()
     {
-        return (playerRef.playerRigidbody.transform.position - GetShootPosition()).normalized;
+        var shotPos = GetShootPosition();
+        return (shotPos - new Vector3(transform.position.x, shotPos.y, transform.position.z)).normalized;
     }
+
+    // private void OnDrawGizmos()
+    // {
+    //     Gizmos.color = Color.red;
+    //     if (usedShootPosition != null) Gizmos.DrawLine(usedShootPosition.Value, usedShootPosition.Value + GetShotDirection() * minimalSpottingDistance);
+    // }
 }
