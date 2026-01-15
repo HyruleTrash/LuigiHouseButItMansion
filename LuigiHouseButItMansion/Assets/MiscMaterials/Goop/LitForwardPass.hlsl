@@ -16,6 +16,7 @@ CBUFFER_START(UnityPerFrame)
     float4 _RoomMin;
     float4 _RoomSize;
     float4 _GoopColor;
+    float4 _GoopAccentColor;
     float _CutOffThreshold;
     float _GoopTiling;
 CBUFFER_END
@@ -253,10 +254,6 @@ float SampleGoopSmooth(float3 uv)
     return sum / w;
 }
 
-float4 addColors(float4 color1, float4 color2) {
-    return min(color1 + color2, float4(1,1,1,1)); // Prevent overflow
-}
-
 // Used in Standard (Physically Based) shader
 void LitPassFragment(
     Varyings input
@@ -316,8 +313,12 @@ void LitPassFragment(
 
     half mask = smoothstep(_CutOffThreshold - 0.1, _CutOffThreshold + 0.1, goop);
     mask = saturate(mask * goopCol.a);
+    if (mask > 0.5 - _CutOffThreshold)
+        mask += 0.5;
+    
+    // float3 usedGoopColor = lerp(_GoopColor.rgb * _GoopColStrength, lerp(goopCol.rgb, _GoopColor.rgb * _GoopColStrength, mask), mask);
 
-    color.rgb = lerp(color.rgb, _GoopColor.rgb, mask);
+    color.rgb = lerp(color.rgb, lerp(_GoopAccentColor.rgb, _GoopColor.rgb, goopCol.a), mask);
     
     color.rgb = MixFog(color.rgb, inputData.fogCoord);
     color.a = OutputAlpha(color.a, IsSurfaceTypeTransparent(_Surface));

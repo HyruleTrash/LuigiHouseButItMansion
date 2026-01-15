@@ -17,3 +17,4 @@ MonoBehaviour:
   goopColor: {r: 1, g: 0.64457875, b: 0.36470592, a: 1}
   cutoffThreshold: 0.1
   textureSize: 64
+  brushSize: 10

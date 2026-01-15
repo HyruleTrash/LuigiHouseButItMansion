@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.SceneManagement;
@@ -136,22 +137,29 @@ public class GoopManager : MonoBehaviour
             }
         }
         
-        const int brushSize = 5;
-        
         Vector3 baseUV = CalculateGoopTexUV(contactPoint);
         float texel = 1f / (goopData.textureSize - 1);
+        
+        int brushSize = goopData.GetBrushSize();
         
         bool madeChanges = false;
         for (int dx = -brushSize; dx <= brushSize; dx++)
         for (int dy = -brushSize; dy <= brushSize; dy++)
         for (int dz = -brushSize; dz <= brushSize; dz++)
         {
-            var pos = GetIntArrayUvFromTranslation(baseUV, new Vector3(dx, dy, dz), texel);
+            var translation = new Vector3(dx, dy, dz);
+            var pos = GetIntArrayUvFromTranslation(baseUV, translation, texel);
+            
+            float distance = Vector3.Distance(baseUV, translation);
+            if (distance > brushSize)
+                continue;
             
             int index = VectorUvToIndex(pos[0], pos[1], pos[2]);
             if (roomTextureData[index] == 0)
                 continue;
-            roomTextureData[index] = 0;
+            
+            float interpolationFactor = 1.0f - Mathf.Sqrt(distance) / (brushSize + 2);
+            roomTextureData[index] = (byte)(roomTextureData[index] * interpolationFactor);
             madeChanges = true;
         }
         
