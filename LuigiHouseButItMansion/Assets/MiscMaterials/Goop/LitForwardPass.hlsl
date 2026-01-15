@@ -9,12 +9,15 @@
 // ===== Goop globals =====
 TEXTURE3D(_GoopMask);
 SAMPLER(sampler_GoopMask);
+TEXTURE2D(_GoopTex);
+SAMPLER(sampler_GoopTex);
 
 CBUFFER_START(UnityPerFrame)
     float4 _RoomMin;
     float4 _RoomSize;
     float4 _GoopColor;
     float _CutOffThreshold;
+    float _GoopTiling;
 CBUFFER_END
 
 #if defined(_PARALLAXMAP)
@@ -228,6 +231,32 @@ Varyings LitPassVertex(Attributes input)
     return output;
 }
 
+float SampleGoopSmooth(float3 uv)
+{
+    float sum = 0;
+    float w = 0;
+    float step = 1.0 / (_RoomSize.x * 32.0); // tweak
+
+    [unroll]
+    for (int x = -1; x <= 1; x++)
+        [unroll]
+        for (int y = -1; y <= 1; y++)
+            [unroll]
+            for (int z = -1; z <= 1; z++)
+            {
+                float3 o = float3(x,y,z) * step;
+                float s = SAMPLE_TEXTURE3D(_GoopMask, sampler_GoopMask, uv + o).r;
+                sum += s;
+                w += 1;
+            }
+
+    return sum / w;
+}
+
+float4 addColors(float4 color1, float4 color2) {
+    return min(color1 + color2, float4(1,1,1,1)); // Prevent overflow
+}
+
 // Used in Standard (Physically Based) shader
 void LitPassFragment(
     Varyings input
@@ -272,10 +301,23 @@ void LitPassFragment(
     float3 worldPos = GetAbsolutePositionWS(inputData.positionWS);
     float3 goopUV = (worldPos - _RoomMin) / _RoomSize;
     goopUV = saturate(goopUV);
-    half goop = SAMPLE_TEXTURE3D(_GoopMask, sampler_GoopMask, goopUV).r;
+    half goop = SampleGoopSmooth(goopUV);
     
-    if (goop >= _CutOffThreshold)
-        color.rgb = lerp(color.rgb, _GoopColor.rgb, goop);
+    float3 wp = inputData.positionWS * _GoopTiling;
+    float3 n = abs(normalize(inputData.normalWS));
+
+    n = max(n, 0.0001);
+
+    float4 colX = SAMPLE_TEXTURE2D(_GoopTex, sampler_GoopTex, wp.yz);
+    float4 colY = SAMPLE_TEXTURE2D(_GoopTex, sampler_GoopTex, wp.xz);
+    float4 colZ = SAMPLE_TEXTURE2D(_GoopTex, sampler_GoopTex, wp.xy);
+
+    float4 goopCol = (colX * n.x + colY * n.y + colZ * n.z) / (n.x + n.y + n.z);
+
+    half mask = smoothstep(_CutOffThreshold - 0.1, _CutOffThreshold + 0.1, goop);
+    mask = saturate(mask * goopCol.a);
+
+    color.rgb = lerp(color.rgb, _GoopColor.rgb, mask);
     
     color.rgb = MixFog(color.rgb, inputData.fogCoord);
     color.a = OutputAlpha(color.a, IsSurfaceTypeTransparent(_Surface));

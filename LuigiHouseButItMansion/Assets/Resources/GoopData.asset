@@ -12,5 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f75222fe490e4f30a490d290fb3076eb, type: 3}
   m_Name: GoopData
   m_EditorClassIdentifier: Assembly-CSharp::GoopData
-  goopColor: {r: 1, g: 0.109803915, b: 0.22363676, a: 0}
+  goopTexture: {fileID: 2800000, guid: 1351d86a95e917f498dab1bb296a2fe7, type: 3}
+  goopTiling: 0.25
+  goopColor: {r: 1, g: 0.64457875, b: 0.36470592, a: 1}
   cutoffThreshold: 0.1
+  textureSize: 64
