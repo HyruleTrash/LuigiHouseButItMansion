@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using Unity.Collections;
 using UnityEngine;
@@ -24,11 +25,12 @@ public class GoopManager : MonoBehaviour
     #endif
     [SerializeField]
     private Bounds roomBounds;
+    private const int textureSize = 128;
     [HideInInspector]
     [CanBeNull] public Texture3D roomTexture = null;
     private NativeArray<byte> roomTextureData;
     
-    private Vector2 CalculateGoopTexUV(Vector3 worldPos)
+    private Vector3 CalculateGoopTexUV(Vector3 worldPos)
     {
         Vector3 goopUV = DivideV3(worldPos - GetRoomMin(), roomBounds.size);
         
@@ -37,6 +39,58 @@ public class GoopManager : MonoBehaviour
             Math.Clamp(goopUV.y, 0, 1),
             Math.Clamp(goopUV.z, 0, 1)
         );
+    }
+
+    private bool RayProjectToBounds(
+        Vector3 origin,
+        Vector3 dir,
+        out float tHit
+    )
+    {
+        Bounds b = roomBounds;
+        b.center += parent.transform.position;
+
+        float tMin = float.NegativeInfinity;
+        float tMax = float.PositiveInfinity;
+
+        Vector3 min = b.min;
+        Vector3 max = b.max;
+
+        for (int i = 0; i < 3; i++)
+        {
+            float o = origin[i];
+            float d = dir[i];
+
+            if (Mathf.Abs(d) < 1e-6f)
+            {
+                if (o < min[i] || o > max[i])
+                {
+                    tHit = 0;
+                    return false;
+                }
+            }
+            else
+            {
+                float invD = 1f / d;
+                float t1 = (min[i] - o) * invD;
+                float t2 = (max[i] - o) * invD;
+
+                if (t1 > t2) (t1, t2) = (t2, t1);
+
+                tMin = Mathf.Max(tMin, t1);
+                tMax = Mathf.Min(tMax, t2);
+
+                if (tMin > tMax)
+                {
+                    tHit = 0;
+                    return false;
+                }
+            }
+        }
+
+        // inside vs outside
+        tHit = tMin >= 0f ? tMin : tMax;
+        return tHit >= 0f;
     }
 
     private static Vector3 DivideV3(Vector3 a, Vector3 b) => new Vector3(a.x / b.x, a.y / b.y, a.z / b.z);
@@ -54,16 +108,23 @@ public class GoopManager : MonoBehaviour
     
     public static void UpdateTexture(GoopManager instance)
     {
-        Debug.Log($"updating texture! {instance.GetInstanceID()}");
         if (instance.roomTexture)
             return;
         
         var format = GraphicsFormat.R8_UNorm;
-        const int size = 128;
-        const float temp = size - 1;
-        instance.roomTexture = new Texture3D(size, size, size, format, TextureCreationFlags.DontUploadUponCreate);
+        const float temp = textureSize - 1;
+        instance.roomTexture = new Texture3D(textureSize,
+            textureSize,
+            textureSize,
+            format,
+            TextureCreationFlags.DontUploadUponCreate)
+        {
+            wrapMode = TextureWrapMode.Clamp,
+            filterMode = FilterMode.Point,
+        };
                 
-        byte[] rawData = new byte[(int)MathF.Pow(size, 3)];
+        byte[] rawData = new byte[(int)MathF.Pow(textureSize,
+            3)];
         
         if (instance.roomTextureData.IsCreated)
         {
@@ -75,34 +136,51 @@ public class GoopManager : MonoBehaviour
         else
         {
             // Calculate gradient in 3D space
-            for (int z = 0; z < size; z++)
+            // for (int z = 0; z < size; z++)
+            // {
+            //     for (int y = 0; y < size; y++)
+            //     {
+            //         for (int x = 0; x < size; x++)
+            //         {
+            //             // Calculate position in 0-1 range for each axis
+            //             float px = x / temp;
+            //             float py = y / temp;
+            //             float pz = z / temp;
+            //                 
+            //             // Create a smooth 3D gradient
+            //             float value = (px + py + pz) / 3.0f;
+            //                 
+            //             // Convert to byte value (0-255)
+            //             rawData[z * size * size + y * size + x] = (byte)(value * 255);
+            //         }
+            //     }
+            // }
+            var rand = new System.Random();
+            for (int z = 0; z < textureSize; z++)
             {
-                for (int y = 0; y < size; y++)
+                for (int y = 0; y < textureSize; y++)
                 {
-                    for (int x = 0; x < size; x++)
+                    for (int x = 0; x < textureSize; x++)
                     {
-                        // Calculate position in 0-1 range for each axis
-                        float px = x / temp;
-                        float py = y / temp;
-                        float pz = z / temp;
-                            
-                        // Create a smooth 3D gradient
-                        float value = (px + py + pz) / 3.0f;
-                            
-                        // Convert to byte value (0-255)
-                        rawData[z * size * size + y * size + x] = (byte)(value * 255);
+                        // Generate random value between 0 and 255
+                        byte value = (byte)rand.Next(0, 256);
+                    
+                        // Store in array
+                        rawData[z * textureSize * textureSize + y * textureSize + x] = value;
                     }
                 }
             }
-            instance.roomTextureData = new NativeArray<byte>(rawData.Length, Allocator.Persistent);
+            instance.roomTextureData = new NativeArray<byte>(rawData.Length,
+                Allocator.Persistent);
         }
                 
-        instance.roomTexture.SetPixelData(rawData, 0);
-        instance.roomTexture.Apply(false, false);
-        Debug.Log($"{instance.GetInstanceID()} texture updated!: {instance.roomTexture}");
+        instance.roomTexture.SetPixelData(rawData,
+            0);
+        instance.roomTexture.Apply(false,
+            false);
     }
-
-    public void RemoveGoopAt(Vector3 contactPoint)
+    
+    public void RemoveGoopAt(Vector3 contactPoint, Vector3 collisionNormal)
     {
         if (!parent || !parent.gameObject || !parent.transform)
         {
@@ -111,7 +189,6 @@ public class GoopManager : MonoBehaviour
         }
         if (!roomTexture)
         {
-            Debug.Log(GetInstanceID() + " has no room texture");
             UpdateTexture(this);
             if (!roomTexture)
             {
@@ -120,53 +197,32 @@ public class GoopManager : MonoBehaviour
             }
         }
         
-        // Convert world space contact point to UV coordinates matching shader logic
-        Vector3 goopUV = CalculateGoopTexUV(contactPoint);
+        const int brushSize = 5;
         
-        // Create a small spherical brush for removal
-        int brushSize = 5; // Adjust based on desired removal size
-        
-        // Ensure we stay within texture bounds
-        int startX = Mathf.Max(0, Mathf.RoundToInt(goopUV.x * roomTexture.width) - brushSize); // Object reference is not set to an instance of an object
-        int startY = Mathf.Max(0, Mathf.RoundToInt(goopUV.y * roomTexture.height) - brushSize);
-        int startZ = Mathf.Max(0, Mathf.RoundToInt(goopUV.z * roomTexture.depth) - brushSize);
-        
-        int endX = Mathf.Min(roomTexture.width - 1, Mathf.RoundToInt(goopUV.x * roomTexture.width) + brushSize);
-        int endY = Mathf.Min(roomTexture.height - 1, Mathf.RoundToInt(goopUV.y * roomTexture.height) + brushSize);
-        int endZ = Mathf.Min(roomTexture.depth - 1, Mathf.RoundToInt(goopUV.z * roomTexture.depth) + brushSize);
-        
-        // Modify the texture data
         using (NativeArray<byte> collection = roomTexture.GetPixelData<byte>(0))
         {
             var pixels = collection;
-            
-            // Calculate center coordinates
-            int centerX = Mathf.RoundToInt(goopUV.x * roomTexture.width);
-            int centerY = Mathf.RoundToInt(goopUV.y * roomTexture.height);
-            int centerZ = Mathf.RoundToInt(goopUV.z * roomTexture.depth);
-        
-            // Remove goop in a spherical region
-            for (int z = startZ; z <= endZ; z++)
+
+            Vector3 baseUV = CalculateGoopTexUV(contactPoint);
+            float texel = 1f / (textureSize - 1);
+
+            for (int dx = -brushSize; dx <= brushSize; dx++)
+            for (int dy = -brushSize; dy <= brushSize; dy++)
+            for (int dz = -brushSize; dz <= brushSize; dz++)
             {
-                for (int y = startY; y <= endY; y++)
-                {
-                    for (int x = startX; x <= endX; x++)
-                    {
-                        // Calculate distance from center in 3D space
-                        float distSq = (x - centerX) * (x - centerX) +
-                                       (y - centerY) * (y - centerY) +
-                                       (z - centerZ) * (z - centerZ);
-                    
-                        // Only affect pixels within brush radius
-                        if (distSq <= brushSize * brushSize)
-                        {
-                            int index = z * roomTexture.width * roomTexture.height + 
-                                        y * roomTexture.width + x;
-                            pixels[index] = 0; // Set to minimum value (no goop)
-                        }
-                    }
-                }
+                Vector3 uv = baseUV + new Vector3(dx, dy, dz) * texel;
+                uv = Vector3.Min(Vector3.one, Vector3.Max(Vector3.zero, uv));
+
+                int x = Mathf.RoundToInt(uv.x * (textureSize - 1));
+                int y = Mathf.RoundToInt(uv.y * (textureSize - 1));
+                int z = Mathf.RoundToInt(uv.z * (textureSize - 1));
+
+                int index = z * textureSize * textureSize + y * textureSize + x;
+                pixels[index] = 0;
             }
+            
+            roomTextureData = new NativeArray<byte>(pixels.Length,
+                Allocator.Persistent);
             collection.CopyTo(roomTextureData);
         }
         roomTexture.Apply();

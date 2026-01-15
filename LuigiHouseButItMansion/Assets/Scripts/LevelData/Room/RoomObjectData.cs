@@ -63,10 +63,7 @@ public class RoomObjectData : MonoBehaviour
 
         if (oldRoom != null) oldRoom.DisableRoom();
 
-        Debug.Log("registering current room" + newRoom.gameObject.name);
         SceneData.instance.RegistereObject<RoomObjectData>(newRoom, true);
-        Debug.Log(newRoom.gameObject.name + " has been set");
-        
         GoopManager.UpdateTexture(newRoom.goopManager);
         
         newRoom.ReadyRoom();
