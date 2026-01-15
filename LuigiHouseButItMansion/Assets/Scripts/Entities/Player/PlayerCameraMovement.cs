@@ -15,7 +15,6 @@ public class PlayerCameraMovement : MonoBehaviour
     [HideInInspector]
     public Vector3 offset;
     private PlayerData playerData;
-    private RoomObjectData currentRoom;
 
     private void Start()
     {
@@ -29,19 +28,17 @@ public class PlayerCameraMovement : MonoBehaviour
         
         var parentsParent = transform.parent.parent;
         transform.SetParent(parentsParent);
-
-        currentRoom = playerData.GetCurrentRoom();
-        playerData.OnCurrentRoomChange += room => { currentRoom = room;};
     }
 
     private void Update()
     {
-        if (!camInterestPoint)
+        var roomObjectData = SceneData.instance.GetRegisteredObject<RoomObjectData>();
+        if (!camInterestPoint || !roomObjectData)
             return;
         var usedInterestPoint = camInterestPoint.position + offset;
         if (Vector3.Distance(transform.position, usedInterestPoint) < minDistance)
             return;
         var newPos = Vector3.Lerp(transform.position, usedInterestPoint, Time.deltaTime * speed);
-        transform.position = currentRoom.cameraConfig.GetNearestInBounds(newPos);
+        transform.position = roomObjectData.cameraConfig.GetNearestInBounds(newPos);
     }
 }

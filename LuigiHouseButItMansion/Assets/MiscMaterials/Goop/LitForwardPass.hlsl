@@ -7,7 +7,7 @@
 #endif
 
 // ===== Goop globals =====
-TEXTURE2D(_GoopMask);
+TEXTURE3D(_GoopMask);
 SAMPLER(sampler_GoopMask);
 
 CBUFFER_START(UnityPerFrame)
@@ -270,9 +270,9 @@ void LitPassFragment(
     half4 color = UniversalFragmentPBR(inputData, surfaceData);
 
     float3 worldPos = GetAbsolutePositionWS(inputData.positionWS);
-    float2 goopUV = (worldPos.xz - _RoomMin.xz) / _RoomSize.xz;
+    float3 goopUV = (worldPos - _RoomMin) / _RoomSize;
     goopUV = saturate(goopUV);
-    half goop = SAMPLE_TEXTURE2D(_GoopMask, sampler_GoopMask, goopUV).r;
+    half goop = SAMPLE_TEXTURE3D(_GoopMask, sampler_GoopMask, goopUV).r;
     
     if (goop >= _CutOffThreshold)
         color.rgb = lerp(color.rgb, _GoopColor.rgb, goop);

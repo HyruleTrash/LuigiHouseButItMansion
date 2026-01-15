@@ -35,7 +35,7 @@ public class AssetBundle : SingletonBehaviour<AssetBundle>
                 keys.Add(fullName);
                 assets.Add(asset);
             }
-            catch (Exception _)
+            catch (Exception)
             {
                 keys.Add("");
                 assets.Add(null);

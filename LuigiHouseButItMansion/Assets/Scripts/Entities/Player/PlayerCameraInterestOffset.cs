@@ -16,7 +16,6 @@ public class PlayerCameraInterestOffset : MonoBehaviour
     [SerializeField]
     private Vector2 minMaxVertical = new (10, 10);
     private Transform camInterestPoint;
-    private RoomObjectData currentRoom;
     private EdgeBoxes edgeBoxes = new ();
     
     [Header("MoveBoxSizes (percentage of screen size)")]
@@ -105,16 +104,13 @@ public class PlayerCameraInterestOffset : MonoBehaviour
     public void SetPlayerData(PlayerData playerData)
     {
         camInterestPoint = playerData.camInterestPoint;
-        currentRoom = playerData.GetCurrentRoom();
-        playerData.OnCurrentRoomChange += room =>
-        {
-            currentRoom = room;
-            Reset();
-        };
+        RoomObjectData.OnCurrentRoomChange += _ => Reset();
     }
 
     private void Update()
     {
+        var roomObjectData = SceneData.instance.GetRegisteredObject<RoomObjectData>();
+        if (!roomObjectData) return;
         edgeBoxes.UpdateBoxes(defaultSizeW, defaultSizeH, minMaxHorizontal, minMaxVertical, offset);
 
         var mouse = Mouse.current.position.ReadValue();
@@ -130,7 +126,7 @@ public class PlayerCameraInterestOffset : MonoBehaviour
             offset.y -= Time.deltaTime * speed;
         offset.y = Mathf.Clamp(offset.y, -minMaxVertical.x, minMaxVertical.y);
 
-        var cameraRotation = Quaternion.LookRotation(currentRoom.cameraViewPoint, Vector3.up);
+        var cameraRotation = Quaternion.LookRotation(roomObjectData.cameraViewPoint, Vector3.up);
         desiredOffset = cameraRotation * offset;
         
         var newOffset = Vector3.Lerp(

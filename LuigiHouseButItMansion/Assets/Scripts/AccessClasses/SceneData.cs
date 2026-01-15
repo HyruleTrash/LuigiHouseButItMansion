@@ -14,11 +14,16 @@ public class SceneData : SingletonBehaviour<SceneData>
             assetBundle = gameObject.AddComponent<AssetBundle>();
     }
 
-    public void RegisteredObject<T>(object newInstance)
+    public void RegistereObject<T>(object newInstance, bool replace = false)
     {
         if (newInstance == null)
             return;
-        registeredObjects.TryAdd(typeof(T), newInstance);
+        if (!replace)
+            registeredObjects.TryAdd(typeof(T), newInstance);
+        else
+        {
+            registeredObjects[typeof(T)] = newInstance;
+        }
     }
     
     public T GetRegisteredObject<T>()
@@ -27,7 +32,7 @@ public class SceneData : SingletonBehaviour<SceneData>
         return (T)value;
     }
     
-    public void DeRegisteredObject<T>()
+    public void DeRegistereObject<T>()
     {
         registeredObjects.Remove(typeof(T));
     }

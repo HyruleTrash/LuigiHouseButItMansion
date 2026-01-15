@@ -51,7 +51,7 @@ public class RoomEntrance : MonoBehaviour
 
     private void SpawnPlayer(PlayerData playerData)
     {
-        playerData.SetCurrentRoom(parentRoom);
+        RoomObjectData.SetCurrentRoom(parentRoom);
         playerData.SetPlayerPosition(GetSpawnPosition());
     }
 

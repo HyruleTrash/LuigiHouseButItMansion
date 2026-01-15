@@ -25,7 +25,7 @@ public class EnemySpawnManager : MonoBehaviour
             return;
         }
 
-        parentRoom.OnReadyRoom += Spawn;
+        parentRoom.onReadyRoom += Spawn;
 
         spawnPoints = new Transform[transform.childCount];
         for (int i = 0; i < transform.childCount; i++)

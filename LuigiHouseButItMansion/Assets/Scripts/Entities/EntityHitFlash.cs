@@ -81,7 +81,7 @@ public class EntityHitFlash : SingletonBehaviour<EntityHitFlash>
             try {
                 this.flashSpeed = flashSpeed.Value;
                 this.flashTime = flashTime.Value;
-            } catch (Exception _) {
+            } catch (Exception) {
                 // ignored
             }
         }

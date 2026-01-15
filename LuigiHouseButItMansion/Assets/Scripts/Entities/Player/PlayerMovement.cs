@@ -8,7 +8,6 @@ public class PlayerMovement : MonoBehaviour
 {
     [SerializeField]
     private PlayerData playerData;
-    private RoomObjectData currentRoom;
     [SerializeField]
     private InputActionAsset inputActionAsset;
     
@@ -69,9 +68,6 @@ public class PlayerMovement : MonoBehaviour
 
         moveAction = inputActionAsset.FindActionMap("Player").FindAction("Move");
         
-        currentRoom = playerData.GetCurrentRoom();
-        playerData.OnCurrentRoomChange += room => { currentRoom = room;};
-        
         SetSpeedData(currentSpeedDataName);
     }
 
@@ -108,7 +104,7 @@ public class PlayerMovement : MonoBehaviour
 
         currentDrag = currentSpeedData.dragAmount;
 
-        var cameraRotation = Quaternion.LookRotation(currentRoom.cameraViewPoint, Vector3.up);
+        var cameraRotation = Quaternion.LookRotation(SceneData.instance.GetRegisteredObject<RoomObjectData>().cameraViewPoint, Vector3.up);
         var moveVector3D = new Vector3(givenMoveVec.x, 0, givenMoveVec.y);
         var moveVectorFinal = cameraRotation * moveVector3D;
         

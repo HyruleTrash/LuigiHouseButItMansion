@@ -34,7 +34,7 @@ public class PlayerInteract : MonoBehaviour
         
         usedOffset = transform.rotation * offset;
         
-        foreach (var interactable in playerDataRef.GetCurrentRoom().interactableObjectsManager.GetInteractables())
+        foreach (var interactable in SceneData.instance.GetRegisteredObject<RoomObjectData>().interactableObjectsManager.GetInteractables())
         {
             if (!interactable)
                 return;
