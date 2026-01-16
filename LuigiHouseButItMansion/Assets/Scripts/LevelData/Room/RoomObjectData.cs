@@ -27,7 +27,6 @@ public class RoomObjectData : MonoBehaviour
         RoomManager.instance.LiveRooms.Add(this);
         goopManager = GetComponent<GoopManager>();
         goopManager.parent = this;
-        goopManager.roomTexture = null;
 
         if (!firstRoom) return;
         SetCurrentRoom(this);
@@ -64,7 +63,7 @@ public class RoomObjectData : MonoBehaviour
         if (oldRoom != null) oldRoom.DisableRoom();
 
         SceneData.instance.RegistereObject<RoomObjectData>(newRoom, true);
-        GoopManager.UpdateTexture(newRoom.goopManager);
+        newRoom.goopManager.UpdateTexture();
         
         newRoom.ReadyRoom();
         OnCurrentRoomChange?.Invoke(newRoom);
@@ -79,6 +78,9 @@ public class RoomObjectData : MonoBehaviour
 
     public void ReadyRoom()
     {
+        goopManager.SetUsedRoomTexture();
+        goopManager.SetGlobalShaderData();
+        
         foreach (var entrance in entrances)
         {
             entrance.enabled = true;
@@ -86,13 +88,11 @@ public class RoomObjectData : MonoBehaviour
 
         UnLockDoors();
         onReadyRoom?.Invoke();
-
-        goopManager.SetGlobalShaderData();
     }
 
     public void DisableRoom()
     {
-        goopManager.DestroyTexture();
+        goopManager.SaveTextureData(goopManager.usedRoomTexture);
         foreach (var entrance in entrances)
         {
             entrance.enabled = false;

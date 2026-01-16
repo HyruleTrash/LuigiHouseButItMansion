@@ -1,20 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f75222fe490e4f30a490d290fb3076eb, type: 3}
-  m_Name: GoopData
-  m_EditorClassIdentifier: Assembly-CSharp::GoopData
-  goopTexture: {fileID: 2800000, guid: 1351d86a95e917f498dab1bb296a2fe7, type: 3}
-  goopTiling: 0.25
-  goopColor: {r: 1, g: 0.64457875, b: 0.36470592, a: 1}
-  cutoffThreshold: 0.1
-  textureSize: 64
-  brushSize: 10
+version https://git-lfs.github.com/spec/v1
+oid sha256:e03d8dd8a28a55d8db91ff95d279008524c04bc4bbf30d10b93d13f5fa2c6509
+size 689

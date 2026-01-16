@@ -13,10 +13,10 @@ TEXTURE2D(_GoopTex);
 SAMPLER(sampler_GoopTex);
 
 CBUFFER_START(UnityPerFrame)
-    float4 _RoomMin;
-    float4 _RoomSize;
     float4 _GoopColor;
     float4 _GoopAccentColor;
+    float3 _RoomMin;
+    float3 _RoomSize;
     float _CutOffThreshold;
     float _GoopTiling;
 CBUFFER_END

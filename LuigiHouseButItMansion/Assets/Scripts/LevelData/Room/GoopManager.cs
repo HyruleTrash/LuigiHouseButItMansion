@@ -3,10 +3,12 @@ using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using Unity.Collections;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
-using UnityEngine.SceneManagement;
+#if UNITY_EDITOR
+using System.IO;
+using UnityEditor;
+#endif
 
 [RequireComponent(typeof(RoomObjectData))]
 public class GoopManager : MonoBehaviour
@@ -19,15 +21,32 @@ public class GoopManager : MonoBehaviour
     
     [SerializeField] 
     private GoopData goopData;
-    #if UNITY_EDITOR
-    private GoopData oldGoopData;
-    #endif
     [SerializeField]
     private Bounds roomBounds;
-    [HideInInspector]
     [CanBeNull] public Texture3D roomTexture = null;
+    [HideInInspector] public Texture3D usedRoomTexture;
     private byte[] roomTextureData;
-    
+
+    public void SetUsedRoomTexture()
+    {
+        if (roomTexture == null)
+            return;
+        
+        usedRoomTexture = new Texture3D(
+            goopData.textureSize,
+            goopData.textureSize,
+            goopData.textureSize,
+            roomTexture.graphicsFormat,
+            TextureCreationFlags.None)
+        {
+            wrapMode = TextureWrapMode.Clamp,
+            filterMode = FilterMode.Point,
+        };
+        usedRoomTexture.SetPixelData(roomTexture.GetPixelData<byte>(0), 0);
+        usedRoomTexture.Apply(false, false);
+        SaveTextureData(usedRoomTexture);
+    }
+
     private Vector3 CalculateGoopTexUV(Vector3 worldPos)
     {
         Vector3 goopUV = DivideV3(worldPos - GetRoomMin(), roomBounds.size);
@@ -48,76 +67,116 @@ public class GoopManager : MonoBehaviour
         Shader.SetGlobalVector(RoomMin, GetRoomMin());
         Shader.SetGlobalVector(RoomSize, roomBounds.size);
         goopData.SetGlobalShaderData();
-        Shader.SetGlobalTexture(GoopMask, roomTexture);
+        Shader.SetGlobalTexture(GoopMask, usedRoomTexture);
     }
     
-    public static void UpdateTexture(GoopManager instance)
+    #if UNITY_EDITOR
+    public void GenerateTexture()
     {
-        if (instance.roomTexture)
-            return;
-        
-        var format = GraphicsFormat.R8_UNorm;
-        instance.roomTexture = new Texture3D(instance.goopData.textureSize,
-            instance.goopData.textureSize,
-            instance.goopData.textureSize,
-            format,
-            TextureCreationFlags.DontUploadUponCreate)
+        var tempTex = Resources.Load<Texture3D>($"Rooms/{gameObject.name}/roomTexture");
+        if (tempTex == null)
         {
-            wrapMode = TextureWrapMode.Clamp,
-            filterMode = FilterMode.Point,
-        };
-        
-        if (instance.roomTextureData != null)
-        {
-            instance.roomTexture.SetPixelData(instance.roomTextureData, 0);
+            var format = GraphicsFormat.R8_UNorm;
+            roomTexture = new Texture3D(
+                goopData.textureSize,
+                goopData.textureSize,
+                goopData.textureSize,
+                format,
+                TextureCreationFlags.DontUploadUponCreate)
+            {
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = FilterMode.Point,
+            };
+            
+            string basePath = Path.Combine(Application.dataPath, "Resources");
+            string roomPath = Path.Combine(basePath, "Rooms", gameObject.name);
+            Directory.CreateDirectory(roomPath);
+            
+            EditorUtility.SetDirty(roomTexture);
+            AssetDatabase.CreateAsset(roomTexture, $"Assets/Resources/Rooms/{gameObject.name}/roomTexture.asset");
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            
+            ApplyDefaultTexture();
         }
         else
         {
-            byte[] rawData = new byte[(int)MathF.Pow(instance.goopData.textureSize,
-                3)];
+            roomTexture = tempTex;
+        }
+        SaveTextureData(roomTexture);
+        roomTexture.Apply(false, false);
+    }
+    #endif
+    
+    public void UpdateTexture()
+    {
+        if (usedRoomTexture)
+        {
+            SaveTextureData(usedRoomTexture);
+            return;
+        }
+        
+        if (roomTextureData != null && usedRoomTexture)
+        {
+            usedRoomTexture.SetPixelData(roomTextureData, 0);
+            usedRoomTexture.Apply(false, false);
+            return;
+        }
+        
+        if (!usedRoomTexture)
+        {
+            Debug.LogError($"Failed to initialize room texture in {gameObject.name}");
+            return;
+        }
+
+        SaveTextureData(usedRoomTexture);
+        usedRoomTexture.Apply(false, false);
+    }
+
+    private void ApplyDefaultTexture()
+    {
+        if (!roomTexture)
+            return;
+        var rawData = new byte[(int)MathF.Pow(goopData.textureSize, 3)];
             
-            // Calculate gradient in 3D space
-            float temp = instance.goopData.textureSize - 1;
-            for (int z = 0; z < instance.goopData.textureSize; z++)
+        // Calculate gradient in 3D space
+        float temp = goopData.textureSize - 1;
+        for (int z = 0; z < goopData.textureSize; z++)
+        {
+            for (int y = 0; y < goopData.textureSize; y++)
             {
-                for (int y = 0; y < instance.goopData.textureSize; y++)
+                for (int x = 0; x < goopData.textureSize; x++)
                 {
-                    for (int x = 0; x < instance.goopData.textureSize; x++)
-                    {
-                        // Calculate position in 0-1 range for each axis
-                        float px = x / temp;
-                        float py = y / temp;
-                        float pz = z / temp;
+                    // Calculate position in 0-1 range for each axis
+                    float px = x / temp;
+                    float py = y / temp;
+                    float pz = z / temp;
                             
-                        // Create a smooth 3D gradient
-                        float value = (px + py + pz) / 3.0f;
+                    // Create a smooth 3D gradient
+                    float value = (px + py + pz) / 3.0f;
                             
-                        // Convert to byte value (0-255)
-                        rawData[z * instance.goopData.textureSize * instance.goopData.textureSize + y * instance.goopData.textureSize + x] = (byte)(value * 255);
-                    }
+                    // Convert to byte value (0-255)
+                    rawData[z * goopData.textureSize * goopData.textureSize + y * goopData.textureSize + x] = (byte)(value * 255);
                 }
             }
-            // var rand = new System.Random();
-            // for (int z = 0; z < instance.goopData.textureSize; z++)
-            // {
-            //     for (int y = 0; y < instance.goopData.textureSize; y++)
-            //     {
-            //         for (int x = 0; x < instance.goopData.textureSize; x++)
-            //         {
-            //             // Generate random value between 0 and 255
-            //             byte value = (byte)rand.Next(0, 256);
-            //         
-            //             // Store in array
-            //             rawData[z * instance.goopData.textureSize * instance.goopData.textureSize + y * instance.goopData.textureSize + x] = value;
-            //         }
-            //     }
-            // }
-            instance.roomTextureData = rawData;
-            instance.roomTexture.SetPixelData(rawData, 0);
         }
-                
-        instance.roomTexture.Apply(false,
-            false);
+        // var rand = new System.Random();
+        // for (int z = 0; z < goopData.textureSize; z++)
+        // {
+        //     for (int y = 0; y < goopData.textureSize; y++)
+        //     {
+        //         for (int x = 0; x < goopData.textureSize; x++)
+        //         {
+        //             // Generate random value between 0 and 255
+        //             byte value = (byte)rand.Next(0, 256);
+        //         
+        //             // Store in array
+        //             rawData[z * goopData.textureSize * goopData.textureSize + y * goopData.textureSize + x] = value;
+        //         }
+        //     }
+        // }
+        
+        roomTexture.SetPixelData(rawData, 0);
     }
     
     public void RemoveGoopAt(Vector3 contactPoint, Vector3 collisionNormal)
@@ -127,10 +186,10 @@ public class GoopManager : MonoBehaviour
             Debug.LogError($"Missing required component in {gameObject?.name}: Parent={parent}, ParentGO={parent?.gameObject}, ParentTransform={parent?.transform}");
             return;
         }
-        if (!roomTexture)
+        if (!usedRoomTexture)
         {
-            UpdateTexture(this);
-            if (!roomTexture)
+            UpdateTexture();
+            if (!usedRoomTexture)
             {
                 Debug.LogError($"Failed to initialize room texture in {gameObject.name}");
                 return;
@@ -162,10 +221,10 @@ public class GoopManager : MonoBehaviour
             roomTextureData[index] = (byte)(roomTextureData[index] * interpolationFactor);
             madeChanges = true;
         }
-        
+
         if (madeChanges)
-            roomTexture.SetPixelData(roomTextureData, 0);
-        roomTexture.Apply();
+            usedRoomTexture.SetPixelData(roomTextureData, 0);
+        usedRoomTexture.Apply();
     }
 
     private int[] GetIntArrayUvFromTranslation(Vector3 baseUV, Vector3 translation, float texelSize)
@@ -183,13 +242,36 @@ public class GoopManager : MonoBehaviour
     {
         return z * goopData.textureSize * goopData.textureSize + y * goopData.textureSize + x;
     }
-
-    private void OnDestroy()
+    
+    public void SaveTextureData(Texture3D texture)
     {
-        if (roomTexture != null)
-        {
-            DestroyImmediate(roomTexture, true);
-        }
+        if (!texture)
+            return;
+        using var collection = texture.GetPixelData<byte>(0);
+        roomTextureData = new byte[collection.Length];
+        collection.CopyTo(roomTextureData);
+    }
+    
+    public void ClearTextureData() => roomTextureData = null;
+
+    public void DestroyTexture()
+    {
+        roomTexture = null;
+        #if UNITY_EDITOR
+        var tempTex = Resources.Load<Texture3D>($"Rooms/{gameObject.name}/roomTexture");
+        if (!tempTex)
+            return;
+        Resources.UnloadAsset(tempTex);
+        var assetPath = Path.Combine(
+            Application.dataPath,
+            "Resources",
+            "Rooms",
+            gameObject.name,
+            "roomTexture");
+        File.Delete(assetPath + ".asset");
+        File.Delete(assetPath + ".meta");
+        AssetDatabase.Refresh();
+        #endif
     }
 
     #if UNITY_EDITOR
@@ -198,16 +280,4 @@ public class GoopManager : MonoBehaviour
         Gizmos.DrawWireCube(roomBounds.center + parent.transform.position, roomBounds.size);
     }
     #endif
-    
-    public void DestroyTexture()
-    {
-        if (roomTexture == null)
-            return;
-        using (NativeArray<byte> collection = roomTexture.GetPixelData<byte>(0))
-        {
-            roomTextureData = new byte[collection.Length];
-            collection.CopyTo(roomTextureData);
-        }
-        roomTexture = null;
-    }
 }

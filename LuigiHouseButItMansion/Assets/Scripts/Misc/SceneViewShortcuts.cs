@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+using UnityEngine;
 using UnityEditor;
 using UnityEditor.ShortcutManagement;
 
-#if UNITY_EDITOR
 public static class SceneViewShortcuts
 {
     [Shortcut("Scene View Camera - Top view", KeyCode.Keypad8)]

@@ -18,7 +18,9 @@ public class LiquidProjectileHandler : MonoBehaviour
 
     [HideInInspector]
     public GameObject generated;
+#if UNITY_EDITOR
     private bool initialized = false;
+#endif
 
     public bool ShouldRun
     {
@@ -108,7 +110,9 @@ public class LiquidProjectileHandler : MonoBehaviour
             .Rotate(Quaternion.Euler(rotation))
             .Scale(new Vector3(0, scale.y, scale.z));
 
+#if UNITY_EDITOR
         initialized = true;
+#endif
     }
 
     // Based on SourceMesh 's buildData function
