@@ -6,6 +6,7 @@ using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
+using Random = System.Random;
 #if UNITY_EDITOR
 using System.IO;
 using UnityEditor;
@@ -29,6 +30,17 @@ public class GoopManager : MonoBehaviour
     [HideInInspector] public Texture3D usedRoomTexture;
     private byte[] roomTextureData;
 
+    private static Vector3 DivideV3(Vector3 a, Vector3 b) => new Vector3(a.x / b.x, a.y / b.y, a.z / b.z);
+    private Vector3 GetRoomMin() => roomBounds.min + parent.transform.position;
+    
+    public void SetGlobalShaderData()
+    {
+        Shader.SetGlobalVector(RoomMin, GetRoomMin());
+        Shader.SetGlobalVector(RoomSize, roomBounds.size);
+        goopData.SetGlobalShaderData();
+        Shader.SetGlobalTexture(GoopMask, usedRoomTexture);
+    }
+    
     private void Start()
     {
         actualBrushSize = null;
@@ -36,7 +48,7 @@ public class GoopManager : MonoBehaviour
 
     public void SetUsedRoomTexture()
     {
-        if (roomTexture == null)
+        if (!roomTexture)
             return;
 
         var res = GetTextureResolution();
@@ -65,18 +77,6 @@ public class GoopManager : MonoBehaviour
             Math.Clamp(goopUV.z, 0, 1)
         );
     }
-
-    private static Vector3 DivideV3(Vector3 a, Vector3 b) => new Vector3(a.x / b.x, a.y / b.y, a.z / b.z);
-
-    public Vector3 GetRoomMin() => roomBounds.min + parent.transform.position;
-
-    public void SetGlobalShaderData()
-    {
-        Shader.SetGlobalVector(RoomMin, GetRoomMin());
-        Shader.SetGlobalVector(RoomSize, roomBounds.size);
-        goopData.SetGlobalShaderData();
-        Shader.SetGlobalTexture(GoopMask, usedRoomTexture);
-    }
     
     private Vector3Int GetTextureResolution()
     {
@@ -90,6 +90,23 @@ public class GoopManager : MonoBehaviour
         int z = Mathf.Max(1, Mathf.RoundToInt(x * ratioZ));
 
         return new Vector3Int(x, y, z);
+    }
+    
+    private int[] GetIntArrayUvFromTranslation(Vector3 baseUV, Vector3 translation, Vector3 texelSize, Vector3Int res)
+    {
+        Vector3 uv = baseUV + Vector3.Scale(translation, texelSize);
+        uv = Vector3.Min(Vector3.one, Vector3.Max(Vector3.zero, uv));
+
+        int x = Mathf.RoundToInt(uv.x * (res.x - 1));
+        int y = Mathf.RoundToInt(uv.y * (res.y - 1));
+        int z = Mathf.RoundToInt(uv.z * (res.z - 1));
+
+        return new[] { x, y, z };
+    }
+
+    private int VectorUvToIndex(int x, int y, int z, Vector3Int res)
+    {
+        return z * res.x * res.y + y * res.x + x;
     }
     
     #if UNITY_EDITOR
@@ -130,6 +147,102 @@ public class GoopManager : MonoBehaviour
         roomTexture.Apply(false, false);
     }
     #endif
+
+    private void ApplyDefaultTexture()
+    {
+        if (!roomTexture)
+            return;
+        var res = GetTextureResolution();
+        var rawData = new byte[res.x * res.y * res.z];
+        
+        const float scale = 0.1f;
+        var perlinDataX = GeneratePerlinArray(res.y, res.z, scale);
+        var perlinDataY = GeneratePerlinArray(res.x, res.z, scale);
+        var perlinDataZ = GeneratePerlinArray(res.y, res.x, scale);
+        
+        // insert perlin data into 3d texture
+        for (int z = 0; z < res.z; z++)
+        {
+            for (int y = 0; y < res.y; y++)
+            {
+                for (int x = 0; x < res.x; x++)
+                {
+                    float usedX = perlinDataX[Idx2D(y, z, res.y)];
+                    float usedY = perlinDataY[Idx2D(x, z, res.x)];
+                    float usedZ = perlinDataZ[Idx2D(y, x, res.y)];
+                    
+                    var value = (usedX + usedY + usedZ) / 3.0f;
+                    if (value > 0.5f)
+                        rawData[z * res.x * res.y + y * res.x + x] = (byte)(value * 255f);
+                    else
+                        rawData[z * res.x * res.y + y * res.x + x] = (byte)0f;
+                }
+            }
+        }
+
+        rawData = SmoothNoiseTexData(rawData, res);
+        rawData = SmoothNoiseTexData(rawData, res);
+        
+        roomTexture.SetPixelData(rawData, 0);
+    }
+
+    int Idx2D(int x, int y, int width) => y * width + x;
+
+    private static float[] GeneratePerlinArray(int width, int height, float scale)
+    {
+        var perlinData = new float[height * width];
+        var seed = UnityEngine.Random.Range(-100000, 100000);
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                float nx = x * scale + seed;
+                float ny = y * scale + seed;
+                float v = Mathf.PerlinNoise(nx, ny);
+                perlinData[y * width + x] = v;
+            }
+        }
+        return perlinData;
+    }
+    
+    private byte[] SmoothNoiseTexData(byte[] rawData, Vector3Int res)
+    {
+        var newData = new byte[res.x * res.y * res.z];
+        for (int z = 0; z < res.z; z++)
+        {
+            for (int y = 0; y < res.y; y++)
+            {
+                for (int x = 0; x < res.x; x++)
+                {
+                    int i = z * res.x * res.y + y * res.x + x;
+                    float opacityStack = 0;
+                    int neighbors = 0;
+
+                    for (int dz = -1; dz <= 1; dz++)
+                    for (int dy = -1; dy <= 1; dy++)
+                    for (int dx = -1; dx <= 1; dx++)
+                    {
+                        int nx = x + dx;
+                        int ny = y + dy;
+                        int nz = z + dz;
+
+                        if (nx < 0 || nx >= res.x ||
+                            ny < 0 || ny >= res.y ||
+                            nz < 0 || nz >= res.z)
+                            continue;
+
+                        int ni = nz * res.x * res.y + ny * res.x + nx;
+
+                        neighbors++;
+                        opacityStack += rawData[ni];
+                    }
+                    
+                    newData[i] = (byte)(opacityStack / neighbors);
+                }
+            }
+        }
+        return newData;
+    }
     
     public void UpdateTexture()
     {
@@ -146,54 +259,36 @@ public class GoopManager : MonoBehaviour
             Debug.LogError($"Failed to initialize room texture in {gameObject.name}");
         }
     }
-
-    private void ApplyDefaultTexture()
+    
+    public void SaveTextureData(Texture3D texture)
     {
-        if (!roomTexture)
+        if (!texture)
             return;
-        var res = GetTextureResolution();
-        var rawData = new byte[res.x * res.y * res.z];
-            
-        // Calculate gradient in 3D space
-        float tempX = res.x - 1;
-        float tempY = res.y - 1;
-        float tempZ = res.z - 1;
-        for (int z = 0; z < res.z; z++)
-        {
-            for (int y = 0; y < res.y; y++)
-            {
-                for (int x = 0; x < res.x; x++)
-                {
-                    // Calculate position in 0-1 range for each axis
-                    float px = x / tempX;
-                    float py = y / tempY;
-                    float pz = z / tempZ;
-                            
-                    // Create a smooth 3D gradient
-                    float value = (px + py + pz) / 3.0f;
-                            
-                    // Convert to byte value (0-255)
-                    rawData[z * res.x * res.y + y * res.x + x] = (byte)(value * 255);
-                }
-            }
-        }
-        // var rand = new System.Random();
-        // for (int z = 0; z < goopData.textureSize; z++)
-        // {
-        //     for (int y = 0; y < goopData.textureSize; y++)
-        //     {
-        //         for (int x = 0; x < goopData.textureSize; x++)
-        //         {
-        //             // Generate random value between 0 and 255
-        //             byte value = (byte)rand.Next(0, 256);
-        //         
-        //             // Store in array
-        //             rawData[z * goopData.textureSize * goopData.textureSize + y * goopData.textureSize + x] = value;
-        //         }
-        //     }
-        // }
-        
-        roomTexture.SetPixelData(rawData, 0);
+        using var collection = texture.GetPixelData<byte>(0);
+        roomTextureData = new byte[collection.Length];
+        collection.CopyTo(roomTextureData);
+    }
+    
+    public void ClearTextureData() => roomTextureData = null;
+
+    public void DestroyTexture()
+    {
+        roomTexture = null;
+#if UNITY_EDITOR
+        var tempTex = Resources.Load<Texture3D>($"Rooms/{gameObject.name}/roomTexture");
+        if (!tempTex)
+            return;
+        Resources.UnloadAsset(tempTex);
+        var assetPath = Path.Combine(
+            Application.dataPath,
+            "Resources",
+            "Rooms",
+            gameObject.name,
+            "roomTexture");
+        File.Delete(assetPath + ".asset");
+        File.Delete(assetPath + ".meta");
+        AssetDatabase.Refresh();
+#endif
     }
     
     private int GetBrushSize(Vector3Int res)
@@ -254,54 +349,6 @@ public class GoopManager : MonoBehaviour
         if (madeChanges)
             usedRoomTexture.SetPixelData(roomTextureData, 0);
         usedRoomTexture.Apply();
-    }
-
-    private int[] GetIntArrayUvFromTranslation(Vector3 baseUV, Vector3 translation, Vector3 texelSize, Vector3Int res)
-    {
-        Vector3 uv = baseUV + Vector3.Scale(translation, texelSize);
-        uv = Vector3.Min(Vector3.one, Vector3.Max(Vector3.zero, uv));
-
-        int x = Mathf.RoundToInt(uv.x * (res.x - 1));
-        int y = Mathf.RoundToInt(uv.y * (res.y - 1));
-        int z = Mathf.RoundToInt(uv.z * (res.z - 1));
-
-        return new[] { x, y, z };
-    }
-
-    private int VectorUvToIndex(int x, int y, int z, Vector3Int res)
-    {
-        return z * res.x * res.y + y * res.x + x;
-    }
-    
-    public void SaveTextureData(Texture3D texture)
-    {
-        if (!texture)
-            return;
-        using var collection = texture.GetPixelData<byte>(0);
-        roomTextureData = new byte[collection.Length];
-        collection.CopyTo(roomTextureData);
-    }
-    
-    public void ClearTextureData() => roomTextureData = null;
-
-    public void DestroyTexture()
-    {
-        roomTexture = null;
-        #if UNITY_EDITOR
-        var tempTex = Resources.Load<Texture3D>($"Rooms/{gameObject.name}/roomTexture");
-        if (!tempTex)
-            return;
-        Resources.UnloadAsset(tempTex);
-        var assetPath = Path.Combine(
-            Application.dataPath,
-            "Resources",
-            "Rooms",
-            gameObject.name,
-            "roomTexture");
-        File.Delete(assetPath + ".asset");
-        File.Delete(assetPath + ".meta");
-        AssetDatabase.Refresh();
-        #endif
     }
 
     #if UNITY_EDITOR
