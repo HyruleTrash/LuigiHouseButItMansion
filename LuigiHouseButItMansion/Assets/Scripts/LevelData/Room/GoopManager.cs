@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 #if UNITY_EDITOR
@@ -21,21 +22,28 @@ public class GoopManager : MonoBehaviour
     
     [SerializeField] 
     private GoopData goopData;
+    private int? actualBrushSize;
     [SerializeField]
     private Bounds roomBounds;
     [CanBeNull] public Texture3D roomTexture = null;
     [HideInInspector] public Texture3D usedRoomTexture;
     private byte[] roomTextureData;
 
+    private void Start()
+    {
+        actualBrushSize = null;
+    }
+
     public void SetUsedRoomTexture()
     {
         if (roomTexture == null)
             return;
-        
+
+        var res = GetTextureResolution();
         usedRoomTexture = new Texture3D(
-            goopData.textureSize,
-            goopData.textureSize,
-            goopData.textureSize,
+            res.x,
+            res.y,
+            res.z,
             roomTexture.graphicsFormat,
             TextureCreationFlags.None)
         {
@@ -70,17 +78,32 @@ public class GoopManager : MonoBehaviour
         Shader.SetGlobalTexture(GoopMask, usedRoomTexture);
     }
     
+    private Vector3Int GetTextureResolution()
+    {
+        Vector3 size = roomBounds.size;
+
+        int x = goopData.textureSize;
+        float ratioY = size.y / size.x;
+        float ratioZ = size.z / size.x;
+
+        int y = Mathf.Max(1, Mathf.RoundToInt(x * ratioY));
+        int z = Mathf.Max(1, Mathf.RoundToInt(x * ratioZ));
+
+        return new Vector3Int(x, y, z);
+    }
+    
     #if UNITY_EDITOR
     public void GenerateTexture()
     {
         var tempTex = Resources.Load<Texture3D>($"Rooms/{gameObject.name}/roomTexture");
         if (tempTex == null)
         {
+            var res = GetTextureResolution();
             var format = GraphicsFormat.R8_UNorm;
             roomTexture = new Texture3D(
-                goopData.textureSize,
-                goopData.textureSize,
-                goopData.textureSize,
+                res.x,
+                res.y,
+                res.z,
                 format,
                 TextureCreationFlags.DontUploadUponCreate)
             {
@@ -110,12 +133,6 @@ public class GoopManager : MonoBehaviour
     
     public void UpdateTexture()
     {
-        if (usedRoomTexture)
-        {
-            SaveTextureData(usedRoomTexture);
-            return;
-        }
-        
         if (roomTextureData != null && usedRoomTexture)
         {
             usedRoomTexture.SetPixelData(roomTextureData, 0);
@@ -123,40 +140,40 @@ public class GoopManager : MonoBehaviour
             return;
         }
         
+        if (!usedRoomTexture) SetUsedRoomTexture();
         if (!usedRoomTexture)
         {
             Debug.LogError($"Failed to initialize room texture in {gameObject.name}");
-            return;
         }
-
-        SaveTextureData(usedRoomTexture);
-        usedRoomTexture.Apply(false, false);
     }
 
     private void ApplyDefaultTexture()
     {
         if (!roomTexture)
             return;
-        var rawData = new byte[(int)MathF.Pow(goopData.textureSize, 3)];
+        var res = GetTextureResolution();
+        var rawData = new byte[res.x * res.y * res.z];
             
         // Calculate gradient in 3D space
-        float temp = goopData.textureSize - 1;
-        for (int z = 0; z < goopData.textureSize; z++)
+        float tempX = res.x - 1;
+        float tempY = res.y - 1;
+        float tempZ = res.z - 1;
+        for (int z = 0; z < res.z; z++)
         {
-            for (int y = 0; y < goopData.textureSize; y++)
+            for (int y = 0; y < res.y; y++)
             {
-                for (int x = 0; x < goopData.textureSize; x++)
+                for (int x = 0; x < res.x; x++)
                 {
                     // Calculate position in 0-1 range for each axis
-                    float px = x / temp;
-                    float py = y / temp;
-                    float pz = z / temp;
+                    float px = x / tempX;
+                    float py = y / tempY;
+                    float pz = z / tempZ;
                             
                     // Create a smooth 3D gradient
                     float value = (px + py + pz) / 3.0f;
                             
                     // Convert to byte value (0-255)
-                    rawData[z * goopData.textureSize * goopData.textureSize + y * goopData.textureSize + x] = (byte)(value * 255);
+                    rawData[z * res.x * res.y + y * res.x + x] = (byte)(value * 255);
                 }
             }
         }
@@ -179,6 +196,13 @@ public class GoopManager : MonoBehaviour
         roomTexture.SetPixelData(rawData, 0);
     }
     
+    private int GetBrushSize(Vector3Int res)
+    {
+        var metersPerTexelX = roomBounds.size.x / (res.x - 1);
+        actualBrushSize ??= Mathf.RoundToInt(goopData.brushSize / metersPerTexelX);
+        return actualBrushSize.Value;
+    }
+    
     public void RemoveGoopAt(Vector3 contactPoint, Vector3 collisionNormal)
     {
         if (!parent || !parent.gameObject || !parent.transform)
@@ -188,7 +212,7 @@ public class GoopManager : MonoBehaviour
         }
         if (!usedRoomTexture)
         {
-            UpdateTexture();
+            SetUsedRoomTexture();
             if (!usedRoomTexture)
             {
                 Debug.LogError($"Failed to initialize room texture in {gameObject.name}");
@@ -197,27 +221,32 @@ public class GoopManager : MonoBehaviour
         }
         
         Vector3 baseUV = CalculateGoopTexUV(contactPoint);
-        float texel = 1f / (goopData.textureSize - 1);
+        var res = GetTextureResolution();
+        var texelSize = new Vector3(
+            1f / (res.x - 1),
+            1f / (res.y - 1),
+            1f / (res.z - 1)
+        );
         
-        int brushSize = goopData.GetBrushSize();
+        int brushRadius = GetBrushSize(res);
         
-        bool madeChanges = false;
-        for (int dx = -brushSize; dx <= brushSize; dx++)
-        for (int dy = -brushSize; dy <= brushSize; dy++)
-        for (int dz = -brushSize; dz <= brushSize; dz++)
+        var madeChanges = false;
+        for (var dx = -brushRadius; dx <= brushRadius; dx++)
+        for (var dy = -brushRadius; dy <= brushRadius; dy++)
+        for (var dz = -brushRadius; dz <= brushRadius; dz++)
         {
             var translation = new Vector3(dx, dy, dz);
-            var pos = GetIntArrayUvFromTranslation(baseUV, translation, texel);
+            var pos = GetIntArrayUvFromTranslation(baseUV, translation, texelSize, res);
             
-            float distance = Vector3.Distance(baseUV, translation);
-            if (distance > brushSize)
+            float distance = math.length(new float3(dx, dy, dz));
+            if (distance > brushRadius)
                 continue;
             
-            int index = VectorUvToIndex(pos[0], pos[1], pos[2]);
+            int index = VectorUvToIndex(pos[0], pos[1], pos[2], res);
             if (roomTextureData[index] == 0)
                 continue;
             
-            float interpolationFactor = 1.0f - Mathf.Sqrt(distance) / (brushSize + 2);
+            float interpolationFactor = 1f - (distance / (brushRadius + 1f));
             roomTextureData[index] = (byte)(roomTextureData[index] * interpolationFactor);
             madeChanges = true;
         }
@@ -227,20 +256,21 @@ public class GoopManager : MonoBehaviour
         usedRoomTexture.Apply();
     }
 
-    private int[] GetIntArrayUvFromTranslation(Vector3 baseUV, Vector3 translation, float texelSize)
+    private int[] GetIntArrayUvFromTranslation(Vector3 baseUV, Vector3 translation, Vector3 texelSize, Vector3Int res)
     {
-        Vector3 uv = baseUV + translation * texelSize;
+        Vector3 uv = baseUV + Vector3.Scale(translation, texelSize);
         uv = Vector3.Min(Vector3.one, Vector3.Max(Vector3.zero, uv));
 
-        int x = Mathf.RoundToInt(uv.x * (goopData.textureSize - 1));
-        int y = Mathf.RoundToInt(uv.y * (goopData.textureSize - 1));
-        int z = Mathf.RoundToInt(uv.z * (goopData.textureSize - 1));
+        int x = Mathf.RoundToInt(uv.x * (res.x - 1));
+        int y = Mathf.RoundToInt(uv.y * (res.y - 1));
+        int z = Mathf.RoundToInt(uv.z * (res.z - 1));
+
         return new[] { x, y, z };
     }
 
-    private int VectorUvToIndex(int x, int y, int z)
+    private int VectorUvToIndex(int x, int y, int z, Vector3Int res)
     {
-        return z * goopData.textureSize * goopData.textureSize + y * goopData.textureSize + x;
+        return z * res.x * res.y + y * res.x + x;
     }
     
     public void SaveTextureData(Texture3D texture)

@@ -18,9 +18,7 @@ public class GoopData : ScriptableObject
     public Color goopAccentColor;
     public float cutoffThreshold = 0.1f;
     public int textureSize = 64;
-    [Range(0, 100)]
     public int brushSize = 5;
-    private int? actualBrushSize;
 
     public void SetGlobalShaderData()
     {
@@ -29,16 +27,5 @@ public class GoopData : ScriptableObject
         Shader.SetGlobalFloat(CutOffThreshold, cutoffThreshold);
         Shader.SetGlobalTexture(GoopTex, goopTexture);
         Shader.SetGlobalFloat(GoopTiling, goopTiling);
-    }
-
-    private void OnValidate()
-    {
-        actualBrushSize = null;
-    }
-
-    public int GetBrushSize()
-    {
-        actualBrushSize ??= (int)math.round((float)textureSize * ((float)brushSize / 100f));
-        return actualBrushSize.Value;
     }
 }
