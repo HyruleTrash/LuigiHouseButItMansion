@@ -6,7 +6,7 @@ public abstract class PointDataHolder : MonoBehaviour
     public Quaternion interactableObjRotation = Quaternion.identity; 
     protected RoomPrefabGenerator parentGenerator;
     
-    private void OnValidate()
+    protected virtual void OnValidate()
     {
         if (parentGenerator != null) return;
         parentGenerator = transform.parent.GetComponent<RoomPrefabGenerator>();

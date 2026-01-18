@@ -1,6 +1,9 @@
 ﻿
+using System;
 using LucasCustomClasses;
+using UnityEditor;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class InteractionPointDataHolder : PointDataHolder
 {
@@ -9,11 +12,34 @@ public class InteractionPointDataHolder : PointDataHolder
     private int usedVisualCycleIndex = 0;
     private float lastTime;
     private float gizmoDeltaTime;
+    [HideInInspector]
+    public bool justSelected = false;
     
     protected override void AddSelfToParent()
     {
         if (!parentGenerator.interactionPoints.Contains(this))
             parentGenerator.interactionPoints.Add(this);
+    }
+
+    private void OnEnable()
+    {
+        Selection.selectionChanged += OnSelectionChanged;
+    }
+
+    private void OnDisable()
+    {
+        Selection.selectionChanged -= OnSelectionChanged;
+    }
+
+    private void OnDestroy()
+    {
+        Selection.selectionChanged -= OnSelectionChanged;
+    }
+
+    private void OnSelectionChanged()
+    {
+        if (gameObject == null) return;
+        if (Selection.activeGameObject == gameObject) justSelected = true;
     }
 
     public override Color GetColor() => Color.yellow;
@@ -25,12 +51,18 @@ public class InteractionPointDataHolder : PointDataHolder
         if (parentGenerator == null || possibleInteractables == null || possibleInteractables.prefabs.Count == 0)
             return;
         Gizmos.color = GetColor();
+
+        if (Selection.activeGameObject == gameObject && justSelected)
+        {
+            justSelected = false;
+            usedVisualCycleIndex = Random.Range(0, possibleInteractables.prefabs.Count - 1);
+        }
         
         var now = Time.realtimeSinceStartup;
         gizmoDeltaTime = now - lastTime;
         lastTime = now;
         
-        visualCycleTimer ??= new Timer(1, () =>
+        visualCycleTimer ??= new Timer(3, () =>
         {
             usedVisualCycleIndex++;
             if (usedVisualCycleIndex > possibleInteractables.prefabs.Count - 1)
