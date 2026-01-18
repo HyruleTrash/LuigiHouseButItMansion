@@ -12,9 +12,13 @@ public class RoomEntrance : MonoBehaviour
     private Timer disableTimer;
     [SerializeField]
     private Vector3 spawnPosition;
+    [Header("Visuals")]
     [SerializeField]
     private List<GameObject> tempLockObjects = new();
     private bool locked;
+#if UNITY_EDITOR
+    public MeshFilter doorRenderObject;
+#endif
     
     private void Awake()
     {

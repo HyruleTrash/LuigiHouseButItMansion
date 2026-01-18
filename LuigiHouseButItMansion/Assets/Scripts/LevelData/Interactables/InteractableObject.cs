@@ -10,6 +10,9 @@ public class InteractableObject : MonoBehaviour
     private Vector3 spawnPoint;
     private InteractableObjectsManager managerRef;
     public UnityEvent OnInteract;
+#if UNITY_EDITOR
+    public MeshFilter objectRepresentation;
+#endif
 
     private void OnDrawGizmosSelected()
     {
