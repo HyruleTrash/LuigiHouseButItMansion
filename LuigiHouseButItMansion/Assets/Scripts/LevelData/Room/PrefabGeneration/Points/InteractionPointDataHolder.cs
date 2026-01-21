@@ -14,11 +14,14 @@ public class InteractionPointDataHolder : PointDataHolder
     private float gizmoDeltaTime;
     [HideInInspector]
     public bool justSelected = false;
-    
+
+    protected override BaseRoomGeneratorComponent GetParentComponent()=> transform.parent.GetComponent<InteractionPointsGenerator>();
+
     protected override void AddSelfToParent()
     {
-        if (!parentGenerator.interactionPoints.Contains(this))
-            parentGenerator.interactionPoints.Add(this);
+        InteractionPointsGenerator parent = (InteractionPointsGenerator)parentGenerator;
+        if (!parent.interactionPoints.Contains(this))
+            parent.interactionPoints.Add(this);
     }
 
     private void OnEnable()

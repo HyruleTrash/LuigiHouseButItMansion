@@ -4,15 +4,16 @@ using UnityEditor;
 public abstract class PointDataHolder : MonoBehaviour
 {
     public Quaternion interactableObjRotation = Quaternion.identity; 
-    protected RoomPrefabGenerator parentGenerator;
+    protected BaseRoomGeneratorComponent parentGenerator;
     
     protected virtual void OnValidate()
     {
         if (parentGenerator != null) return;
-        parentGenerator = transform.parent.GetComponent<RoomPrefabGenerator>();
+        parentGenerator = GetParentComponent();
         AddSelfToParent();
     }
 
+    protected abstract BaseRoomGeneratorComponent GetParentComponent();
     protected abstract void AddSelfToParent();
     public abstract Color GetColor();
     

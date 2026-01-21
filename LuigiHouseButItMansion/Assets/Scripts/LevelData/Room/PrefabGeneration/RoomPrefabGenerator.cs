@@ -1,83 +1,91 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
+using Random = System.Random;
 
 #if UNITY_EDITOR
 public class RoomPrefabGenerator : MonoBehaviour
 {
-    [Header("Prefabs")]
-    public GameObject entrancePrefab;
     [Header("Room data")]
     public GameObject levelCollision;
-    public List<InteractionPointDataHolder> interactionPoints = new();
-    public List<EntrancePointDataHolder> entrancePoints;
-
-    private void OnValidate()
-    {
-        if (levelCollision == null)
-            enabled = false;
-        for (var i = 0; i < interactionPoints.Count; i++)
-        {
-            if (interactionPoints[i] != null)
-                continue;
-            var obj = new GameObject("InteractionPointDataHolder");
-            obj.transform.SetParent(transform);
-            interactionPoints[i] = obj.AddComponent<InteractionPointDataHolder>();
-        }
-        for (var i = 0; i < entrancePoints.Count; i++)
-        {
-            if (entrancePoints[i] != null)
-                continue;
-            var obj = new GameObject("EntrancePointDataHolder");
-            obj.transform.SetParent(transform);
-            entrancePoints[i] = obj.AddComponent<EntrancePointDataHolder>();
-        }
-    }
+    public GoopData goopData;
+    public Bounds goopBounds;
+    public RoomCameraConfig roomCameraConfigRef;
+    public Vector3 cameraViewPoint;
+    [HideInInspector]
+    public List<BaseRoomGeneratorComponent> roomGeneratorComponents = new();
 
     private void OnDrawGizmos()
     {
-        void DrawPositions<T>(List<T> list) where T : PointDataHolder
-        {
-            foreach (var point in list)
-            {
-                Gizmos.color = point.GetColor();
-                if (point == null)
-                    continue;
-                Gizmos.DrawSphere(GetPositionFromPointData(point), 0.1f);
-            }
-        }
-        DrawPositions(interactionPoints);
-        DrawPositions(entrancePoints);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireCube(goopBounds.center + levelCollision.transform.localPosition + transform.position, goopBounds.size);
     }
 
-    private Vector3 GetPositionFromPointData<T>(T point) where T : PointDataHolder
+    public Vector3 GetPositionFromPointData<T>(T point) where T : PointDataHolder
     {
         Vector3 offset = point.transform.position - levelCollision.transform.position;
         Vector3 rotated = levelCollision.transform.rotation * offset;
         return rotated + levelCollision.transform.position;
     }
 
-    public void UpdateAllLists()
+    public void UpdateAllLists() => roomGeneratorComponents.ForEach(x => x.UpdateList());
+
+    private void OnDrawGizmosSelected()
     {
-        UpdateEntranceList();
-        UpdateInteractableList();
+        Gizmos.color = Color.red;
+        var offset = Vector3.up * 5;
+        var startPosition = transform.position;
+        var endPosition = cameraViewPoint * 2;
+        Gizmos.DrawLine(startPosition + offset, startPosition + endPosition + offset);
     }
 
-    public void UpdateInteractableList()
+    public void SaveAndGenerateAsPrefab()
     {
-        interactionPoints.Clear();
-        foreach (var data in GetComponentsInChildren<InteractionPointDataHolder>())
+        if (levelCollision == null)
         {
-            interactionPoints.Add(data);
+            Debug.LogError("Cannot generate prefabs if levelCollision is null");
+            return;
         }
+
+        var roomObjectData = new GameObject(levelCollision.name).AddComponent<RoomObjectData>();
+        var goopManager = roomObjectData.GetComponent<GoopManager>();
+        Instantiate(levelCollision, roomObjectData.transform);
+
+        roomGeneratorComponents.ForEach(x => x.Generate(roomObjectData));
+
+        // goopManager.Init(goopBounds, goopData); TODO
+        // roomObjectData.Init(roomCameraConfigRef, cameraViewPoint); TODO
+
+        // string prefabPath = GetPrefabPath();
     }
-    
-    public void UpdateEntranceList()
+
+    private string GetPrefabPath()
     {
-        entrancePoints.Clear();
-        foreach (var data in GetComponentsInChildren<EntrancePointDataHolder>())
+        string basePath = "Assets/Resources/Rooms";
+        string roomName = levelCollision.name;
+
+        bool TryString(string bP, string rN, out string fP)
         {
-            entrancePoints.Add(data);
+            fP = $"{basePath}/{roomName}";
+            var folderExists = AssetDatabase.IsValidFolder(fP);
+            if (folderExists) return false;
+            
+            AssetDatabase.CreateFolder(basePath, roomName);
+            return true;
+        }
+        
+        if (TryString(basePath, roomName, out string prefabPath))
+            return prefabPath;
+
+        int counter = 0;
+        while (true)
+        {
+            counter++;
+            string toAdd = $"({counter})";
+            if (TryString(basePath, roomName+toAdd, out string pP))
+                return pP;
         }
     }
 }

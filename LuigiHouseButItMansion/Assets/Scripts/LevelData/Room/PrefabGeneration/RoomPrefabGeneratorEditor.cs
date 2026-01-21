@@ -16,9 +16,7 @@ public class RoomPrefabGeneratorEditor : Editor
         GUILayout.Space(16);
         if (GUILayout.Button("Update all lists")) 
             generator.UpdateAllLists();
-        if (GUILayout.Button("Update entrance list")) 
-            generator.UpdateEntranceList();
-        if (GUILayout.Button("Update interactable list")) 
-            generator.UpdateInteractableList();
+        if (GUILayout.Button("Save and generate prefab")) 
+            generator.SaveAndGenerateAsPrefab();
     }
 }
