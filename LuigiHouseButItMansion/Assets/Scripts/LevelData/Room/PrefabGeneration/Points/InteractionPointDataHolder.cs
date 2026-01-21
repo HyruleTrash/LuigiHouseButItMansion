@@ -15,11 +15,12 @@ public class InteractionPointDataHolder : PointDataHolder
     [HideInInspector]
     public bool justSelected = false;
 
-    protected override BaseRoomGeneratorComponent GetParentComponent()=> transform.parent.GetComponent<InteractionPointsGenerator>();
+    protected override BaseRoomGeneratorComponent GetParentComponent() => transform.parent.GetComponent<InteractionPointsGenerator>();
 
     protected override void AddSelfToParent()
     {
         InteractionPointsGenerator parent = (InteractionPointsGenerator)parentGenerator;
+        if (parent == null) return;
         if (!parent.interactionPoints.Contains(this))
             parent.interactionPoints.Add(this);
     }

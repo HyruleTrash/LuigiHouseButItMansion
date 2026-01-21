@@ -16,7 +16,22 @@ public class EnemySpawnManager : MonoBehaviour
     private List<ClassReference<BaseEnemy>> enemyReferencesThatUseSpawnPoints = new();
     private List<ClassReference<BaseEnemy>> enemyReferencesWithoutSpawnPoints = new();
     private List<GameObject> enemies = new();
+    
+    public void Init(RoomObjectData roomObjectData, int range, List<ClassReference<BaseEnemy>> enemyPool, List<EnemySpawnPointDataHolder> spawnPointsToInit)
+    {
+        parentRoom = roomObjectData;
+        spawnCount = range;
+        enemyReferences = enemyPool;
 
+        for (var i = 0; i < spawnPointsToInit.Count; i++)
+        {
+            var spawnPoint = spawnPointsToInit[i];
+            var newInstanceSpawnPoint = Instantiate(spawnPoint, transform);
+            newInstanceSpawnPoint.gameObject.name = $"spawnPoint({i+1})";
+            DestroyImmediate(newInstanceSpawnPoint);
+        }
+    }
+    
     private void Awake()
     {
         if (parentRoom == null)

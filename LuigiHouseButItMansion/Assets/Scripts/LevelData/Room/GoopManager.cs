@@ -29,7 +29,19 @@ public class GoopManager : MonoBehaviour
     [CanBeNull] public Texture3D roomTexture = null;
     [HideInInspector] public Texture3D usedRoomTexture;
     private byte[] roomTextureData;
-
+    
+    public void Init(Bounds goopBounds, GoopData goopData1)
+    {
+        roomBounds = goopBounds;
+        goopData = goopData1;
+        DestroyTexture();
+        ClearTextureData();
+        GenerateTexture();
+        SetUsedRoomTexture();
+        UpdateTexture();
+        SetGlobalShaderData();
+    }
+    
     private static Vector3 DivideV3(Vector3 a, Vector3 b) => new Vector3(a.x / b.x, a.y / b.y, a.z / b.z);
     private Vector3 GetRoomMin() => roomBounds.min + parent.transform.position;
     
@@ -192,12 +204,14 @@ public class GoopManager : MonoBehaviour
     {
         var perlinData = new float[height * width];
         var seed = UnityEngine.Random.Range(-100000, 100000);
+        var rOffsetX = UnityEngine.Random.Range(-width, width);
+        var rOffsetY = UnityEngine.Random.Range(-height, height);
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
             {
-                float nx = x * scale + seed;
-                float ny = y * scale + seed;
+                float nx = x * scale + seed + rOffsetX;
+                float ny = y * scale + seed + rOffsetY;
                 float v = Mathf.PerlinNoise(nx, ny);
                 perlinData[y * width + x] = v;
             }

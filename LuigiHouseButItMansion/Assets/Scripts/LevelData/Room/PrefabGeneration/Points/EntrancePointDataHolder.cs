@@ -28,4 +28,10 @@ public class EntrancePointDataHolder : PointDataHolder
         Mesh mesh = parent.entrancePrefab.GetComponent<RoomEntrance>().doorRenderObject.sharedMesh;
         Gizmos.DrawWireMesh(mesh, transform.position, interactableObjRotation * Quaternion.Euler(-90, 0, 0));
     }
+
+    public void CreateInstance(RoomObjectData roomObjectData, RoomPrefabGenerator parent, GameObject entrancePrefab)
+    {
+        var instance = Instantiate(entrancePrefab, parent.GetPositionFromPointData(this), interactableObjRotation);
+        instance.transform.SetParent(roomObjectData.transform);
+    }
 }

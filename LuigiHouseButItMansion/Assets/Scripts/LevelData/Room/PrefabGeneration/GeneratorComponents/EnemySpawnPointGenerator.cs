@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class EnemySpawnPointGenerator : BaseRoomGeneratorComponent
@@ -22,8 +23,20 @@ public class EnemySpawnPointGenerator : BaseRoomGeneratorComponent
         var enemySpawnManager = new GameObject("EnemySpawnManager").AddComponent<EnemySpawnManager>();
         enemySpawnManager.transform.SetParent(roomObjectData.transform);
 
-        // Define EnemyPool TODO
+        var pickedData = possibleEnemyPoolDatas[Random.Range(0, possibleEnemyPoolDatas.Count - 1)];
+        var enemyPool = pickedData.enemyReferences;
+
+        var possibleInteractionPoints = enemySpawnPoints.Cast<EnemySpawnPointDataHolder>().ToList();
+        var result = new List<EnemySpawnPointDataHolder>();
+        var amount = Random.Range(minMaxChosenFromList.x, minMaxChosenFromList.y);
+        for (int i = 0; i < amount; i++)
+        {
+            var index = Random.Range(0, possibleInteractionPoints.Count);
+            var point = possibleInteractionPoints[index];
+            result.Add(point);
+            possibleInteractionPoints.RemoveAt(index);
+        }
         
-        // enemySpawnManager.Init(roomObjectData, spawnCount, enemyPool); TODO
+        enemySpawnManager.Init(roomObjectData, Random.Range(pickedData.minMaxSpawnCount.x, pickedData.minMaxSpawnCount.y), enemyPool, result);
     }
 }

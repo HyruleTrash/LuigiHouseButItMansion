@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class BaseRoomGeneratorComponent : MonoBehaviour
 {
     protected RoomPrefabGenerator parent;
-    public Vector2Int minMaxInteractionPoints;
+    public Vector2Int minMaxChosenFromList;
     
     protected virtual void OnValidate()
     {

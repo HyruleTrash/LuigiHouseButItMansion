@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -10,7 +11,7 @@ public class RoomPrefabGenerator : MonoBehaviour
 {
     [Header("Room data")]
     public GameObject levelCollision;
-    public GoopData goopData;
+    public List<GoopData> goopData;
     public Bounds goopBounds;
     public RoomCameraConfig roomCameraConfigRef;
     public Vector3 cameraViewPoint;
@@ -47,44 +48,47 @@ public class RoomPrefabGenerator : MonoBehaviour
         {
             Debug.LogError("Cannot generate prefabs if levelCollision is null");
             return;
-        }
+        } // TODO add more validation, especially per generator component
 
         var roomObjectData = new GameObject(levelCollision.name).AddComponent<RoomObjectData>();
         var goopManager = roomObjectData.GetComponent<GoopManager>();
         Instantiate(levelCollision, roomObjectData.transform);
 
+        string prefabPath = GetPrefabPath(out string addition);
+        roomObjectData.name += addition;
+        
         roomGeneratorComponents.ForEach(x => x.Generate(roomObjectData));
 
-        // goopManager.Init(goopBounds, goopData); TODO
-        // roomObjectData.Init(roomCameraConfigRef, cameraViewPoint); TODO
+        roomObjectData.Init(roomCameraConfigRef, cameraViewPoint);
+        goopManager.Init(goopBounds, goopData[UnityEngine.Random.Range(0, goopData.Count)]);
 
-        // string prefabPath = GetPrefabPath();
+        PrefabUtility.SaveAsPrefabAsset(roomObjectData.gameObject, Path.Combine(prefabPath, $"{roomObjectData.name}.prefab"));
+        DestroyImmediate(roomObjectData.gameObject);
     }
 
-    private string GetPrefabPath()
+    private string GetPrefabPath(out string addition)
     {
         string basePath = "Assets/Resources/Rooms";
         string roomName = levelCollision.name;
 
         bool TryString(string bP, string rN, out string fP)
         {
-            fP = $"{basePath}/{roomName}";
+            fP = $"{bP}/{rN}";
             var folderExists = AssetDatabase.IsValidFolder(fP);
             if (folderExists) return false;
             
-            AssetDatabase.CreateFolder(basePath, roomName);
+            AssetDatabase.CreateFolder(bP, rN);
             return true;
         }
-        
-        if (TryString(basePath, roomName, out string prefabPath))
-            return prefabPath;
 
-        int counter = 0;
+        int counter = -1;
         while (true)
         {
             counter++;
-            string toAdd = $"({counter})";
-            if (TryString(basePath, roomName+toAdd, out string pP))
+            addition = $"({counter})";
+            if (counter == 0)
+                addition = "";
+            if (TryString(basePath, roomName+addition, out string pP))
                 return pP;
         }
     }

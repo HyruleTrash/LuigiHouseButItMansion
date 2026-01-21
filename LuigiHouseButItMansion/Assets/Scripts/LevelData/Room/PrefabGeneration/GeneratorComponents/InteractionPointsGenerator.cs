@@ -24,16 +24,16 @@ public class InteractionPointsGenerator : BaseRoomGeneratorComponent
         
         var possibleInteractionPoints = interactionPoints.Cast<InteractionPointDataHolder>().ToList();
         var result = new List<InteractionPointDataHolder>();
-        int amount = UnityEngine.Random.Range(minMaxInteractionPoints.x, minMaxInteractionPoints.y);
+        int amount = UnityEngine.Random.Range(minMaxChosenFromList.x, minMaxChosenFromList.y);
         for (int i = 0; i < amount; i++)
         {
             int index = UnityEngine.Random.Range(0, possibleInteractionPoints.Count);
             InteractionPointDataHolder point = possibleInteractionPoints[index];
-            result.Add(point);
+            result.Add(Instantiate(point, roomObjectData.transform));
             possibleInteractionPoints.RemoveAt(index);
         }
 
-        // interactableObjectsManager.Init(result); TODO
+        interactableObjectsManager.Init(roomObjectData, result);
     }
 
     public override List<PointDataHolder> GetList() => interactionPoints;

@@ -8,6 +8,14 @@ public class InteractableObjectsManager : MonoBehaviour
     [SerializeField]
     private RoomObjectData parentRoom;
     private List<InteractableObject> interactables = new();
+    [SerializeField] private List<InteractionPointDataHolder> possibleInteractables;
+
+    public void Init(RoomObjectData roomObjectData, List<InteractionPointDataHolder> result)
+    {
+        possibleInteractables = result;
+        parentRoom = roomObjectData;
+        roomObjectData.interactableObjectsManager = this;
+    }
 
     private void Start()
     {

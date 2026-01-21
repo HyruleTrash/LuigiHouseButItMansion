@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(BaseRoomGeneratorComponent))]
+[CustomEditor(typeof(BaseRoomGeneratorComponent), true), CanEditMultipleObjects]
 public class BaseRoomGeneratorComponentEditor : Editor
 {
     public override void OnInspectorGUI()

@@ -918,7 +918,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   levelCollision: {fileID: 4942486397594380773}
-  goopData: {fileID: 0}
+  goopData:
+  - {fileID: 11400000, guid: 64a4ea66badb24640873882f66f38ce5, type: 2}
+  - {fileID: 11400000, guid: 62c272b6fab5163479eab6964ff8565a, type: 2}
   goopBounds:
     m_Center: {x: 0, y: 2, z: 0}
     m_Extent: {x: 8.34, y: 3.75, z: 12.16}
@@ -940,7 +942,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7937e896d63559646bb542e5ae42dcac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractionPointsGenerator
-  minMaxInteractionPoints: {x: 0, y: 0}
+  minMaxChosenFromList: {x: 3, y: 5}
   interactionPoints:
   - {fileID: 3050200372763003329}
   - {fileID: 3205449838006812160}
@@ -960,7 +962,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a45b149685c42979d61e1d8d8954633, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EntrancePointsGenerator
-  minMaxInteractionPoints: {x: 0, y: 0}
+  minMaxChosenFromList: {x: 2, y: 3}
   entrancePoints:
   - {fileID: 5743904084240264443}
   - {fileID: 9100035564313835829}
@@ -979,7 +981,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fe0f6232178470b9527f94e5758f259, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPointGenerator
-  minMaxInteractionPoints: {x: 0, y: 0}
+  minMaxChosenFromList: {x: 3, y: 6}
   enemySpawnPoints:
   - {fileID: 2212838883557626357}
   - {fileID: 2692901606441324904}

@@ -20,7 +20,13 @@ public class RoomObjectData : MonoBehaviour
     public Action onReadyRoom;
     public InteractableObjectsManager interactableObjectsManager;
     public GoopManager goopManager;
-
+    
+    public void Init(RoomCameraConfig roomCameraConfigRef, Vector3 camSetViewDir)
+    {
+        cameraConfig = Instantiate(roomCameraConfigRef, transform);
+        cameraViewPoint = camSetViewDir;
+    }
+    
     private void Start()
     {
         OnCurrentRoomChange = null;
