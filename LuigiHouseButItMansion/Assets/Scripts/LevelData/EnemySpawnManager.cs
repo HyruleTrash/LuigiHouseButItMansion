@@ -63,6 +63,11 @@ public class EnemySpawnManager : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        parentRoom.onReadyRoom -= Spawn;
+    }
+
     private void Spawn()
     {
         if (!enabled || spawnCount <= 0)

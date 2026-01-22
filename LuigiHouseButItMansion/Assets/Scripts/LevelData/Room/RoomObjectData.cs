@@ -7,6 +7,7 @@ using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(GoopManager))]
 public class RoomObjectData : MonoBehaviour
@@ -14,7 +15,8 @@ public class RoomObjectData : MonoBehaviour
     public static Action<RoomObjectData> OnCurrentRoomChange;
 
     public bool firstRoom = false;
-    private List<RoomEntrance> entrances;
+    [SerializeField]
+    private List<RoomEntrance> entrances = new();
     public Vector3 cameraViewPoint;
     public RoomCameraConfig cameraConfig;
     public Action onReadyRoom;
@@ -75,17 +77,15 @@ public class RoomObjectData : MonoBehaviour
         OnCurrentRoomChange?.Invoke(newRoom);
     }
 
-    public void AddEntrance(RoomEntrance entrance)
-    {
-        entrances ??= new List<RoomEntrance>();
-        entrances.Add(entrance);
-        entrance.UnLock();
-    }
+    public void AddEntrance(RoomEntrance entrance) => entrances.Add(entrance);
+    public void RemoveEntrance(RoomEntrance roomEntrance) => entrances?.Remove(roomEntrance);
+
+    public List<RoomEntrance> GetEntrances() => entrances?.ToList();
 
     public void ReadyRoom()
     {
-        goopManager.SetUsedRoomTexture();
-        goopManager.SetGlobalShaderData();
+        gameObject.SetActive(true);
+        goopManager.SetToCurrent();
         
         foreach (var entrance in entrances)
         {
@@ -103,6 +103,8 @@ public class RoomObjectData : MonoBehaviour
         {
             entrance.enabled = false;
         }
+        
+        gameObject.SetActive(false);
     }
 
     public void LockDoors()
@@ -121,14 +123,50 @@ public class RoomObjectData : MonoBehaviour
         }
     }
 
-    public void TurnToInstance()
+    public void TurnToInstance(LevelGenerator levelGenerator)
     {
-        goopManager.SetToCurrent();
         interactableObjectsManager.PickInteractables();
 
-        if (!firstRoom)
+        if (firstRoom)
         {
-            // spawn enemies
+            var spawner = GetComponentInChildren<EnemySpawnManager>();
+            if (spawner)
+                Destroy(spawner.gameObject);
         }
+        
+        // check how many not used entrances still exist
+        var canBeRemoved = levelGenerator.unUsedEntrances.CheckIfBacklogExists(entrances);
+        if (canBeRemoved.Count != 0)
+        {
+            var amount = Random.Range(0, canBeRemoved.Count);
+            for (var i = 0; i < amount; i++)
+            {
+                var index = Random.Range(0, canBeRemoved.Count);
+                var instance = entrances.Find(x => x == canBeRemoved[index]);
+                Destroy(instance.gameObject);
+                entrances.Remove(instance);
+            }
+        }
+        levelGenerator.unUsedEntrances.AddRange(entrances);
+
+        foreach (var entrance in entrances)
+        {
+            entrance.levelGeneratorRef = levelGenerator;
+        }
+        
+        ReadyRoom();
+    }
+
+    public RoomEntrance GetEntranceToUse(LevelGenerator levelGenerator, RoomEntrance otherEntranceToConnect, Vector3 dir)
+    {
+        foreach (var entrance in entrances)
+        {
+            var foundDir = entrance.transform.forward;
+            if (foundDir != dir) continue;
+            levelGenerator.unUsedEntrances.Remove(entrance);
+            entrance.otherRoomEntrance = otherEntranceToConnect;
+            return entrance;
+        }
+        return null;
     }
 }

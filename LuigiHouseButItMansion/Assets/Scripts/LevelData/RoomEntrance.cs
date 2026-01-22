@@ -7,6 +7,7 @@ using UnityEngine;
 public class RoomEntrance : MonoBehaviour
 {
     public RoomEntrance otherRoomEntrance;
+    [SerializeField]
     private RoomObjectData parentRoom;
     public Collider entranceTrigger;
     private Timer disableTimer;
@@ -19,18 +20,18 @@ public class RoomEntrance : MonoBehaviour
 #if UNITY_EDITOR
     public MeshFilter doorRenderObject;
 #endif
+    public LevelGenerator levelGeneratorRef;
     
+    public void Init(RoomObjectData roomObjectData)
+    {
+        parentRoom = roomObjectData;
+        parentRoom.AddEntrance(this);
+    }
+
+    private void OnDestroy() => parentRoom.RemoveEntrance(this);
+
     private void Awake()
     {
-        parentRoom = transform.parent.GetComponent<RoomObjectData>();
-        if (parentRoom == null)
-        {
-            enabled = false;
-            return;
-        }
-        
-        parentRoom.AddEntrance(this);
-
         if (otherRoomEntrance == null)
             enabled = false;
 
@@ -38,6 +39,8 @@ public class RoomEntrance : MonoBehaviour
         entranceTrigger = GetComponent<Collider>();
         entranceTrigger.isTrigger = true;
     }
+
+    private void Start() => UnLock();
 
     private void OnTriggerEnter(Collider other)
     {
@@ -47,6 +50,9 @@ public class RoomEntrance : MonoBehaviour
         {
             var dataRef = other.GetComponent<ComponentReference>();
             if (dataRef == null) return;
+
+            if (otherRoomEntrance == null)
+                otherRoomEntrance = levelGeneratorRef.GetConnectedRoom(this);
             
             otherRoomEntrance.DisableTriggerTimed();
             otherRoomEntrance.SpawnPlayer(dataRef.GetReference<PlayerData>());

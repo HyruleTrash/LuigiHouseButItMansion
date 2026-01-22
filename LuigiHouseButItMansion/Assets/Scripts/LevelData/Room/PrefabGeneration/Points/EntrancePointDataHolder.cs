@@ -31,6 +31,7 @@ public class EntrancePointDataHolder : PointDataHolder
 
     public void CreateInstance(RoomObjectData roomObjectData, RoomPrefabGenerator parent, GameObject entrancePrefab)
     {
-        Instantiate(entrancePrefab, parent.GetPositionFromPointData(this), interactableObjRotation, roomObjectData.transform);
+        var instance = Instantiate(entrancePrefab, parent.GetPositionFromPointData(this), interactableObjRotation, roomObjectData.transform);
+        instance.GetComponent<RoomEntrance>().Init(roomObjectData);
     }
 }
