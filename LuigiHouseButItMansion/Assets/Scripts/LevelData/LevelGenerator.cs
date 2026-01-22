@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.AI.Navigation;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class LevelGenerator : MonoBehaviour
 {
+    [SerializeField]
+    private GameObject navMeshSurface;
     public UnUsedEntranceList unUsedEntrances = new();
     public List<GameObject> possibleRooms = new();
     [HideInInspector]
@@ -40,11 +44,22 @@ public class LevelGenerator : MonoBehaviour
 
     private RoomObjectData CreateRoom(GameObject prefab, bool isFirst = false)
     {
+        if (prefab == null) return null;
         var instance = Instantiate(prefab, transform.position, transform.rotation);
         var roomObj = instance.GetComponent<RoomObjectData>();
         roomObj.firstRoom = isFirst;
         roomObj.TurnToInstance(this);
+        
+        foreach (var surface in navMeshSurface.GetComponents<NavMeshSurface>())
+            StartCoroutine(BuildNextFrame(surface));
+        
         return roomObj;
+    }
+
+    IEnumerator BuildNextFrame(NavMeshSurface surface)
+    {
+        yield return null;
+        surface.BuildNavMesh();
     }
 
     public RoomEntrance GetConnectedRoom(RoomEntrance roomEntrance)

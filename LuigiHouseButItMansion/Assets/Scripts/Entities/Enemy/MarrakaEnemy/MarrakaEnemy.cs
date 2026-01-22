@@ -107,6 +107,9 @@ public class MarrakaEnemy : BaseEnemy
     private void TriggerHideMechanic(EnemySpawnManager spawner)
     {
         var interactableObjectsManager = spawner.parentRoom.interactableObjectsManager;
+        
+        Debug.Log(interactableObjectsManager);
+        
         if (interactableObjectsManager == null)
         {
             OnDeath(Instance);
