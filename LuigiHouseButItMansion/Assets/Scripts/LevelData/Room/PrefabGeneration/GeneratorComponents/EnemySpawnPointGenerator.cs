@@ -18,6 +18,8 @@ public class EnemySpawnPointGenerator : BaseRoomGeneratorComponent
         }
     }
 
+    public override bool CanGenerate() => enemySpawnPoints.Count != 0 && possibleEnemyPoolDatas != null;
+
     public override void Generate(RoomObjectData roomObjectData)
     {
         var enemySpawnManager = new GameObject("EnemySpawnManager").AddComponent<EnemySpawnManager>();
@@ -29,7 +31,7 @@ public class EnemySpawnPointGenerator : BaseRoomGeneratorComponent
         var possibleInteractionPoints = enemySpawnPoints.Cast<EnemySpawnPointDataHolder>().ToList();
         var result = new List<EnemySpawnPointDataHolder>();
         var amount = Random.Range(minMaxChosenFromList.x, minMaxChosenFromList.y);
-        for (int i = 0; i < amount; i++)
+        for (var i = 0; i < amount; i++)
         {
             var index = Random.Range(0, possibleInteractionPoints.Count);
             var point = possibleInteractionPoints[index];

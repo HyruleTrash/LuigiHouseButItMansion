@@ -5,6 +5,7 @@ using UnityEngine.Events;
 
 public class InteractableObject : MonoBehaviour
 {
+    public bool isWallMounted = false;
     public Bounds bounds;
     [SerializeField]
     private Vector3 spawnPoint;
@@ -17,7 +18,7 @@ public class InteractableObject : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireCube(bounds.center + transform.position, bounds.size);
+        Gizmos.DrawWireCube(GetBoundsCenter(), bounds.size);
         Gizmos.color = Color.blue;
         Gizmos.DrawSphere(GetSpawnPoint(), 0.1f);
     }
@@ -44,10 +45,12 @@ public class InteractableObject : MonoBehaviour
     public bool CheckIntersection(Bounds other, Vector3 offset)
     {
         var otherBounds = new Bounds(other.center + offset, other.size);
-        var selfBounds = new Bounds(bounds.center + transform.position, bounds.size);
+        var selfBounds = new Bounds(GetBoundsCenter(), bounds.size);
         var result = BoxesOverlap(selfBounds, otherBounds);
         return result;
     }
+    
+    private Vector3 GetBoundsCenter() => transform.rotation * bounds.center + transform.position;
     
     private bool BoxesOverlap(Bounds a, Bounds b)
     {

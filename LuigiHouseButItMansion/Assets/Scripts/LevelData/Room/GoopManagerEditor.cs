@@ -41,10 +41,8 @@ public class GoopManagerEditor : Editor
             {
                 foreach (var t in targetObjects)
                 {
-                    GoopManager targetedManager = (GoopManager)t;
-                    targetedManager.DestroyTexture();
-                    targetedManager.ClearTextureData();
-                    targetedManager.GenerateTexture();
+                    var targetedManager = (GoopManager)t;
+                    targetedManager.Regenerate();
                 }
             }
     
@@ -52,32 +50,20 @@ public class GoopManagerEditor : Editor
             {
                 foreach (var t in targetObjects)
                 {
-                    GoopManager targetedManager = (GoopManager)t;
-                    targetedManager.SetUsedRoomTexture();
-                    targetedManager.UpdateTexture();
-                    targetedManager.SetGlobalShaderData();
+                    var targetedManager = (GoopManager)t;
+                    targetedManager.SetToCurrent();
                 }
             } 
             return;
         }
         
-        GoopManager manager = (GoopManager)serializedObject.targetObject;
+        var manager = (GoopManager)serializedObject.targetObject;
         if (!manager.enabled)
             return;
         
-        if (GUILayout.Button("Regenerate Texture"))
-        {
-            manager.DestroyTexture();
-            manager.ClearTextureData();
-            manager.GenerateTexture();
-        }
+        if (GUILayout.Button("Regenerate Texture")) manager.Regenerate();
         
-        if (GUILayout.Button("Set to current"))
-        {
-            manager.SetUsedRoomTexture();
-            manager.UpdateTexture();
-            manager.SetGlobalShaderData();
-        }
+        if (GUILayout.Button("Set to current")) manager.SetToCurrent();
     }
     
     public override void OnPreviewGUI(Rect r, GUIStyle background)

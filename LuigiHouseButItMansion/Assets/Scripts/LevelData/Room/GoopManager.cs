@@ -34,12 +34,8 @@ public class GoopManager : MonoBehaviour
     {
         roomBounds = goopBounds;
         goopData = goopData1;
-        DestroyTexture();
-        ClearTextureData();
-        GenerateTexture();
-        SetUsedRoomTexture();
-        UpdateTexture();
-        SetGlobalShaderData();
+        Regenerate();
+        SetToCurrent();
     }
     
     private static Vector3 DivideV3(Vector3 a, Vector3 b) => new Vector3(a.x / b.x, a.y / b.y, a.z / b.z);
@@ -371,4 +367,18 @@ public class GoopManager : MonoBehaviour
         Gizmos.DrawWireCube(roomBounds.center + parent.transform.position, roomBounds.size);
     }
     #endif
+    
+    public void Regenerate()
+    {
+        DestroyTexture();
+        ClearTextureData();
+        GenerateTexture();
+    }
+
+    public void SetToCurrent()
+    {
+        SetUsedRoomTexture();
+        UpdateTexture();
+        SetGlobalShaderData();
+    }
 }

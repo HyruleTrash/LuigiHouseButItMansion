@@ -7,6 +7,7 @@ using Random = UnityEngine.Random;
 
 public class InteractionPointDataHolder : PointDataHolder
 {
+    public Vector3 wallMountedPosition;
     public PossibleInteractableList possibleInteractables;
     private Timer visualCycleTimer;
     private int usedVisualCycleIndex = 0;
@@ -55,6 +56,7 @@ public class InteractionPointDataHolder : PointDataHolder
         if (parentGenerator == null || possibleInteractables == null || possibleInteractables.prefabs.Count == 0)
             return;
         Gizmos.color = GetColor();
+        Gizmos.DrawSphere(transform.position + wallMountedPosition, 0.1f);
 
         if (Selection.activeGameObject == gameObject && justSelected)
         {
@@ -79,9 +81,26 @@ public class InteractionPointDataHolder : PointDataHolder
         if (usedVisualCycleIndex >= possibleInteractables.prefabs.Count || usedVisualCycleIndex < 0)
             return;
         GameObject foundObj = possibleInteractables.prefabs[usedVisualCycleIndex];
-        Mesh mesh = foundObj.GetComponent<InteractableObject>().objectRepresentation.sharedMesh;
+        var interactable = foundObj.GetComponent<InteractableObject>();
+        Mesh mesh = interactable.objectRepresentation.sharedMesh;
         if (mesh == null)
             return;
-        Gizmos.DrawWireMesh(mesh, transform.position, interactableObjRotation * foundObj.transform.localRotation, foundObj.transform.localScale);
+        var pos = transform.position;
+        if (interactable.isWallMounted)
+            pos += wallMountedPosition;
+        Gizmos.DrawWireMesh(mesh, pos, interactableObjRotation * foundObj.transform.localRotation, foundObj.transform.localScale);
+    }
+
+    public GameObject GetInteractable()
+    {
+        return possibleInteractables.prefabs[Random.Range(0, possibleInteractables.prefabs.Count)];
+    }
+
+    public GameObject InstantiatePrefab(GameObject prefab, Transform parent)
+    {
+        var pos = transform.position;
+        if (prefab.GetComponent<InteractableObject>().isWallMounted)
+            pos += wallMountedPosition;
+        return Instantiate(prefab, pos, interactableObjRotation, parent);
     }
 }

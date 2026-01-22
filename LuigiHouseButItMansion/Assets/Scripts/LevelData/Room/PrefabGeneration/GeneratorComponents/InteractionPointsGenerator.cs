@@ -17,6 +17,8 @@ public class InteractionPointsGenerator : BaseRoomGeneratorComponent
         }
     }
     
+    public override bool CanGenerate() => interactionPoints.Count != 0;
+    
     public override void Generate(RoomObjectData roomObjectData)
     {
         var interactableObjectsManager = new GameObject("InteractablesManager").AddComponent<InteractableObjectsManager>();

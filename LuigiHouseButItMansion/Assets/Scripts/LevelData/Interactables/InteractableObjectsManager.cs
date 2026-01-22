@@ -56,4 +56,18 @@ public class InteractableObjectsManager : MonoBehaviour
         
         return interactables[index];
     }
+
+    public void PickInteractables()
+    {
+        foreach (var possibleInteractable in possibleInteractables)
+        {
+            GameObject prefab = possibleInteractable.GetInteractable();
+            possibleInteractable.InstantiatePrefab(prefab, transform);
+            Destroy(possibleInteractable.gameObject);
+        }
+        
+        // cleanup
+        foreach (var possibleInteractable in possibleInteractables) Destroy(possibleInteractable);
+        possibleInteractables.Clear();
+    }
 }

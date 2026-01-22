@@ -120,4 +120,15 @@ public class RoomObjectData : MonoBehaviour
             entrance.UnLock();
         }
     }
+
+    public void TurnToInstance()
+    {
+        goopManager.SetToCurrent();
+        interactableObjectsManager.PickInteractables();
+
+        if (!firstRoom)
+        {
+            // spawn enemies
+        }
+    }
 }

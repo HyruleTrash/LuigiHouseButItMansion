@@ -21,6 +21,7 @@ public abstract class BaseRoomGeneratorComponent : MonoBehaviour
 
     public abstract List<PointDataHolder> GetList();
     public abstract void UpdateList();
+    public abstract bool CanGenerate();
     public abstract void Generate(RoomObjectData roomObjectData);
 
     private void OnDestroy()

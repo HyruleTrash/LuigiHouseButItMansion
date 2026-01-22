@@ -17,6 +17,8 @@ public class EntrancePointsGenerator : BaseRoomGeneratorComponent
             entrancePoints.Add(data);
         }
     }
+    
+    public override bool CanGenerate() => entrancePoints.Count != 0 && entrancePrefab  != null;
 
     public override void Generate(RoomObjectData roomObjectData)
     {

@@ -42,13 +42,13 @@ public class RoomPrefabGenerator : MonoBehaviour
         Gizmos.DrawLine(startPosition + offset, startPosition + endPosition + offset);
     }
 
+    private bool CanGenerate() => levelCollision != null && roomCameraConfigRef != null &&
+                                  cameraViewPoint != Vector3.zero && goopData.Count != 0;
+
     public void SaveAndGenerateAsPrefab()
     {
-        if (levelCollision == null)
-        {
-            Debug.LogError("Cannot generate prefabs if levelCollision is null");
+        if (!CanGenerate())
             return;
-        } // TODO add more validation, especially per generator component
 
         var roomObjectData = new GameObject(levelCollision.name).AddComponent<RoomObjectData>();
         var goopManager = roomObjectData.GetComponent<GoopManager>();
@@ -57,7 +57,11 @@ public class RoomPrefabGenerator : MonoBehaviour
         string prefabPath = GetPrefabPath(out string addition);
         roomObjectData.name += addition;
         
-        roomGeneratorComponents.ForEach(x => x.Generate(roomObjectData));
+        roomGeneratorComponents.ForEach(x =>
+        {
+            if (x.CanGenerate())
+                x.Generate(roomObjectData);
+        });
 
         roomObjectData.Init(roomCameraConfigRef, cameraViewPoint);
         goopManager.Init(goopBounds, goopData[UnityEngine.Random.Range(0, goopData.Count)]);

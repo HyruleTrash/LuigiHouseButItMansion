@@ -316,6 +316,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b1805c90116485fbb25f77f211a7e62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableObject
+  isWallMounted: 0
   bounds:
     m_Center: {x: 0, y: 0.91, z: 0}
     m_Extent: {x: 1.26, y: 0.72, z: 0.84}
@@ -463,8 +464,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5146423468888963854}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.066}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -472,7 +473,7 @@ Transform:
   - {fileID: 2685958349237415746}
   - {fileID: 4466522400523031727}
   m_Father: {fileID: 3790686955782685868}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!65 &2566866389378334920
 BoxCollider:
   m_ObjectHideFlags: 0
