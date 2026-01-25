@@ -1,13 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class EntrancePointsGenerator : BaseRoomGeneratorComponent
 {
     public List<PointDataHolder> entrancePoints = new();
     public GameObject entrancePrefab;
-    
-    public override List<PointDataHolder> GetList() => entrancePoints;
+
+    protected override List<PointDataHolder> GetList() => entrancePoints;
+    protected override Type GetGenType() => typeof(EntrancePointDataHolder);
 
     public override void UpdateList()
     {

@@ -1,13 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class EnemySpawnPointGenerator : BaseRoomGeneratorComponent
 {
     public List<PointDataHolder> enemySpawnPoints = new();
     public List<PossibleEnemyPoolData> possibleEnemyPoolDatas = new();
 
-    public override List<PointDataHolder> GetList() => enemySpawnPoints;
+    protected override List<PointDataHolder> GetList() => enemySpawnPoints;
+    protected override Type GetGenType() => typeof(EnemySpawnPointDataHolder);
 
     public override void UpdateList()
     {
@@ -19,7 +22,6 @@ public class EnemySpawnPointGenerator : BaseRoomGeneratorComponent
     }
 
     public override bool CanGenerate() => enemySpawnPoints.Count != 0 && possibleEnemyPoolDatas != null;
-
     public override void Generate(RoomObjectData roomObjectData)
     {
         var enemySpawnManager = new GameObject("EnemySpawnManager").AddComponent<EnemySpawnManager>();

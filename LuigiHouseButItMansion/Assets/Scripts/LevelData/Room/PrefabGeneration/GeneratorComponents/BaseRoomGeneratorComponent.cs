@@ -6,6 +6,8 @@ public abstract class BaseRoomGeneratorComponent : MonoBehaviour
 {
     protected RoomPrefabGenerator parent;
     public Vector2Int minMaxChosenFromList;
+    protected abstract List<PointDataHolder> GetList();
+    protected abstract Type GetGenType();
     
     protected virtual void OnValidate()
     {
@@ -19,7 +21,6 @@ public abstract class BaseRoomGeneratorComponent : MonoBehaviour
     
     private void OnDrawGizmos() => DrawPositions(GetList());
 
-    public abstract List<PointDataHolder> GetList();
     public abstract void UpdateList();
     public abstract bool CanGenerate();
     public abstract void Generate(RoomObjectData roomObjectData);
@@ -31,20 +32,20 @@ public abstract class BaseRoomGeneratorComponent : MonoBehaviour
         if (parent.roomGeneratorComponents.Contains(this))
             parent.roomGeneratorComponents.Remove(this);
     }
-    
-    public void TurnNullIntoChild<T>(List<T> list) where T : PointDataHolder
+
+    private void TurnNullIntoChild(List<PointDataHolder> list)
     {
         for (var i = 0; i < list.Count; i++)
         {
             if (list[i] != null)
                 continue;
-            var obj = new GameObject(typeof(T).Name);
+            var obj = new GameObject(GetGenType().Name);
             obj.transform.SetParent(parent.transform);
-            list[i] = obj.AddComponent<T>();
+            list[i] = (PointDataHolder)obj.AddComponent(GetGenType());
         }
     }
-    
-    public void DrawPositions<T>(List<T> list) where T : PointDataHolder
+
+    private void DrawPositions<T>(List<T> list) where T : PointDataHolder
     {
         foreach (var point in list)
         {

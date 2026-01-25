@@ -8,6 +8,9 @@ public class InteractionPointsGenerator : BaseRoomGeneratorComponent
 {
     public List<PointDataHolder> interactionPoints = new();
     
+    protected override List<PointDataHolder> GetList() => interactionPoints;
+    protected override Type GetGenType() => typeof(InteractionPointDataHolder);
+    
     public override void UpdateList()
     {
         interactionPoints.Clear();
@@ -37,6 +40,4 @@ public class InteractionPointsGenerator : BaseRoomGeneratorComponent
 
         interactableObjectsManager.Init(roomObjectData, result);
     }
-
-    public override List<PointDataHolder> GetList() => interactionPoints;
 }
