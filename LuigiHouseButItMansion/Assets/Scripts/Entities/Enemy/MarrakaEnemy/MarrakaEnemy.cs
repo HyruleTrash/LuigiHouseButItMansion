@@ -108,8 +108,6 @@ public class MarrakaEnemy : BaseEnemy
     {
         var interactableObjectsManager = spawner.parentRoom.interactableObjectsManager;
         
-        Debug.Log(interactableObjectsManager);
-        
         if (interactableObjectsManager == null)
         {
             OnDeath(Instance);

@@ -54,6 +54,8 @@ public class RoomEntrance : MonoBehaviour
             if (otherRoomEntrance == null)
                 otherRoomEntrance = levelGeneratorRef.GetConnectedRoom(this);
             
+            if (otherRoomEntrance == null)
+                return;
             otherRoomEntrance.DisableTriggerTimed();
             otherRoomEntrance.SpawnPlayer(dataRef.GetReference<PlayerData>());
         }
