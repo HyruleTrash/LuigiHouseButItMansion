@@ -13,6 +13,8 @@ public class PlayerShoot : ShootHandler
     private InputAction aimAction;
     private InputAction shootAction;
     private bool isTryingToShoot;
+    private bool wasTryingToShoot;
+    private Vector3? lastLookDirection;
 
     private void OnEnable()
     {
@@ -30,15 +32,18 @@ public class PlayerShoot : ShootHandler
         base.Update();
         isTryingToShoot = Mathf.Approximately(shootAction.ReadValue<float>(), 1f);
         if (isTryingToShoot)
+        {
             TryShoot();
+            wasTryingToShoot = true;
+        }
+        else if (wasTryingToShoot) // mouseUp
+            lastLookDirection = null;
     }
 
     private Vector3 CalculateShootDirectionMouse()
     {
-        if (!Physics.Raycast(MouseRayGetter.instance.GetMouseRay(), out var hit, Mathf.Infinity, layerMask))
-            return transform.forward;
-        var shootPos = GetShootPosition();
-        return (hit.point - shootPos).normalized;
+        MouseRayGetter.instance.GetRelevantHitBasedOnLastDirection(ref lastLookDirection, GetShootPosition(), layerMask, out _);
+        return lastLookDirection ?? transform.forward;
     }
 
     protected override Vector3 GetShotDirection()

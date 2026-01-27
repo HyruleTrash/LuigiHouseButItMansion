@@ -9,6 +9,8 @@ public class PlayerLookAt : MonoBehaviour
     [SerializeField]
     private LayerMask layerMask;
     private Rigidbody rb;
+    private Vector3? lastLookDirection;
+    private bool wasMouseActive;
 
     private void Start()
     {
@@ -21,19 +23,31 @@ public class PlayerLookAt : MonoBehaviour
     private Vector3 lookAtPoint;
     private void Update()
     {
-        var mouseRay = MouseRayGetter.instance.GetMouseRay();
-        if (Physics.Raycast(mouseRay, out var hit, Mathf.Infinity, layerMask))
+        void SetLookAt(Vector3 point)
         {
-            hitPoint = hit.point;
+            hitPoint = point;
             lookAtPoint = new Vector3(hitPoint.x, rb.transform.position.y, hitPoint.z);
             rb.transform.LookAt(lookAtPoint);
         }
+        
+        Vector2 mouseDelta = Mouse.current.delta.ReadValue();
+        float movementAmount = mouseDelta.magnitude;
+        bool mouseActive = movementAmount >= MouseRayGetter.instance.minMouseActivity;
+        if (mouseActive && !wasMouseActive)
+            lastLookDirection = null;
+        wasMouseActive = mouseActive;
+        
+        var mouseRay = MouseRayGetter.instance.GetMouseRay();
+        var temp = MouseRayGetter.instance.GetRelevantHitBasedOnLastDirection(ref lastLookDirection, rb.position, layerMask, out var wasSizeZero);
+        if (temp != null)
+            SetLookAt(temp.Value.point);
+        else if (!wasSizeZero)
+            SetLookAt(hitPoint);
         else
         {
             if (!Physics.Raycast(rb.position, -Vector3.up, out var groundHit, Mathf.Infinity, layerMask)) return;
-            if (!IntersectY(mouseRay.origin, mouseRay.direction, groundHit.point.y, out hitPoint, out _)) return;
-            lookAtPoint = new Vector3(hitPoint.x, rb.transform.position.y, hitPoint.z);
-            rb.transform.LookAt(lookAtPoint);
+            if (!IntersectY(mouseRay.origin, mouseRay.direction, groundHit.point.y, out var foundHitPoint, out _)) return;
+            SetLookAt(foundHitPoint);
         }
     }
     
