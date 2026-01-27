@@ -12,10 +12,9 @@ public class LiquidTrajectoryGetter
     
     private Spline spline;
     private GameObject splineObject;
-    private GameObject meshObject;
-    private MeshCollider meshCollider;
+    private GameObject collisionObj;
+    private SphereCollider sphereCollider;
     
-    private Mesh mesh;
     private LayerMask layerMask;
     
     public struct SplineCollision
@@ -28,33 +27,29 @@ public class LiquidTrajectoryGetter
         public Collider collidedWith;
     }
 
-    public LiquidTrajectoryGetter(Mesh mesh, GameObject parent, Vector3 scale, LayerMask layerMask)
+    public LiquidTrajectoryGetter(float radius, GameObject parent, LayerMask layerMask)
     {
-        this.mesh = mesh;
         this.layerMask = layerMask;
         this.parent = parent;
 
-        splineObject = new GameObject($"{typeof(LiquidTrajectoryGetter)}_{mesh.name}", typeof(Spline));
-        meshObject = new GameObject($"{typeof(LiquidTrajectoryGetter)}_{mesh.name}_Mesh", typeof(MeshCollider));
-        meshObject.transform.SetParent(splineObject.transform);
+        splineObject = new GameObject($"{typeof(LiquidTrajectoryGetter)}", typeof(Spline));
+        collisionObj = new GameObject($"{typeof(LiquidTrajectoryGetter)}_collisionChecker", typeof(SphereCollider));
+        collisionObj.transform.SetParent(splineObject.transform);
         
         splineObject.layer = LayerMask.NameToLayer("Projectile");
-        meshObject.layer = splineObject.layer;
+        collisionObj.layer = splineObject.layer;
         
         spline = splineObject.GetComponent<Spline>();
         
-        meshCollider = meshObject.GetComponent<MeshCollider>();
-        meshCollider.convex = true;
-        meshCollider.isTrigger = true;
-        meshCollider.sharedMesh = mesh;
-        
-        meshObject.transform.localScale = scale;
+        sphereCollider = collisionObj.GetComponent<SphereCollider>();
+        sphereCollider.radius = radius;
+        sphereCollider.isTrigger = true;
     }
 
     /// <summary>
     /// Returns collision data and the calculated spline trajectory, this spline's data needs to be copied not used directly
     /// </summary>
-    /// <param name="onEnd">function thats called to handle the found data</param>
+    /// <param name="onEnd">function that's called to handle the found data</param>
     public void GetTrajectory(Vector3 shotStartPosition, Vector3 direction, float strength, Action<SplineCollision, Spline> onEnd)
     {
         splineObject.transform.position = parent.transform.position;
@@ -105,9 +100,11 @@ public class LiquidTrajectoryGetter
 
     private SplineCollision CheckCollisionAllongSpline()
     {
-        var stepSize = mesh.bounds.extents.magnitude / 4;
-        var halfExtents = mesh.bounds.extents / 2;
-        meshCollider.enabled = true;
+        var stepSize = Mathf.Max(
+            sphereCollider.radius,
+            0.01f
+        );
+        sphereCollider.enabled = true;
 
         Vector3 highestPoint = GetHighestPointInSpline(stepSize);
 
@@ -116,7 +113,11 @@ public class LiquidTrajectoryGetter
             var curve = spline.GetSampleAtDistance(i);
             var checkOriginPos = curve.location + splineObject.transform.position;
 
-            Collider[] colliders = Physics.OverlapBox(checkOriginPos, halfExtents);
+            Collider[] colliders = Physics.OverlapSphere(
+                checkOriginPos,
+                sphereCollider.radius,
+                layerMask
+            );
             if (colliders.Length <= 0) continue;
             
             foreach (var collision in colliders)
@@ -125,20 +126,20 @@ public class LiquidTrajectoryGetter
                 if ((layerMask & (1 << collision.gameObject.layer)) == 0) continue; 
                 // Inside bounds and layer
 
-                meshObject.transform.position = checkOriginPos;
+                collisionObj.transform.position = checkOriginPos;
                     
                 var rot = splineObject.transform.rotation;
                 var posOther = collision.transform.position;
                 var rotOther = collision.transform.rotation;
 
                 if (!Physics.ComputePenetration(
-                        meshCollider, checkOriginPos, rot,
+                        sphereCollider, checkOriginPos, rot,
                         collision, posOther, rotOther,
                         out var direction, out var distance)) continue;
                 // collision penetrated
                 
-                meshObject.transform.localPosition = Vector3.zero;
-                meshCollider.enabled = false;
+                collisionObj.transform.localPosition = Vector3.zero;
+                sphereCollider.enabled = false;
                 return new SplineCollision {collided = true, contactPoint = checkOriginPos, distance = distance, direction = direction, highestPoint = highestPoint, collidedWith = collision};
             }
         }

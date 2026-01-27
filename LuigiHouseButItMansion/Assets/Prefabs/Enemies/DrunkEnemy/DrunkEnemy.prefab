@@ -159,7 +159,7 @@ MonoBehaviour:
   projectileData: {fileID: 11400000, guid: 9e5f7b639c363a34e9b76c12789e81b6, type: 2}
   shootPosition: {x: 0, y: 1.15, z: 1.06}
   chamberTime: 2
-  collisionMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  collisionRadius: 0.5
   layerMask:
     serializedVersion: 2
     m_Bits: 329

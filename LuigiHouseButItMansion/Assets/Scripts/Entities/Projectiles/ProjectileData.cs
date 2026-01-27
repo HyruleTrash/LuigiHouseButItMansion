@@ -11,15 +11,13 @@ public abstract class ProjectileData : ScriptableObject
     public float damage;
     [Header("Visual")]
     public Mesh mesh;
-    public Vector3 scale;
-    [Space(5)]
     public Material material;
     public Vector3 visualRotation;
     public Vector3 visualScale;
 
     public bool Validate()
     {
-        return mesh != null && scale != Vector3.zero;
+        return mesh != null;
     }
 
     public abstract LiquidProjectileInstance SpawnInstance(LiquidTrajectoryGetter.SplineCollision collisionData, Spline spline,

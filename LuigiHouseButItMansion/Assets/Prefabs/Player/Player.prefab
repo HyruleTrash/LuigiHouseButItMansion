@@ -49,7 +49,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25200dec32d1e6646a20a391fac27c4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  currentRoom: {fileID: 0}
   playerCameraLookAt: {fileID: 2701891313739678807}
   playerCameraMovement: {fileID: 2198887547801475123}
   playerCameraInterestOffset: {fileID: 5751102011175974575}
@@ -155,7 +154,7 @@ MonoBehaviour:
   projectileData: {fileID: 11400000, guid: 13640ede02e007a459a67eec366f40e3, type: 2}
   shootPosition: {x: 0, y: 0, z: 0.5}
   chamberTime: 0.1
-  collisionMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  collisionRadius: 0.5
   layerMask:
     serializedVersion: 2
     m_Bits: 265

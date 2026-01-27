@@ -17,14 +17,14 @@ public abstract class ShootHandler : MonoBehaviour
     protected bool canShoot = true;
     [Header("Collision")]
     [SerializeField]
-    private Mesh collisionMesh;
+    private float collisionRadius;
     [SerializeField]
     protected LayerMask layerMask;
-    protected LiquidTrajectoryGetter liquidTrajectoryGetter;
+    private LiquidTrajectoryGetter liquidTrajectoryGetter;
     
     private void OnValidate()
     {
-        if (collisionMesh != null && projectileData != null && projectileData.Validate() &&
+        if (projectileData != null && projectileData.Validate() &&
             layerMask != -1) return;
         canShoot = false;
         enabled = false;
@@ -36,7 +36,7 @@ public abstract class ShootHandler : MonoBehaviour
         chamberTimer.running = false;
         chamberTimer.onEnd += () => canShoot = true;
         
-        liquidTrajectoryGetter = new LiquidTrajectoryGetter(collisionMesh, gameObject, projectileData.scale, layerMask);
+        liquidTrajectoryGetter = new LiquidTrajectoryGetter(collisionRadius, gameObject, layerMask);
     }
 
     protected virtual void Update()
