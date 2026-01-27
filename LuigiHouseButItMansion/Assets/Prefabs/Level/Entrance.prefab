@@ -50,12 +50,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomEntrance
   otherRoomEntrance: {fileID: 0}
+  parentRoom: {fileID: 0}
   entranceTrigger: {fileID: 8278936816855245128}
-  spawnPosition: {x: 0, y: 0.8548301, z: -0.46}
+  spawnPosition: {x: 0, y: 0.94, z: 0.79}
   tempLockObjects:
   - {fileID: 7156894060220544369}
   - {fileID: 3491656066546762536}
   doorRenderObject: {fileID: 5817774243194177374}
+  levelGeneratorRef: {fileID: 0}
 --- !u!65 &8278936816855245128
 BoxCollider:
   m_ObjectHideFlags: 0

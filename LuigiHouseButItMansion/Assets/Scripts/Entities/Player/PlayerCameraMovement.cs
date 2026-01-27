@@ -32,7 +32,7 @@ public class PlayerCameraMovement : MonoBehaviour
 
     private void Update()
     {
-        var roomObjectData = SceneData.instance.GetRegisteredObject<RoomObjectData>();
+        var roomObjectData = RoomObjectData.CurrentRoom;
         if (!camInterestPoint || !roomObjectData)
             return;
         var usedInterestPoint = camInterestPoint.position + offset;

@@ -12,8 +12,11 @@ public class BaseRoomGeneratorComponentEditor : Editor
         BaseRoomGeneratorComponent generator = (BaseRoomGeneratorComponent)serializedObject.targetObject;
         if (!generator.enabled)
             return;
-        
-        if (GUILayout.Button("Update list")) 
+
+        if (GUILayout.Button("Update list"))
+        {
             generator.UpdateList();
+            EditorUtility.SetDirty(generator);
+        }
     }
 }

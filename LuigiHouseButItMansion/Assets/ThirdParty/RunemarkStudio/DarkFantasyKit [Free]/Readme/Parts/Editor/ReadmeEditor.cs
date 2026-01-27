@@ -23,17 +23,17 @@ namespace Runemark.DarkFantasyKit
 
         static void SelectReadmeAutomatically()
         {
-            if (!SessionState.GetBool(kShowedReadmeSessionStateName, false))
-            {
-                var readme = SelectReadme();
-                SessionState.SetBool(kShowedReadmeSessionStateName, true);
-
-                if (readme && !readme.loadedLayout)
-                {
-                   // LoadLayout();
-                    readme.loadedLayout = true;
-                }
-            }
+            // if (!SessionState.GetBool(kShowedReadmeSessionStateName, false))
+            // {
+            //     var readme = SelectReadme();
+            //     SessionState.SetBool(kShowedReadmeSessionStateName, true);
+            //
+            //     if (readme && !readme.loadedLayout)
+            //     {
+            //        // LoadLayout();
+            //         readme.loadedLayout = true;
+            //     }
+            // }
         }
 
         static void LoadLayout()

@@ -24,5 +24,6 @@ public class LevelGeneratorEditor : Editor
             var go = AssetDatabase.LoadAssetAtPath<GameObject>(path);
             levelGenerator.possibleRooms.Add(go);
         }
+        EditorUtility.SetDirty(levelGenerator);
     }
 }

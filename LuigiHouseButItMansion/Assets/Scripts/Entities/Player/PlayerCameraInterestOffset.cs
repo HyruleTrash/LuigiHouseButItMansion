@@ -109,7 +109,7 @@ public class PlayerCameraInterestOffset : MonoBehaviour
 
     private void Update()
     {
-        var roomObjectData = SceneData.instance.GetRegisteredObject<RoomObjectData>();
+        var roomObjectData = RoomObjectData.CurrentRoom;
         if (!roomObjectData) return;
         edgeBoxes.UpdateBoxes(defaultSizeW, defaultSizeH, minMaxHorizontal, minMaxVertical, offset);
 

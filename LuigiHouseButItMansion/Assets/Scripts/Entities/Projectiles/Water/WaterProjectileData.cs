@@ -48,7 +48,7 @@ public class WaterProjectileData : ProjectileData
     
     private void CheckIfCollidedWithWasDamagable(LiquidProjectileInstance _, GameObject collidedWithGameObject, LiquidTrajectoryGetter.SplineCollision collisionData)
     {
-        SceneData.instance.GetRegisteredObject<RoomObjectData>().goopManager.RemoveGoopAt(collisionData.contactPoint, collisionData.direction.normalized);
+        RoomObjectData.CurrentRoom.goopManager.RemoveGoopAt(collisionData.contactPoint, collisionData.direction.normalized);
         
         if (collidedWithGameObject.layer != LayerMask.NameToLayer("Damagable")) return;
         IDamagable[] damagables;

@@ -13,7 +13,7 @@ public class RoomPrefabGenerator : MonoBehaviour
     public GameObject levelCollision;
     public List<GoopData> goopData;
     public Bounds goopBounds;
-    public RoomCameraConfig roomCameraConfigRef;
+    public List<RoomCameraConfig> roomCameraConfigRef;
     public Vector3 cameraViewPoint;
     [HideInInspector]
     public List<BaseRoomGeneratorComponent> roomGeneratorComponents = new();
@@ -31,7 +31,11 @@ public class RoomPrefabGenerator : MonoBehaviour
         return rotated + levelCollision.transform.position;
     }
 
-    public void UpdateAllLists() => roomGeneratorComponents.ForEach(x => x.UpdateList());
+    public void UpdateAllLists() => roomGeneratorComponents.ForEach(x =>
+    {
+        x.UpdateList();
+        EditorUtility.SetDirty(x);
+    });
 
     private void OnDrawGizmosSelected()
     {

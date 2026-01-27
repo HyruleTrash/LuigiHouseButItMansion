@@ -13,25 +13,34 @@ using Random = UnityEngine.Random;
 public class RoomObjectData : MonoBehaviour
 {
     public static Action<RoomObjectData> OnCurrentRoomChange;
+    public static RoomObjectData CurrentRoom { get; private set; }
 
     public bool firstRoom = false;
     [SerializeField]
-    private List<RoomEntrance> entrances = new();
+    private DirectionBasedEntranceList entrances = new();
     public Vector3 cameraViewPoint;
     public RoomCameraConfig cameraConfig;
     public Action onReadyRoom;
     public InteractableObjectsManager interactableObjectsManager;
     public GoopManager goopManager;
     
-    public void Init(RoomCameraConfig roomCameraConfigRef, Vector3 camSetViewDir)
+    public void Init(List<RoomCameraConfig> roomCameraConfigRef, Vector3 camSetViewDir)
     {
-        cameraConfig = Instantiate(roomCameraConfigRef, transform);
+        for (var i = 0; i < roomCameraConfigRef.Count; i++)
+        {
+            var instance = Instantiate(roomCameraConfigRef[i], transform);
+            if (i == 0)
+                cameraConfig = instance;
+        }
+
         cameraViewPoint = camSetViewDir;
     }
     
+    public void AddEntrance(RoomEntrance entrance) => entrances.Add(entrance);
+    public DirectionBasedEntranceList GetEntrances() => entrances;
+    
     private void Start()
     {
-        OnCurrentRoomChange = null;
         RoomManager.instance.LiveRooms.Add(this);
         goopManager = GetComponent<GoopManager>();
         goopManager.parent = this;
@@ -44,8 +53,8 @@ public class RoomObjectData : MonoBehaviour
     private void OnDestroy()
     {
         RoomManager.instance.LiveRooms.Remove(this);
-        if (SceneData.instance.GetRegisteredObject<RoomObjectData>() == this)
-            SceneData.instance.DeRegistereObject<RoomObjectData>();
+        if (CurrentRoom == this)
+            CurrentRoom = null;
     }
 
     private void OnDrawGizmosSelected()
@@ -65,25 +74,22 @@ public class RoomObjectData : MonoBehaviour
 
     public static void SetCurrentRoom(RoomObjectData newRoom)
     {
-        RoomObjectData oldRoom = SceneData.instance.GetRegisteredObject<RoomObjectData>();
+        var oldRoom = CurrentRoom;
         if (newRoom == null || newRoom == oldRoom) return;
 
         if (oldRoom != null) oldRoom.DisableRoom();
 
-        SceneData.instance.RegistereObject<RoomObjectData>(newRoom, true);
+        CurrentRoom = newRoom;
         newRoom.goopManager.UpdateTexture();
         
         newRoom.ReadyRoom();
         OnCurrentRoomChange?.Invoke(newRoom);
     }
 
-    public void AddEntrance(RoomEntrance entrance) => entrances.Add(entrance);
-    public void RemoveEntrance(RoomEntrance roomEntrance) => entrances?.Remove(roomEntrance);
-
-    public List<RoomEntrance> GetEntrances() => entrances?.ToList();
-
     public void ReadyRoom()
     {
+        if (CurrentRoom != this)
+            return;
         gameObject.SetActive(true);
         goopManager.SetToCurrent();
         
@@ -123,7 +129,7 @@ public class RoomObjectData : MonoBehaviour
         }
     }
 
-    public void TurnToInstance(LevelGenerator levelGenerator)
+    public void TurnToInstance(LevelGenerator levelGenerator, Vector3? direction)
     {
         interactableObjectsManager.PickInteractables();
 
@@ -135,16 +141,20 @@ public class RoomObjectData : MonoBehaviour
         }
         
         // check how many not used entrances still exist
-        var canBeRemoved = levelGenerator.unUsedEntrances.CheckIfBacklogExists(entrances);
+        var canBeRemoved = levelGenerator.CheckIfBacklogExists(entrances);
         if (canBeRemoved.Count != 0)
         {
             var amount = Random.Range(0, canBeRemoved.Count);
             for (var i = 0; i < amount; i++)
             {
                 var index = Random.Range(0, canBeRemoved.Count);
-                var instance = entrances.Find(x => x == canBeRemoved[index]);
-                Destroy(instance.gameObject);
+                var instance = entrances.Find(x => ReferenceEquals(x, canBeRemoved[index]));
+                if (!instance)
+                    continue;
+                if (direction != null && instance.transform.forward == direction.Value)
+                    continue;
                 entrances.Remove(instance);
+                Destroy(instance.gameObject);
             }
         }
         levelGenerator.unUsedEntrances.AddRange(entrances);
@@ -159,14 +169,11 @@ public class RoomObjectData : MonoBehaviour
 
     public RoomEntrance GetEntranceToUse(LevelGenerator levelGenerator, RoomEntrance otherEntranceToConnect, Vector3 dir)
     {
-        foreach (var entrance in entrances)
-        {
-            var foundDir = entrance.transform.forward;
-            if (foundDir != dir) continue;
-            levelGenerator.unUsedEntrances.Remove(entrance);
-            entrance.otherRoomEntrance = otherEntranceToConnect;
-            return entrance;
-        }
-        return null;
+        var foundEntrance = entrances.GetFromDir(dir).FirstOrDefault();
+        if (foundEntrance == null)
+            return null;
+        levelGenerator.unUsedEntrances.Remove(foundEntrance);
+        foundEntrance.otherRoomEntrance = otherEntranceToConnect;
+        return foundEntrance;
     }
 }

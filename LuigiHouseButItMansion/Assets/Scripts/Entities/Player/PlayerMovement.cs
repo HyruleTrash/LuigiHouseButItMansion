@@ -83,7 +83,6 @@ public class PlayerMovement : MonoBehaviour
     private void LimitVelocity()
     {
         var horizontalVelocity = VectorHelper.GetXZ(rb.linearVelocity);
-        // Debug.Log($"HorizontalVelocity: {horizontalVelocity}, magnitude: {horizontalVelocity.magnitude}");
         if (horizontalVelocity.magnitude <= currentSpeedData.maxSpeed) 
             return;
         horizontalVelocity = horizontalVelocity.normalized * currentSpeedData.maxSpeed;
@@ -104,7 +103,7 @@ public class PlayerMovement : MonoBehaviour
 
         currentDrag = currentSpeedData.dragAmount;
 
-        var cameraRotation = Quaternion.LookRotation(SceneData.instance.GetRegisteredObject<RoomObjectData>().cameraViewPoint, Vector3.up);
+        var cameraRotation = Quaternion.LookRotation(RoomObjectData.CurrentRoom.cameraViewPoint, Vector3.up);
         var moveVector3D = new Vector3(givenMoveVec.x, 0, givenMoveVec.y);
         var moveVectorFinal = cameraRotation * moveVector3D;
         

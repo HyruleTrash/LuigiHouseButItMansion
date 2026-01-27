@@ -10,7 +10,7 @@ public class LevelGenerator : MonoBehaviour
 {
     [SerializeField]
     private GameObject navMeshSurface;
-    public UnUsedEntranceList unUsedEntrances = new();
+    public DirectionBasedEntranceList unUsedEntrances = new();
     public List<GameObject> possibleRooms = new();
     [HideInInspector]
     public GameObject lastPickedRoomPrefab;
@@ -23,32 +23,55 @@ public class LevelGenerator : MonoBehaviour
 
     private void Start()
     {
+        RoomObjectData.OnCurrentRoomChange = null;
         CreateRoom(PickRoomFromPossibles(possibleRooms), true);
     }
 
     private GameObject PickRoomFromPossibles(List<GameObject> possibilityList)
     {
+        if (!ValidatePossibleRooms(possibilityList))
+        {
+            Debug.LogError("No possible rooms found");
+            return null;
+        }
+
+        const int maxAmountOfTries = 10;
+        int tries = 0;
         while (true)
         {
+            tries++;
             if (possibilityList.Count == 0)
             {
                 Debug.LogError("No possible rooms found");
                 return null;
             }
             var found = possibilityList[Random.Range(0, possibilityList.Count)];
-            if (!found || lastPickedRoomPrefab == found) continue;
+            if (!found || lastPickedRoomPrefab == found)
+            {
+                Debug.Log(tries);
+                if (tries > maxAmountOfTries)
+                    return null;
+                continue;
+            }
             lastPickedRoomPrefab = found;
             return found;
         }
     }
 
-    private RoomObjectData CreateRoom(GameObject prefab, bool isFirst = false)
+    private bool ValidatePossibleRooms(List<GameObject> possibilityList)
+    {
+        if (possibilityList.Count == 0) return false;
+        foreach (var obj in possibilityList) if (!obj) return false;
+        return true;
+    }
+
+    private RoomObjectData CreateRoom(GameObject prefab, bool isFirst = false, Vector3? direction = null)
     {
         if (prefab == null) return null;
         var instance = Instantiate(prefab, transform.position, transform.rotation);
         var roomObj = instance.GetComponent<RoomObjectData>();
         roomObj.firstRoom = isFirst;
-        roomObj.TurnToInstance(this);
+        roomObj.TurnToInstance(this, direction);
         
         foreach (var surface in navMeshSurface.GetComponents<NavMeshSurface>())
             StartCoroutine(BuildNextFrame(surface));
@@ -67,51 +90,25 @@ public class LevelGenerator : MonoBehaviour
         unUsedEntrances.Remove(roomEntrance);
         var dir = roomEntrance.transform.forward;
         
-        List<GameObject> possibleConnection = GetPossibleRoomsInDirection(-dir);
-        var room = CreateRoom(PickRoomFromPossibles(possibleConnection));
+        var possibleConnection = GetPossibleRoomsInDirection(-dir);
+        var room = CreateRoom(PickRoomFromPossibles(possibleConnection), direction: -dir);
         
-        return room.GetEntranceToUse(this, roomEntrance, -dir);
+        var entrance = room.GetEntranceToUse(this, roomEntrance, -dir);
+        unUsedEntrances.Remove(entrance);
+        
+        return entrance;
     }
 
-    private List<GameObject> GetPossibleRoomsInDirection(Vector3 direction)
+    private List<GameObject> GetPossibleRoomsInDirection(Vector3 dir)
     {
-        var possibleConnection = new List<GameObject>();
+        List<GameObject> result = new();
         foreach (var room in possibleRooms)
         {
-            foreach (var entrance in room.GetComponent<RoomObjectData>().GetEntrances())
-            {
-                var foundDir = entrance.transform.forward;
-                if (foundDir != direction) continue;
-                possibleConnection.Add(room);
-                break;
-            }
+            var entrances = room.GetComponent<RoomObjectData>().GetEntrances();
+            if (entrances.ContainsKey(dir))
+                result.Add(room);
         }
-        return possibleConnection;
-    }
-}
-
-public class UnUsedEntranceList
-{
-    private Dictionary<Vector3, List<RoomEntrance>> unUsedEntrances = new();
-
-    public void Remove(RoomEntrance roomEntrance)
-    {
-        foreach (var unUsedEntrance in unUsedEntrances.Values)
-        {
-            unUsedEntrance.Remove(roomEntrance);
-            break;
-        }
-    }
-
-    public void AddRange(List<RoomEntrance> entrances)
-    {
-        foreach (var entrance in entrances)
-        {
-            var dir = entrance.transform.forward;
-            if (!unUsedEntrances.ContainsKey(dir))
-                unUsedEntrances.Add(dir, new List<RoomEntrance>());
-            unUsedEntrances[dir].Add(entrance);
-        }
+        return result;
     }
 
     /// <summary>
@@ -119,13 +116,13 @@ public class UnUsedEntranceList
     /// </summary>
     /// <param name="entrances"></param>
     /// <returns></returns>
-    public List<RoomEntrance> CheckIfBacklogExists(List<RoomEntrance> entrances)
+    public List<RoomEntrance> CheckIfBacklogExists(DirectionBasedEntranceList entrances)
     {
         List<RoomEntrance> result = new();
         foreach (var entrance in entrances)
         {
             var dir = entrance.transform.forward;
-            if (unUsedEntrances.ContainsKey(dir) && unUsedEntrances[dir].Count > 0)
+            if (unUsedEntrances.ContainsKey(dir) && unUsedEntrances.GetFromDir(dir).Count > 0)
             {
                 result.Add(entrance);
             }

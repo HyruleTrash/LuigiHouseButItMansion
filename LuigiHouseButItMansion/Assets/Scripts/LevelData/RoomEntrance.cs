@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using LucasCustomClasses;
 using UnityEngine;
@@ -17,6 +18,7 @@ public class RoomEntrance : MonoBehaviour
     [SerializeField]
     private List<GameObject> tempLockObjects = new();
     private bool locked;
+    private static bool isTransitioning = false;
 #if UNITY_EDITOR
     public MeshFilter doorRenderObject;
 #endif
@@ -27,8 +29,6 @@ public class RoomEntrance : MonoBehaviour
         parentRoom = roomObjectData;
         parentRoom.AddEntrance(this);
     }
-
-    private void OnDestroy() => parentRoom.RemoveEntrance(this);
 
     private void Awake()
     {
@@ -44,21 +44,21 @@ public class RoomEntrance : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (locked)
-            return;
-        if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
-        {
-            var dataRef = other.GetComponent<ComponentReference>();
-            if (dataRef == null) return;
+        if (isTransitioning || locked) return;
+        if (other.gameObject.layer != LayerMask.NameToLayer("Player")) return;
+        
+        var dataRef = other.GetComponent<ComponentReference>();
+        if (dataRef == null) return;
 
-            if (otherRoomEntrance == null)
-                otherRoomEntrance = levelGeneratorRef.GetConnectedRoom(this);
-            
-            if (otherRoomEntrance == null)
-                return;
-            otherRoomEntrance.DisableTriggerTimed();
-            otherRoomEntrance.SpawnPlayer(dataRef.GetReference<PlayerData>());
-        }
+        isTransitioning = true;
+        
+        if (otherRoomEntrance == null)
+            otherRoomEntrance = levelGeneratorRef.GetConnectedRoom(this);
+
+        if (otherRoomEntrance == null) return;
+        
+        otherRoomEntrance.DisableTriggerTimed();
+        otherRoomEntrance.SpawnPlayer(dataRef.GetReference<PlayerData>());
     }
 
     private void SpawnPlayer(PlayerData playerData)
@@ -73,13 +73,17 @@ public class RoomEntrance : MonoBehaviour
             disableTimer.Update(Time.deltaTime);
     }
 
-    private void DisableTriggerTimed()
+    public void DisableTriggerTimed()
     {
         entranceTrigger.enabled = false;
-        disableTimer = new Timer(2, () => {entranceTrigger.enabled = true;});
+        disableTimer = new Timer(2, () =>
+        {
+            entranceTrigger.enabled = true;
+            isTransitioning = false;
+        });
     }
 
-    public Vector3 GetSpawnPosition()
+    private Vector3 GetSpawnPosition()
     {
         return transform.rotation * spawnPosition + transform.position;
     }
