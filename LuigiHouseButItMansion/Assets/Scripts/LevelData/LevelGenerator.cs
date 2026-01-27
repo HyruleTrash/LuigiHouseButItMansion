@@ -48,7 +48,6 @@ public class LevelGenerator : MonoBehaviour
             var found = possibilityList[Random.Range(0, possibilityList.Count)];
             if (!found || lastPickedRoomPrefab == found)
             {
-                Debug.Log(tries);
                 if (tries > maxAmountOfTries)
                     return null;
                 continue;

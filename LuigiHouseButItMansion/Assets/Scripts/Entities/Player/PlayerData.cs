@@ -38,7 +38,7 @@ public class PlayerData : MonoBehaviour
 
     private void OnDestroy()
     {
-        SceneData.instance.DeRegistereObject<PlayerData>();
+        SceneData.instance?.DeRegistereObject<PlayerData>();
     }
 
     public Vector3 GetCameraDirection()

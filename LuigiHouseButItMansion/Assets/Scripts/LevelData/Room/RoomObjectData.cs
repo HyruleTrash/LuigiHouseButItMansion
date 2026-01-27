@@ -41,7 +41,6 @@ public class RoomObjectData : MonoBehaviour
     
     private void Start()
     {
-        RoomManager.instance.LiveRooms.Add(this);
         goopManager = GetComponent<GoopManager>();
         goopManager.parent = this;
 
@@ -52,7 +51,6 @@ public class RoomObjectData : MonoBehaviour
 
     private void OnDestroy()
     {
-        RoomManager.instance.LiveRooms.Remove(this);
         if (CurrentRoom == this)
             CurrentRoom = null;
     }
