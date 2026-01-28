@@ -49,6 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25200dec32d1e6646a20a391fac27c4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  cam: {fileID: 6646246718813869919}
   playerCameraLookAt: {fileID: 2701891313739678807}
   playerCameraMovement: {fileID: 2198887547801475123}
   playerCameraInterestOffset: {fileID: 5751102011175974575}

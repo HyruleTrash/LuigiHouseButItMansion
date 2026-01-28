@@ -26,9 +26,11 @@ public class SingletonBehaviour<T> : MonoBehaviour where T : MonoBehaviour
     
     protected void Awake()
     {
+        // Debug.Log($"SingletonBehaviour<{typeof(T).Name}>::Awake\n{_instance != null} and {_instance != GetComponent<T>()}");
         if (_instance != null && _instance != GetComponent<T>())
         {
             Destroy(gameObject);
+            return;
         }
         _instance = GetComponent<T>();
         DontDestroyOnLoad(gameObject);

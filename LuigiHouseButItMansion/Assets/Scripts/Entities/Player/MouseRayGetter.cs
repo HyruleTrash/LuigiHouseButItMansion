@@ -19,6 +19,8 @@ public class MouseRayGetter : SingletonBehaviour<MouseRayGetter>
         var mousePos = Mouse.current.position.ReadValue();
         var trueMousePos = new Vector2(CalculateMousePos(mousePos.x, Screen.width, renderTexture.width),
             CalculateMousePos(mousePos.y, Screen.height, renderTexture.height));
+
+        if (!cam) cam = SceneData.instance.GetRegisteredObject<PlayerData>().cam;
         
         return cam.ScreenPointToRay(trueMousePos);
     }

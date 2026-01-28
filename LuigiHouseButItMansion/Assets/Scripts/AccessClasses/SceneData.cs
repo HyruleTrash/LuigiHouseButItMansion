@@ -5,7 +5,7 @@ using UnityEngine;
 public class SceneData : SingletonBehaviour<SceneData>
 {
     private AssetBundle assetBundle;
-    private Dictionary<Type, object> registeredObjects = new Dictionary<Type, object>();
+    private Dictionary<Type, object> registeredObjects = new();
 
     private void Start()
     {

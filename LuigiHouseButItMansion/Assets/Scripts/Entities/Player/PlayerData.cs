@@ -5,6 +5,7 @@ using UnityEngine.Serialization;
 public class PlayerData : MonoBehaviour
 {
     [Header("Cam data")]
+    public Camera cam;
     [SerializeField]
     private PlayerCameraLookAt playerCameraLookAt;
     [SerializeField]
