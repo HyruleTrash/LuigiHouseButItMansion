@@ -40,8 +40,6 @@ public class RoomEntrance : MonoBehaviour
         entranceTrigger.isTrigger = true;
     }
 
-    private void Start() => UnLock();
-
     private void OnTriggerEnter(Collider other)
     {
         if (isTransitioning || locked) return;
@@ -104,12 +102,14 @@ public class RoomEntrance : MonoBehaviour
 
     public void Lock()
     {
+        Debug.Log("locking");
         SetTempLockObjects(true);
         locked = true;
     }
 
     public void UnLock()
     {
+        Debug.Log("unlocking");
         SetTempLockObjects(false);
         locked = false;
     }

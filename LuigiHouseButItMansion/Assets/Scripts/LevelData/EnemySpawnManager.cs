@@ -17,10 +17,10 @@ public class EnemySpawnManager : MonoBehaviour
     private List<ClassReference<BaseEnemy>> enemyReferencesWithoutSpawnPoints = new();
     private List<GameObject> enemies = new();
     
-    public void Init(RoomObjectData roomObjectData, int range, List<ClassReference<BaseEnemy>> enemyPool, List<EnemySpawnPointDataHolder> spawnPointsToInit)
+    public void Init(RoomObjectData roomObjectData, int spawnAmount, List<ClassReference<BaseEnemy>> enemyPool, List<EnemySpawnPointDataHolder> spawnPointsToInit)
     {
         parentRoom = roomObjectData;
-        spawnCount = range;
+        spawnCount = spawnAmount;
         enemyReferences = enemyPool;
 
         for (var i = 0; i < spawnPointsToInit.Count; i++)

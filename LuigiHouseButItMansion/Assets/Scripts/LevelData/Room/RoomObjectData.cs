@@ -113,6 +113,7 @@ public class RoomObjectData : MonoBehaviour
 
     public void LockDoors()
     {
+        Debug.Log("LockingDoors");
         foreach (var entrance in entrances)
         {
             entrance.Lock();

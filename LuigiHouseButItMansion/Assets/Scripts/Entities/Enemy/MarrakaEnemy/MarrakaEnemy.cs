@@ -36,6 +36,7 @@ public class MarrakaEnemy : BaseEnemy
         {
             running = false
         };
+        Instance.GetComponent<CapsuleCollider>().enabled = false;
         
         spawner.Add(Instance);
         
@@ -168,6 +169,7 @@ public class MarrakaEnemy : BaseEnemy
             agentComp.Warp(destination);
             agentComp.enabled = true;
             goToPlayerComp.enabled = true;
+            Instance.GetComponent<CapsuleCollider>().enabled = true;
         });
     }
 

@@ -32,7 +32,14 @@ public class EnemySpawnPointGenerator : BaseRoomGeneratorComponent
 
         var possibleInteractionPoints = enemySpawnPoints.Cast<EnemySpawnPointDataHolder>().ToList();
         var result = new List<EnemySpawnPointDataHolder>();
-        var amount = Random.Range(minMaxChosenFromList.x, minMaxChosenFromList.y);
+        
+        var available = possibleInteractionPoints.Count;
+
+        var min = Mathf.Clamp(pickedData.minMaxSpawnCount.x, 0, available);
+        var max = Mathf.Clamp(pickedData.minMaxSpawnCount.y, min, available);
+
+        var amount = Random.Range(min, max + 1);
+        
         for (var i = 0; i < amount; i++)
         {
             var index = Random.Range(0, possibleInteractionPoints.Count);
@@ -41,6 +48,10 @@ public class EnemySpawnPointGenerator : BaseRoomGeneratorComponent
             possibleInteractionPoints.RemoveAt(index);
         }
         
-        enemySpawnManager.Init(roomObjectData, Random.Range(pickedData.minMaxSpawnCount.x, pickedData.minMaxSpawnCount.y), enemyPool, result);
+        var spawnAmount = Random.Range(pickedData.minMaxSpawnCount.x, pickedData.minMaxSpawnCount.y);
+        if (spawnAmount != 0)
+            enemySpawnManager.Init(roomObjectData, spawnAmount, enemyPool, result);
+        
+        Debug.Log($"Created spawner with {pickedData.name}, spawn amount: {spawnAmount}, spawn points: {result.Count}");
     }
 }

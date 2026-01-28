@@ -61,8 +61,8 @@ public class InteractableObjectsManager : MonoBehaviour
     {
         foreach (var possibleInteractable in possibleInteractables)
         {
-            GameObject prefab = possibleInteractable.GetInteractable();
-            possibleInteractable.InstantiatePrefab(prefab, transform);
+            var prefab = possibleInteractable.GetInteractable();
+            interactables.Add(possibleInteractable.InstantiatePrefab(prefab, transform).GetComponent<InteractableObject>());
             Destroy(possibleInteractable.gameObject);
         }
         

@@ -54,6 +54,7 @@ public class RoomPrefabGenerator : MonoBehaviour
         if (!CanGenerate())
             return;
 
+        Debug.Log($"Creating prefab room for: {levelCollision.name}");
         var roomObjectData = new GameObject(levelCollision.name).AddComponent<RoomObjectData>();
         var goopManager = roomObjectData.GetComponent<GoopManager>();
         Instantiate(levelCollision, roomObjectData.transform);

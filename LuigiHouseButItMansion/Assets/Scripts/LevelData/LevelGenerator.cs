@@ -91,6 +91,8 @@ public class LevelGenerator : MonoBehaviour
         
         var possibleConnection = GetPossibleRoomsInDirection(-dir);
         var room = CreateRoom(PickRoomFromPossibles(possibleConnection), direction: -dir);
+        if (room == null)
+            return null;
         
         var entrance = room.GetEntranceToUse(this, roomEntrance, -dir);
         unUsedEntrances.Remove(entrance);

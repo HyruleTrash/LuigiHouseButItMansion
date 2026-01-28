@@ -23,7 +23,7 @@ public class GoopManager : MonoBehaviour
     
     [SerializeField] 
     private GoopData goopData;
-    private int? actualBrushSize;
+    private float? actualBrushSize;
     [SerializeField]
     private Bounds roomBounds;
     [CanBeNull] public Texture3D roomTexture = null;
@@ -301,10 +301,10 @@ public class GoopManager : MonoBehaviour
 #endif
     }
     
-    private int GetBrushSize(Vector3Int res)
+    private float GetBrushSize(Vector3Int res)
     {
         var metersPerTexelX = roomBounds.size.x / (res.x - 1);
-        actualBrushSize ??= Mathf.RoundToInt(goopData.brushSize / metersPerTexelX);
+        actualBrushSize ??= goopData.brushSize / metersPerTexelX;
         return actualBrushSize.Value;
     }
     
@@ -333,7 +333,7 @@ public class GoopManager : MonoBehaviour
             1f / (res.z - 1)
         );
         
-        int brushRadius = GetBrushSize(res);
+        float brushRadius = GetBrushSize(res);
         
         var madeChanges = false;
         for (var dx = -brushRadius; dx <= brushRadius; dx++)
