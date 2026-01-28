@@ -8,6 +8,7 @@ public class NavAgentGoToTarget : MonoBehaviour
     private NavMeshAgent navMeshAgent;
     public Action playerReached;
     public Func<Vector3> getTargetPosition;
+    public Action fixedUpdate;
 
     private void Start()
     {
@@ -34,5 +35,10 @@ public class NavAgentGoToTarget : MonoBehaviour
             navMeshAgent.SetDestination(transform.position);
             playerReached?.Invoke();
         }
+    }
+
+    private void FixedUpdate()
+    {
+        fixedUpdate?.Invoke();
     }
 }

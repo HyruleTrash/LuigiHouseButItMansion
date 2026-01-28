@@ -25,9 +25,9 @@ public class MarrakaEnemy : BaseEnemy
     private TimerComp hideAndSeekTimerComp;
     private InteractableObject hauntedInteractable;
     
-    public override void Spawn(EnemySpawnManager spawner, Vector3 position)
+    public override void Spawn(EnemySpawnManager spawner, Vector3 spawnPosition)
     {
-        PrepareSpawn(spawner, position, out MarrakaEnemyData data);
+        PrepareSpawn(spawner, spawnPosition, out MarrakaEnemyData data);
         dataInstance = data;
         
         healthComp.OnHit.AddListener(OnHit);

@@ -12,6 +12,8 @@ public class BeerProjectileData : ProjectileData
     private ObjectPool<BeerProjectileInstance> projectilePool = new();
     [SerializeField]
     private float maxEffectTime;
+    private float? actualBrushSize;
+    public float brushSize = 1.5f;
 
     public override LiquidProjectileInstance SpawnInstance(LiquidTrajectoryGetter.SplineCollision collisionData, Spline spline, Action<LiquidProjectileInstance, GameObject, LiquidTrajectoryGetter.SplineCollision> onCollision)
     {
@@ -36,6 +38,7 @@ public class BeerProjectileData : ProjectileData
             var splashParticle = Instantiate(splashPrefab, currentInstance.projectileHandler.transform, false);
             currentInstance.splashParticle = splashParticle.GetComponent<ParticleSystem>();
         }
+        actualBrushSize = null;
         
         onCollision += CheckIfCollidedWasPlayer;
         currentInstance.SetData(spline, visualRotation, visualScale, projectileSpeed);
@@ -48,8 +51,16 @@ public class BeerProjectileData : ProjectileData
         return currentInstance;
     }
     
+    private float GetBrushSize(Vector3Int res, Bounds roomBounds)
+    {
+        var metersPerTexelX = roomBounds.size.x / (res.x - 1);
+        actualBrushSize ??= brushSize / metersPerTexelX;
+        return actualBrushSize.Value;
+    }
+    
     private void CheckIfCollidedWasPlayer(LiquidProjectileInstance instance, GameObject collidedWithGameObject, LiquidTrajectoryGetter.SplineCollision collisionData)
     {
+        RoomObjectData.CurrentRoom.goopManager.ApplyGoopAt(collisionData.contactPoint, GetBrushSize);
         if (collidedWithGameObject.layer != LayerMask.NameToLayer("Player")) return;
         
         if (instance is not BeerProjectileInstance shotInstance || shotInstance.playerRef == null)

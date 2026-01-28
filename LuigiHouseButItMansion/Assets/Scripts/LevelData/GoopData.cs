@@ -18,7 +18,6 @@ public class GoopData : ScriptableObject
     public Color goopAccentColor;
     public float cutoffThreshold = 0.1f;
     public int textureSize = 64;
-    public float brushSize = 1.5f;
 
     public void SetGlobalShaderData()
     {

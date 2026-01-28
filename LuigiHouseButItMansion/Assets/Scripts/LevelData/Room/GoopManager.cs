@@ -23,7 +23,6 @@ public class GoopManager : MonoBehaviour
     
     [SerializeField] 
     private GoopData goopData;
-    private float? actualBrushSize;
     [SerializeField]
     private Bounds roomBounds;
     [CanBeNull] public Texture3D roomTexture = null;
@@ -47,11 +46,6 @@ public class GoopManager : MonoBehaviour
         Shader.SetGlobalVector(RoomSize, roomBounds.size);
         goopData.SetGlobalShaderData();
         Shader.SetGlobalTexture(GoopMask, usedRoomTexture);
-    }
-    
-    private void Start()
-    {
-        actualBrushSize = null;
     }
 
     public void SetUsedRoomTexture()
@@ -301,19 +295,49 @@ public class GoopManager : MonoBehaviour
 #endif
     }
     
-    private float GetBrushSize(Vector3Int res)
+    private struct TexelData
     {
-        var metersPerTexelX = roomBounds.size.x / (res.x - 1);
-        actualBrushSize ??= goopData.brushSize / metersPerTexelX;
-        return actualBrushSize.Value;
+        public Vector3 baseUV;
+        public Vector3 texelSize;
+        public Vector3Int res;
     }
     
-    public void RemoveGoopAt(Vector3 contactPoint, Vector3 collisionNormal)
+    public void RemoveGoopAt(Vector3 contactPoint, Func<Vector3Int, Bounds, float> calculateBrush)
+    {
+        if (!ValidateGoop()) return;
+        
+        TexelData texelData = CalculateTexelData(contactPoint);
+        float brushRadius = calculateBrush.Invoke(texelData.res, roomBounds);
+        ApplyCircleToTexture(brushRadius, texelData, (current, distance, brushRadius) =>
+        {
+            float interpolationFactor = 1f - (distance / (brushRadius + 1f));
+            return (byte)(current * interpolationFactor);
+        });
+    }
+    
+    public void ApplyGoopAt(Vector3 contactPoint, Func<Vector3Int, Bounds, float> calculateBrush)
+    {
+        if (!ValidateGoop()) return;
+        
+        TexelData texelData = CalculateTexelData(contactPoint);
+        float brushRadius = calculateBrush.Invoke(texelData.res, roomBounds);
+        ApplyCircleToTexture(brushRadius, texelData, (current, distance, brushRadius) =>
+        {
+            float interpolationFactor = 1f - (distance / (brushRadius + 1f));
+            return (byte)(current + (255 - current) * interpolationFactor);
+        });
+    }
+
+    /// <summary>
+    /// Validates current state of manager, and texture
+    /// </summary>
+    /// <returns>false when not passing validation, true when validation was passed</returns>
+    private bool ValidateGoop()
     {
         if (!parent || !parent.gameObject || !parent.transform)
         {
             Debug.LogError($"Missing required component in {gameObject?.name}: Parent={parent}, ParentGO={parent?.gameObject}, ParentTransform={parent?.transform}");
-            return;
+            return false;
         }
         if (!usedRoomTexture)
         {
@@ -321,11 +345,15 @@ public class GoopManager : MonoBehaviour
             if (!usedRoomTexture)
             {
                 Debug.LogError($"Failed to initialize room texture in {gameObject.name}");
-                return;
+                return false;
             }
         }
-        
-        Vector3 baseUV = CalculateGoopTexUV(contactPoint);
+        return true;
+    }
+
+    private TexelData CalculateTexelData(Vector3 point)
+    {
+        Vector3 baseUV = CalculateGoopTexUV(point);
         var res = GetTextureResolution();
         var texelSize = new Vector3(
             1f / (res.x - 1),
@@ -333,26 +361,33 @@ public class GoopManager : MonoBehaviour
             1f / (res.z - 1)
         );
         
-        float brushRadius = GetBrushSize(res);
-        
+        return new TexelData
+        {
+            baseUV = baseUV,
+            texelSize = texelSize,
+            res = res
+        };
+    }
+
+    private void ApplyCircleToTexture(float brushRadius, TexelData texelData, Func<byte, float, float, byte> mutation)
+    {
         var madeChanges = false;
         for (var dx = -brushRadius; dx <= brushRadius; dx++)
         for (var dy = -brushRadius; dy <= brushRadius; dy++)
         for (var dz = -brushRadius; dz <= brushRadius; dz++)
         {
             var translation = new Vector3(dx, dy, dz);
-            var pos = GetIntArrayUvFromTranslation(baseUV, translation, texelSize, res);
+            var pos = GetIntArrayUvFromTranslation(texelData.baseUV, translation, texelData.texelSize, texelData.res);
             
             float distance = math.length(new float3(dx, dy, dz));
             if (distance > brushRadius)
                 continue;
             
-            int index = VectorUvToIndex(pos[0], pos[1], pos[2], res);
+            int index = VectorUvToIndex(pos[0], pos[1], pos[2], texelData.res);
             if (roomTextureData[index] == 0)
                 continue;
             
-            float interpolationFactor = 1f - (distance / (brushRadius + 1f));
-            roomTextureData[index] = (byte)(roomTextureData[index] * interpolationFactor);
+            roomTextureData[index] = mutation.Invoke(roomTextureData[index], distance, brushRadius);
             madeChanges = true;
         }
 

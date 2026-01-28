@@ -46,7 +46,7 @@ public class EnemyShoot : ShootHandler
         else
         {
             shouldShoot = true;
-            stopShootingTimer.running = false;
+            if (stopShootingTimer != null) stopShootingTimer.running = false;
         }
         
         if (!shouldShoot)

@@ -102,14 +102,12 @@ public class RoomEntrance : MonoBehaviour
 
     public void Lock()
     {
-        Debug.Log("locking");
         SetTempLockObjects(true);
         locked = true;
     }
 
     public void UnLock()
     {
-        Debug.Log("unlocking");
         SetTempLockObjects(false);
         locked = false;
     }

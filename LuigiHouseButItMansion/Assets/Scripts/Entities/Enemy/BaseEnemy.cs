@@ -17,7 +17,7 @@ public abstract class BaseEnemy
             FirstInstance(position, enemyData);
     }
 
-    public abstract void Spawn(EnemySpawnManager spawner, Vector3 position);
+    public abstract void Spawn(EnemySpawnManager spawner, Vector3 spawnPosition);
 
     protected abstract void FirstInstance(Vector3 position, object enemyData);
 

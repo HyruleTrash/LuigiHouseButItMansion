@@ -14,14 +14,39 @@ public class RatEnemy : BaseEnemy
     private NavMeshAgent agentComp;
     private NavAgentGoToTarget goToPlayerComp;
     private IsLocationNear isPlayerNearComp;
-
-    public override void Spawn(EnemySpawnManager spawner, Vector3 position)
+    
+    private Vector3? lastPosition;
+    private float? actualBrushSize;
+    
+    private float GetBrushSize(Vector3Int res, Bounds roomBounds)
     {
-        PrepareSpawn(spawner, position, out RatEnemyData data);
+        var metersPerTexelX = roomBounds.size.x / (res.x - 1);
+        actualBrushSize ??= dataInstance.brushSize / metersPerTexelX;
+        return actualBrushSize.Value;
+    }
+    
+    public override void Spawn(EnemySpawnManager spawner, Vector3 spawnPosition)
+    {
+        PrepareSpawn(spawner, spawnPosition, out RatEnemyData data);
         dataInstance = data;
 
         healthComp.maxHealth = dataInstance.healthData.maxHealth;
         healthComp.invincibilityFrames = dataInstance.healthData.invincibilityFrames;
+
+        lastPosition = null;
+        actualBrushSize = null;
+        goToPlayerComp.fixedUpdate = () =>
+        {
+            if (lastPosition == null)
+            {
+                lastPosition = Instance.transform.position;
+                return;
+            }
+
+            if (!(Vector3.Distance(lastPosition.Value, Instance.transform.position) > dataInstance.goopApplyRate)) return;
+            lastPosition = Instance.transform.position;
+            RoomObjectData.CurrentRoom.goopManager.ApplyGoopAt(Instance.transform.position + Vector3.down, GetBrushSize);
+        };
         
         healthComp.Revive();
         spawner.Add(Instance);

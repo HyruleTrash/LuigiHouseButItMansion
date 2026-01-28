@@ -8,9 +8,9 @@ public class DrunkEnemy : BaseEnemy
     
     private Health healthComp;
     
-    public override void Spawn(EnemySpawnManager spawner, Vector3 position)
+    public override void Spawn(EnemySpawnManager spawner, Vector3 spawnPosition)
     {
-        PrepareSpawn(spawner, position, out DrunkEnemyData data);
+        PrepareSpawn(spawner, spawnPosition, out DrunkEnemyData data);
         dataInstance = data;
         
         healthComp.maxHealth = dataInstance.healthData.maxHealth;

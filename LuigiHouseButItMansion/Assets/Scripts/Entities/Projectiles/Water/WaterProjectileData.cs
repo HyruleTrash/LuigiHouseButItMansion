@@ -9,6 +9,8 @@ public class WaterProjectileData : ProjectileData
     [Space(5)]
     public GameObject waterSplashPrefab;
     private ObjectPool<WaterProjectileInstance> waterProjectilePool = new();
+    private float? actualBrushSize;
+    public float brushSize = 1.5f;
     
     public override LiquidProjectileInstance SpawnInstance(LiquidTrajectoryGetter.SplineCollision collisionData, Spline spline, Action<LiquidProjectileInstance, GameObject, LiquidTrajectoryGetter.SplineCollision> onCollision)
     {
@@ -33,6 +35,7 @@ public class WaterProjectileData : ProjectileData
             var splashParticle = Instantiate(waterSplashPrefab, currentInstance.projectileHandler.transform, false);
             currentInstance.splashParticle = splashParticle.GetComponent<ParticleSystem>();
         }
+        actualBrushSize = null;
         
         onCollision += CheckIfCollidedWithWasDamagable;
         currentInstance.SetData(spline, visualRotation, visualScale, projectileSpeed);
@@ -45,10 +48,16 @@ public class WaterProjectileData : ProjectileData
         return currentInstance;
     }
     
+    private float GetBrushSize(Vector3Int res, Bounds roomBounds)
+    {
+        var metersPerTexelX = roomBounds.size.x / (res.x - 1);
+        actualBrushSize ??= brushSize / metersPerTexelX;
+        return actualBrushSize.Value;
+    }
     
     private void CheckIfCollidedWithWasDamagable(LiquidProjectileInstance _, GameObject collidedWithGameObject, LiquidTrajectoryGetter.SplineCollision collisionData)
     {
-        RoomObjectData.CurrentRoom.goopManager.RemoveGoopAt(collisionData.contactPoint, collisionData.direction.normalized);
+        RoomObjectData.CurrentRoom.goopManager.RemoveGoopAt(collisionData.contactPoint, GetBrushSize);
         
         if (collidedWithGameObject.layer != LayerMask.NameToLayer("Damagable")) return;
         IDamagable[] damagables;
