@@ -10,7 +10,9 @@ public class InteractionPointDataHolder : PointDataHolder
     public Vector3 wallMountedPosition;
     public PossibleInteractableList possibleInteractables;
     private Timer visualCycleTimer;
+#if UNITY_EDITOR
     private int usedVisualCycleIndex = 0;
+#endif
     private float lastTime;
     private float gizmoDeltaTime;
     [HideInInspector]
@@ -25,7 +27,9 @@ public class InteractionPointDataHolder : PointDataHolder
         if (!parent.interactionPoints.Contains(this))
             parent.interactionPoints.Add(this);
     }
+    public override Color GetColor() => Color.yellow;
 
+#if UNITY_EDITOR
     private void OnEnable()
     {
         Selection.selectionChanged += OnSelectionChanged;
@@ -46,8 +50,6 @@ public class InteractionPointDataHolder : PointDataHolder
         if (gameObject == null) return;
         if (Selection.activeGameObject == gameObject) justSelected = true;
     }
-
-    public override Color GetColor() => Color.yellow;
 
     protected override void OnDrawGizmosSelected()
     {
@@ -90,6 +92,7 @@ public class InteractionPointDataHolder : PointDataHolder
             pos += wallMountedPosition;
         Gizmos.DrawWireMesh(mesh, pos, interactableObjRotation * foundObj.transform.localRotation, foundObj.transform.localScale);
     }
+#endif
 
     public GameObject GetInteractable()
     {

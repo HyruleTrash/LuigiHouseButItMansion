@@ -17,6 +17,7 @@ public abstract class PointDataHolder : MonoBehaviour
     protected abstract void AddSelfToParent();
     public abstract Color GetColor();
     
+    #if UNITY_EDITOR
     protected virtual void OnDrawGizmosSelected()
     {
         if (Selection.activeGameObject != transform.gameObject)
@@ -27,4 +28,5 @@ public abstract class PointDataHolder : MonoBehaviour
         var origin = transform.position + Vector3.up * 2;
         Gizmos.DrawLine(origin, origin + dir);
     }
+    #endif
 }

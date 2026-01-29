@@ -28,7 +28,8 @@ public class GoopManager : MonoBehaviour
     [CanBeNull] public Texture3D roomTexture = null;
     [HideInInspector] public Texture3D usedRoomTexture;
     private byte[] roomTextureData;
-    
+
+#if UNITY_EDITOR
     /// <summary>
     /// Editor function for initializing values
     /// </summary>
@@ -39,6 +40,7 @@ public class GoopManager : MonoBehaviour
         Regenerate();
         SetToCurrent();
     }
+#endif
     
     private static Vector3 DivideV3(Vector3 a, Vector3 b) => new Vector3(a.x / b.x, a.y / b.y, a.z / b.z);
     private Vector3 GetRoomMin() => roomBounds.min + parent.transform.position;
@@ -422,20 +424,19 @@ public class GoopManager : MonoBehaviour
         return amountOfChange;
     }
 
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
     public void OnDrawGizmosSelected()
     {
         Gizmos.DrawWireCube(roomBounds.center + parent.transform.position, roomBounds.size);
     }
-    #endif
     
     public void Regenerate()
     {
-        Debug.Log("usedroomTex missing"); // not the issue doesnt get triggered
         DestroyTexture();
         ClearTextureData();
         GenerateTexture();
     }
+#endif
 
     public void SetToCurrent()
     {

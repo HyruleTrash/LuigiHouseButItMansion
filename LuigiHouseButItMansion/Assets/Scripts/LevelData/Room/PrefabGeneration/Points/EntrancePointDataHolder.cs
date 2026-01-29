@@ -15,6 +15,7 @@ public class EntrancePointDataHolder : PointDataHolder
 
     public override Color GetColor() => Color.orangeRed;
 
+    #if UNITY_EDITOR
     protected override void OnDrawGizmosSelected()
     {
         base.OnDrawGizmosSelected();
@@ -28,6 +29,7 @@ public class EntrancePointDataHolder : PointDataHolder
         Mesh mesh = parent.entrancePrefab.GetComponent<RoomEntrance>().doorRenderObject.sharedMesh;
         Gizmos.DrawWireMesh(mesh, transform.position, interactableObjRotation * Quaternion.Euler(-90, 0, 0));
     }
+    #endif
 
     public void CreateInstance(RoomObjectData roomObjectData, RoomPrefabGenerator parent, GameObject entrancePrefab)
     {

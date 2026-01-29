@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 using Random = System.Random;
 
-#if UNITY_EDITOR
 public class RoomPrefabGenerator : MonoBehaviour
 {
     [Header("Room data")]
@@ -31,11 +32,13 @@ public class RoomPrefabGenerator : MonoBehaviour
         return rotated + levelCollision.transform.position;
     }
 
+    #if UNITY_EDITOR
     public void UpdateAllLists() => roomGeneratorComponents.ForEach(x =>
     {
         x.UpdateList();
         EditorUtility.SetDirty(x);
     });
+    #endif
 
     private void OnDrawGizmosSelected()
     {
@@ -49,6 +52,7 @@ public class RoomPrefabGenerator : MonoBehaviour
     private bool CanGenerate() => levelCollision != null && roomCameraConfigRef != null &&
                                   cameraViewPoint != Vector3.zero && goopData.Count != 0;
 
+    #if UNITY_EDITOR
     public void SaveAndGenerateAsPrefab()
     {
         if (!CanGenerate())
@@ -101,5 +105,5 @@ public class RoomPrefabGenerator : MonoBehaviour
                 return pP;
         }
     }
+    #endif
 }
-#endif
