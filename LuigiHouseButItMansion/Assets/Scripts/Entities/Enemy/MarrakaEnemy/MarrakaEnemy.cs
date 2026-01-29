@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using LucasCustomClasses;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 using Object = UnityEngine.Object;
 
 public class MarrakaEnemy : BaseEnemy
@@ -121,7 +122,8 @@ public class MarrakaEnemy : BaseEnemy
             OnDeath(Instance);
             return;
         }
-        
+
+        hauntedInteractable.OnInteract = new UnityEvent();
         hauntedInteractable.OnInteract.AddListener(() =>
         {
             hideAndSeekTimerComp.timer.running = false;

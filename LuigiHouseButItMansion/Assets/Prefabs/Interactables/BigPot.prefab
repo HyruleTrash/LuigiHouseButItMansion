@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 526885252927149876}
   - component: {fileID: 2236699145932930675}
   - component: {fileID: 3966771788789090510}
+  - component: {fileID: 7257922807484220840}
   m_Layer: 0
   m_Name: BigPot
   m_TagString: Untagged
@@ -29,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 6444805712882892866}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 13.580608, y: 0.006, z: 37.532574}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 3.0064, y: 3.0064, z: 3.0064}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -68,7 +69,7 @@ MeshRenderer:
   m_RenderingLayerMask: 257
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 300ee636ab1b3b7429c61eaa1f29b0b8, type: 2}
+  - {fileID: 2100000, guid: fd0321cd00f2c824e953d37e8d589fb4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -124,11 +125,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b1805c90116485fbb25f77f211a7e62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableObject
+  isWallMounted: 0
   bounds:
     m_Center: {x: 0, y: 0.69, z: 0}
     m_Extent: {x: 0.48, y: 0.72, z: 0.48}
-  spawnPoint: {x: 0, y: 1.36, z: 0}
+  spawnPoint: {x: 0, y: 0.57, z: 0}
   OnInteract:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7257922807484220840}
+        m_TargetAssemblyTypeName: SimpleGoldAdd, Assembly-CSharp
+        m_MethodName: Trigger
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   objectRepresentation: {fileID: 68043790370894907}
+--- !u!114 &7257922807484220840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6444805712882892866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c23b43706c9f5141b025cf220f6b236, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  minMaxReward: {x: 2, y: 5}
+  cashEffectPrefab: {fileID: 2932097852895167225, guid: 9a333657c28908946ac41c6590a58ee7, type: 3}
+  direction: {x: -0.70710677, y: 0, z: 0, w: 0.70710677}
+  interactableObject: {fileID: 3966771788789090510}

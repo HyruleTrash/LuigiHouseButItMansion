@@ -7,11 +7,11 @@ namespace LucasCustomClasses
     {
         private double _currentTime = 0;
         private float _maxTime = 0;
-        public System.Action onEnd;
-        public System.Action<double> onPlaying;
+        public Action onEnd;
+        public Action<double> onPlaying;
         public bool running;
 
-        public Timer(float maxTime, System.Action onEnd)
+        public Timer(float maxTime, Action onEnd)
         {
             this._maxTime = maxTime;
             this.onEnd = onEnd;
@@ -63,5 +63,7 @@ namespace LucasCustomClasses
         {
             return countDown ? GetFormattedTime(_maxTime - _currentTime) : GetFormattedTime(_currentTime);
         }
+
+        public void Add(float time) => _maxTime += time;
     }
 }

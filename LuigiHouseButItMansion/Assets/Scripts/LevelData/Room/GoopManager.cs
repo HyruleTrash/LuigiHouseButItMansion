@@ -308,11 +308,16 @@ public class GoopManager : MonoBehaviour
         
         TexelData texelData = CalculateTexelData(contactPoint);
         float brushRadius = calculateBrush.Invoke(texelData.res, roomBounds);
-        ApplyCircleToTexture(brushRadius, texelData, (current, distance, brushRadius) =>
+        var amountOfTexelsChanged = ApplyCircleToTexture(brushRadius, texelData, (current, distance, brushRadius) =>
         {
             float interpolationFactor = 1f - (distance / (brushRadius + 1f));
             return (byte)(current * interpolationFactor);
         });
+
+        var scoreCounter = SceneData.instance.GetRegisteredObject<ScoreCounter>();
+        if (scoreCounter == null) return;
+        const float modifier = 20f;
+        scoreCounter.CleanCount += TexelCountToWorldVolume(amountOfTexelsChanged) / modifier;
     }
     
     public void ApplyGoopAt(Vector3 contactPoint, Func<Vector3Int, Bounds, float> calculateBrush)
@@ -368,10 +373,25 @@ public class GoopManager : MonoBehaviour
             res = res
         };
     }
+    
+    private float TexelCountToWorldVolume(int texelCount)
+    {
+        var res = GetTextureResolution();
+        Vector3 roomSize = roomBounds.size;
 
-    private void ApplyCircleToTexture(float brushRadius, TexelData texelData, Func<byte, float, float, byte> mutation)
+        float texelVolume =
+            (roomSize.x / res.x) *
+            (roomSize.y / res.y) *
+            (roomSize.z / res.z);
+
+        return texelCount * texelVolume;
+    }
+
+
+    private int ApplyCircleToTexture(float brushRadius, TexelData texelData, Func<byte, float, float, byte> mutation)
     {
         var madeChanges = false;
+        var amountOfChange = 0;
         for (var dx = -brushRadius; dx <= brushRadius; dx++)
         for (var dy = -brushRadius; dy <= brushRadius; dy++)
         for (var dz = -brushRadius; dz <= brushRadius; dz++)
@@ -389,11 +409,13 @@ public class GoopManager : MonoBehaviour
             
             roomTextureData[index] = mutation.Invoke(roomTextureData[index], distance, brushRadius);
             madeChanges = true;
+            amountOfChange++;
         }
 
         if (madeChanges)
             usedRoomTexture.SetPixelData(roomTextureData, 0);
         usedRoomTexture.Apply();
+        return amountOfChange;
     }
 
     #if UNITY_EDITOR

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1762137549354237833}
   - component: {fileID: 4533715434601583579}
   - component: {fileID: 8258139753602431287}
+  - component: {fileID: 7886720248892570630}
   m_Layer: 0
   m_Name: WoodenCoffin
   m_TagString: Untagged
@@ -28,13 +29,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8871709406911562321}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.019374311, y: -0.83454895, z: 0.5483692, w: 0.04943653}
-  m_LocalPosition: {x: 21.328001, y: 1.295, z: 46.339}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.7159, y: 1.7159, z: 1.7158998}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 66.52, y: -171.155, z: 3.148}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &4601130468943660136
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -68,7 +69,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 73f84b067aa02e34ea913d78c0b3b81f, type: 2}
+  - {fileID: 2100000, guid: 6e9d05f2708b2a54690e29043ea9ff67, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -125,11 +126,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b1805c90116485fbb25f77f211a7e62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableObject
+  isWallMounted: 0
   bounds:
-    m_Center: {x: -0.06, y: 0.24, z: -0.48}
-    m_Extent: {x: 0.48, y: 1.42, z: 0.82}
-  spawnPoint: {x: 0, y: 1.09, z: 0}
+    m_Center: {x: 0, y: 0.42, z: 0}
+    m_Extent: {x: 0.58, y: 0.6, z: 1.27}
+  spawnPoint: {x: 0, y: 0.47, z: 0}
   OnInteract:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7886720248892570630}
+        m_TargetAssemblyTypeName: SimpleGoldAdd, Assembly-CSharp
+        m_MethodName: Trigger
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   objectRepresentation: {fileID: 4601130468943660136}
+--- !u!114 &7886720248892570630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8871709406911562321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c23b43706c9f5141b025cf220f6b236, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  minMaxReward: {x: 5, y: 10}
+  cashEffectPrefab: {fileID: 2932097852895167225, guid: 9a333657c28908946ac41c6590a58ee7, type: 3}
+  direction: {x: -0.70710677, y: 0, z: 0, w: 0.70710677}
+  interactableObject: {fileID: 8258139753602431287}

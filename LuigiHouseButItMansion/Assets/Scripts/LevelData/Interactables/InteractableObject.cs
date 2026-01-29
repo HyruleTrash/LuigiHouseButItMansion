@@ -68,6 +68,6 @@ public class InteractableObject : MonoBehaviour
 
     public Vector3 GetSpawnPoint()
     {
-        return (transform.rotation * spawnPoint) + transform.position;
+        return transform.TransformPoint(spawnPoint);
     }
 }

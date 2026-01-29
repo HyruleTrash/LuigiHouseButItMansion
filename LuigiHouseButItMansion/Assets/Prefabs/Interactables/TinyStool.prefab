@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2067084302386484829}
   - component: {fileID: 5041563578087358423}
+  - component: {fileID: 4392682235693220295}
   m_Layer: 0
   m_Name: TinyStool
   m_TagString: Untagged
@@ -45,14 +46,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b1805c90116485fbb25f77f211a7e62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableObject
+  isWallMounted: 0
   bounds:
     m_Center: {x: 0, y: 0.71, z: 0}
     m_Extent: {x: 0.56, y: 0.64, z: 0.42}
-  spawnPoint: {x: 0, y: 0.87, z: 0}
+  spawnPoint: {x: 0, y: 0.33, z: 0}
   OnInteract:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4392682235693220295}
+        m_TargetAssemblyTypeName: SimpleGoldAdd, Assembly-CSharp
+        m_MethodName: Trigger
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   objectRepresentation: {fileID: 4325946407378181711}
+--- !u!114 &4392682235693220295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1721521384531168487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c23b43706c9f5141b025cf220f6b236, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  minMaxReward: {x: 1, y: 3}
+  cashEffectPrefab: {fileID: 2932097852895167225, guid: 9a333657c28908946ac41c6590a58ee7, type: 3}
+  direction: {x: -0.70710677, y: 0, z: 0, w: 0.70710677}
+  interactableObject: {fileID: 5041563578087358423}
 --- !u!1 &7667898934154196030
 GameObject:
   m_ObjectHideFlags: 0
@@ -120,8 +150,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -2813337366143557646, guid: 217a8463f653c7e4d9d6142866189dec, type: 3}
-  - {fileID: 725804396391725484, guid: 217a8463f653c7e4d9d6142866189dec, type: 3}
+  - {fileID: 2100000, guid: 9e6988fbbe1137148a7094d5563e0067, type: 2}
+  - {fileID: 2100000, guid: 5a2d2f7a5e17245478efe6cf05f46c9a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

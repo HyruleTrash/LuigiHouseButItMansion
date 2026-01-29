@@ -32,7 +32,8 @@ public class Health : MonoBehaviour, IDamagable
     {
         if (isDead || damagers == null || damagers.Count < 1)
             return;
-        foreach (DamagerRegistration damager in damagers)
+        var temp = damagers.ToList();
+        foreach (DamagerRegistration damager in temp)
             damager.timer.Update(Time.deltaTime);
     }
 
@@ -46,6 +47,7 @@ public class Health : MonoBehaviour, IDamagable
         if (!(health <= 0))
         {
             damagers.Add(new DamagerRegistration {
+                damager = damager,
                 timer = new Timer(invincibilityFrames) { onEnd = () =>
                 {
                     RemoveFromDamagers(damager);
@@ -62,12 +64,9 @@ public class Health : MonoBehaviour, IDamagable
 
     private void RemoveFromDamagers(object damager)
     {
-        foreach (var registeredDamager in damagers)
-        {
-            if (!damager.Equals(registeredDamager.damager)) continue;
-            damagers.Remove(registeredDamager);
-            return;
-        }
+        var temp = damagers.FirstOrDefault(x => x.damager == damager);
+        if (temp != null)
+            damagers.Remove(temp);
     }
 
     private bool HasHitEnemy(object damager)
@@ -88,5 +87,10 @@ public class Health : MonoBehaviour, IDamagable
     {
         health = maxHealth;
         isDead = false;
+    }
+
+    public override string ToString()
+    {
+        return $"[{health} / {maxHealth}]";
     }
 }

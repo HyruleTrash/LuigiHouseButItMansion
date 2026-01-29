@@ -66,7 +66,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 73f84b067aa02e34ea913d78c0b3b81f, type: 2}
+  - {fileID: 2100000, guid: 6e9d05f2708b2a54690e29043ea9ff67, type: 2}
   - {fileID: 2100000, guid: b4be24b7cab885c4a88fd49b922267ca, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -156,7 +156,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 73f84b067aa02e34ea913d78c0b3b81f, type: 2}
+  - {fileID: 2100000, guid: 6e9d05f2708b2a54690e29043ea9ff67, type: 2}
   - {fileID: 2100000, guid: b4be24b7cab885c4a88fd49b922267ca, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -246,7 +246,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 73f84b067aa02e34ea913d78c0b3b81f, type: 2}
+  - {fileID: 2100000, guid: 6e9d05f2708b2a54690e29043ea9ff67, type: 2}
   - {fileID: 2100000, guid: b4be24b7cab885c4a88fd49b922267ca, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -280,6 +280,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3790686955782685868}
   - component: {fileID: 2122819203101714532}
+  - component: {fileID: 4616074129998615667}
   m_Layer: 0
   m_Name: TableWithCandles
   m_TagString: Untagged
@@ -296,7 +297,7 @@ Transform:
   m_GameObject: {fileID: 4598431540317396502}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 27.15, y: -0.034, z: 34.620003}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.0341, y: 2.0341, z: 2.0341}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -320,11 +321,39 @@ MonoBehaviour:
   bounds:
     m_Center: {x: 0, y: 0.91, z: 0}
     m_Extent: {x: 1.26, y: 0.72, z: 0.84}
-  spawnPoint: {x: 0, y: 1.4, z: 0}
+  spawnPoint: {x: 0, y: 0.67, z: 0}
   OnInteract:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4616074129998615667}
+        m_TargetAssemblyTypeName: SimpleGoldAdd, Assembly-CSharp
+        m_MethodName: Trigger
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   objectRepresentation: {fileID: 1458078712540777662}
+--- !u!114 &4616074129998615667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4598431540317396502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c23b43706c9f5141b025cf220f6b236, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  minMaxReward: {x: 0, y: 10}
+  cashEffectPrefab: {fileID: 2932097852895167225, guid: 9a333657c28908946ac41c6590a58ee7, type: 3}
+  direction: {x: 0.36901692, y: 0, z: 0, w: -0.9294227}
+  interactableObject: {fileID: 2122819203101714532}
 --- !u!1 &4782016858443310799
 GameObject:
   m_ObjectHideFlags: 0
@@ -393,8 +422,8 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: a95992adeb8eabc45ae55971246a432f, type: 2}
-  - {fileID: -2813337366143557646, guid: 9184c4a2134f0cf438d8e1f1068d1c1d, type: 3}
-  - {fileID: 725804396391725484, guid: 9184c4a2134f0cf438d8e1f1068d1c1d, type: 3}
+  - {fileID: 2100000, guid: aef81d584a86c8944b7d8fde7fa5934c, type: 2}
+  - {fileID: 2100000, guid: b7b114c7018a3ff4f9cd3cda29da6ff5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

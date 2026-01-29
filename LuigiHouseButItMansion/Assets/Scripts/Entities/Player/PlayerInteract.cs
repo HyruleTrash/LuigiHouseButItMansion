@@ -47,17 +47,9 @@ public class PlayerInteract : MonoBehaviour
         interactionCooldownTimer.Reset();
     }
 
-    private void TriggerInteraction(InteractableObject interactable)
-    {
-        Debug.Log("Interact!");
-        interactable.TriggerInteraction();
-    }
+    private void TriggerInteraction(InteractableObject interactable) => interactable.TriggerInteraction();
+    private void Update() => interactionCooldownTimer.Update(Time.deltaTime);
 
-    private void Update()
-    {
-        interactionCooldownTimer.Update(Time.deltaTime);
-    }
-    
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;

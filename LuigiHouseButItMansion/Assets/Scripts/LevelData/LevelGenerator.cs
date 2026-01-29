@@ -6,7 +6,7 @@ using Unity.AI.Navigation;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class LevelGenerator : MonoBehaviour
+public class LevelGenerator : MonoBehaviour, IOnRunStart
 {
     [SerializeField]
     private GameObject navMeshSurface;
@@ -21,7 +21,7 @@ public class LevelGenerator : MonoBehaviour
         enabled = false;
     }
 
-    private void Start()
+    public void OnRunStart()
     {
         RoomObjectData.OnCurrentRoomChange = null;
         CreateRoom(PickRoomFromPossibles(possibleRooms), true);

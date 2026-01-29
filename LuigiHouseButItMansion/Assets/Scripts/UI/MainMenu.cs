@@ -14,8 +14,8 @@ public class MainMenu : MonoBehaviour
 
     public void PlayGame()
     {
-        var exit = new PlayCommand();
-        exit.Execute();
+        var playCmd = new PlayCommand();
+        playCmd.Execute();
     }
 
     public void ShowOptions()
@@ -25,7 +25,7 @@ public class MainMenu : MonoBehaviour
 
     public void QuitGame()
     {
-        var exit = new ExitCommand();
-        exit.Execute();
+        var exitCmd = new ExitCommand();
+        exitCmd.Execute();
     }
 }

@@ -38,7 +38,7 @@ public class ExitCommand : ICommand
         if (timer == null) return;
         
         Object.DontDestroyOnLoad(timerObject);
-        timer.timer = new Timer(2f, () =>
+        timer.timer = new Timer(0.5f, () =>
         {
             allowedToTrigger = true;
             timer.gameObject.SetActive(false);
