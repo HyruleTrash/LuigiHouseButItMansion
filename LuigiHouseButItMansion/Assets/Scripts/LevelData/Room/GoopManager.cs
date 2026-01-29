@@ -29,6 +29,9 @@ public class GoopManager : MonoBehaviour
     [HideInInspector] public Texture3D usedRoomTexture;
     private byte[] roomTextureData;
     
+    /// <summary>
+    /// Editor function for initializing values
+    /// </summary>
     public void Init(Bounds goopBounds, GoopData goopData1)
     {
         roomBounds = goopBounds;
@@ -346,6 +349,7 @@ public class GoopManager : MonoBehaviour
         }
         if (!usedRoomTexture)
         {
+            Debug.Log("usedroomTex missing"); // not the issue doesnt get triggered
             SetUsedRoomTexture();
             if (!usedRoomTexture)
             {
@@ -427,6 +431,7 @@ public class GoopManager : MonoBehaviour
     
     public void Regenerate()
     {
+        Debug.Log("usedroomTex missing"); // not the issue doesnt get triggered
         DestroyTexture();
         ClearTextureData();
         GenerateTexture();
@@ -434,7 +439,8 @@ public class GoopManager : MonoBehaviour
 
     public void SetToCurrent()
     {
-        SetUsedRoomTexture();
+        if (!usedRoomTexture)
+            SetUsedRoomTexture();
         UpdateTexture();
         SetGlobalShaderData();
     }

@@ -112,10 +112,7 @@ public class EntityHitFlash : SingletonBehaviour<EntityHitFlash>
         {
             if (!isDead)
             {
-                foreach (var registrations in rendererRegistrations)
-                {
-                    registrations.renderer.SetMaterials(registrations.hitmaskMaterialList);
-                }
+                foreach (var registrations in rendererRegistrations) registrations.renderer?.SetMaterials(registrations.hitmaskMaterialList);
             }
             
             flashTimer.Reset();
@@ -133,10 +130,7 @@ public class EntityHitFlash : SingletonBehaviour<EntityHitFlash>
 
         public void ResetMaterials()
         {
-            foreach (var registrations in rendererRegistrations)
-            {
-                registrations.renderer.SetMaterials(registrations.oldMaterials);
-            }
+            foreach (var registrations in rendererRegistrations) registrations.renderer?.SetMaterials(registrations.oldMaterials);
         }
         
         private void UnRegisterFinishedEntity()
